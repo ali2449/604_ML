@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IAF 604 - Module 1: AI → ML → Tools → Python → Cloud (Complete)</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    /************************************************************
+     * THEME: Aurora (modern, high-contrast, accessible)
+     ************************************************************/
+    :root{
+      --bg0:#070A12;
+      --bg1:#0B1020;
+      --panel:#0F172A;
+      --panel2:#0B1226;
+      --card:#101B34;
+      --text:#EAF0FF;
+      --muted:rgba(234,240,255,0.75);
+      --muted2:rgba(234,240,255,0.62);
+      --border: rgba(148,163,184,0.14);
+      --shadow: 0 24px 60px rgba(0,0,0,0.35);
+
+      --primary:#60A5FA;     /* sky */
+      --secondary:#A78BFA;   /* violet */
+      --accent:#F472B6;      /* pink */
+      --success:#34D399;     /* green */
+      --warning:#FBBF24;     /* amber */
+      --danger:#FB7185;      /* rose */
+      --cyan:#22D3EE;        /* cyan */
+
+      --radius: 16px;
+      --radius2: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+
+      --ring: 0 0 0 4px rgba(96,165,250,0.22);
+      --ring2: 0 0 0 4px rgba(167,139,250,0.20);
+    }
+
+    *{ margin:0; padding:0; box-sizing:border-box; }
+    html{ scroll-behavior:smooth; }
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial;
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(96,165,250,0.18), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(244,114,182,0.16), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(34,211,238,0.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      color: var(--text);
+      line-height: 1.7;
+    }
+    a{ color: var(--primary); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+
+    .container{ max-width: 1240px; margin: 0 auto; padding: 22px; }
+    .skip{
+      position:absolute; left:-999px; top: 0;
+      background: var(--panel); border: 1px solid var(--border);
+      padding: 10px 12px; border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 9999;
+      color: var(--text);
+    }
+    .skip:focus{ left: 16px; top: 16px; outline: none; box-shadow: var(--shadow), var(--ring); }
+
+    /************************************************************
+     * HEADER
+     ************************************************************/
+    header{
+      background:
+        radial-gradient(600px 250px at 18% 20%, rgba(96,165,250,0.25), transparent 65%),
+        radial-gradient(600px 250px at 85% 35%, rgba(167,139,250,0.22), transparent 70%),
+        linear-gradient(135deg, rgba(15,23,42,0.90), rgba(16,27,52,0.92));
+      border: 1px solid rgba(148,163,184,0.18);
+      color: white;
+      padding: 22px;
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      position: relative;
+      overflow:hidden;
+    }
+    header:after{
+      content:"";
+      position:absolute;
+      right:-180px; top:-180px;
+      width:420px; height:420px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.20), transparent 62%);
+      filter: blur(2px);
+    }
+
+    .course-header{
+      display:flex;
+      justify-content: space-between;
+      align-items:flex-start;
+      gap: 14px;
+      flex-wrap: wrap;
+      position:relative;
+      z-index:1;
+    }
+    .course-info h1{
+      font-size: clamp(22px, 2.7vw, 36px);
+      margin-bottom: 6px;
+      letter-spacing: 0.2px;
+    }
+    .course-info h2{
+      font-size: clamp(14px, 1.6vw, 18px);
+      font-weight: 350;
+      opacity: 0.95;
+      margin-bottom: 10px;
+      color: rgba(234,240,255,0.92);
+    }
+    .subtitle{
+      max-width: 900px;
+      color: rgba(234,240,255,0.82);
+      font-size: 14px;
+      margin-top: 10px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 950;
+      letter-spacing: 0.2px;
+      border: 1px solid rgba(148,163,184,0.22);
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(8px);
+      width: fit-content;
+    }
+    .badge i{ color: rgba(234,240,255,0.9); }
+
+    .meta{
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(148,163,184,0.22);
+      padding: 12px 14px;
+      border-radius: 16px;
+      min-width: 330px;
+      backdrop-filter: blur(8px);
+    }
+    .meta p{ margin: 6px 0; font-size: 14px; color: rgba(234,240,255,0.9); }
+    .meta .pillrow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 10px; border-radius:999px;
+      background: rgba(15,23,42,0.35);
+      border: 1px solid rgba(148,163,184,0.22);
+      font-weight:950; font-size: 12px;
+      color: rgba(234,240,255,0.92);
+    }
+
+    /************************************************************
+     * LAYOUT
+     ************************************************************/
+    .layout{
+      display:grid;
+      grid-template-columns: 2.25fr 1fr;
+      gap: 18px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .layout{ grid-template-columns: 1fr; }
+      .meta{ min-width:auto; width:100%; }
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(15,23,42,0.90), rgba(11,18,38,0.92));
+      border-radius: var(--radius);
+      border: 1px solid rgba(148,163,184,0.14);
+      box-shadow: var(--shadow);
+    }
+    .main{ padding: 18px; }
+    .sidebar{ display:flex; flex-direction:column; gap: 14px; }
+
+    .card{ padding: 16px; }
+    .card h3{
+      color: rgba(234,240,255,0.92);
+      border-bottom: 1px solid rgba(148,163,184,0.18);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      font-size: 16px;
+    }
+
+    /************************************************************
+     * TYPOGRAPHY + SECTIONS
+     ************************************************************/
+    .section{ margin: 18px 0; scroll-margin-top: 20px; }
+    .section h4{
+      margin-bottom: 10px;
+      font-size: 1.25rem;
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      color: rgba(234,240,255,0.94);
+    }
+    .lead{ font-size: 15px; color: rgba(234,240,255,0.88); }
+    .muted{ color: var(--muted); font-size: 14px; }
+    .small{ font-size: 13px; color: var(--muted2); }
+
+    /************************************************************
+     * COMPONENTS
+     ************************************************************/
+    .callout{
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.16);
+      background: rgba(15,23,42,0.55);
+    }
+    .definition{
+      background: linear-gradient(135deg, rgba(167,139,250,0.16), rgba(96,165,250,0.10));
+      border: 1px solid rgba(167,139,250,0.18);
+      border-left: 4px solid rgba(167,139,250,0.70);
+      padding: 12px;
+      border-radius: 14px;
+      margin: 12px 0;
+    }
+    .note{
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(251,191,36,0.25);
+      background: rgba(251,191,36,0.10);
+      margin-top: 12px;
+      color: rgba(234,240,255,0.90);
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 980px){ .grid2{ grid-template-columns: 1fr; } }
+
+    .good{ border: 1px solid rgba(52,211,153,0.22); background: rgba(52,211,153,0.08); }
+    .bad{ border: 1px solid rgba(251,113,133,0.25); background: rgba(251,113,133,0.08); }
+    .warn{ border: 1px solid rgba(251,191,36,0.28); background: rgba(251,191,36,0.10); }
+
+    .box-title{
+      font-weight: 950;
+      display:flex; align-items:center; gap:10px;
+      margin-bottom: 6px;
+      color: rgba(234,240,255,0.94);
+    }
+
+    .cards3{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 1100px){ .cards3{ grid-template-columns: 1fr; } }
+
+    .mini-card{
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid rgba(148,163,184,0.14);
+      background: linear-gradient(180deg, rgba(16,27,52,0.92), rgba(11,18,38,0.94));
+      position: relative;
+      overflow:hidden;
+    }
+    .mini-card:after{
+      content:"";
+      position:absolute;
+      inset:auto -40px -70px auto;
+      width:220px; height:220px;
+      background: radial-gradient(circle at 30% 30%, rgba(96,165,250,0.14), transparent 65%);
+      transform: rotate(10deg);
+      filter: blur(0.4px);
+    }
+    .mini-card h5{
+      display:flex; align-items:center; gap:10px;
+      margin-bottom: 8px;
+      color: rgba(234,240,255,0.94);
+      font-size: 1.05rem;
+      position: relative;
+      z-index:1;
+    }
+    .mini-card p, .mini-card ul{ position:relative; z-index:1; }
+    .mini-card ul{ padding-left:18px; margin-top:8px; }
+
+    .mini-card.blue{ border-top: 5px solid rgba(96,165,250,0.85); }
+    .mini-card.violet{ border-top: 5px solid rgba(167,139,250,0.85); }
+    .mini-card.pink{ border-top: 5px solid rgba(244,114,182,0.85); }
+    .mini-card.green{ border-top: 5px solid rgba(52,211,153,0.85); }
+    .mini-card.cyan{ border-top: 5px solid rgba(34,211,238,0.85); }
+    .mini-card.gray{ border-top: 5px solid rgba(148,163,184,0.55); }
+
+    .chiprow{
+      display:flex; gap:8px; flex-wrap:wrap; margin-top: 10px;
+      position:relative; z-index:1;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 7px 10px; border-radius:999px;
+      font-weight: 950; font-size: 12px;
+      border: 1px solid rgba(148,163,184,0.18);
+      background: rgba(15,23,42,0.40);
+      color: rgba(234,240,255,0.90);
+    }
+
+    /************************************************************
+     * CHARTS
+     ************************************************************/
+    .chart{
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,0.14);
+      background: rgba(15,23,42,0.45);
+    }
+    .chart-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-weight: 950;
+      color: rgba(234,240,255,0.92);
+      font-size: 14px;
+    }
+    canvas{ width: 100% !important; height: 320px !important; }
+
+    /************************************************************
+     * INTERACTIVE
+     ************************************************************/
+    .interactive{
+      background: rgba(15,23,42,0.50);
+      border: 1px dashed rgba(148,163,184,0.22);
+      padding: 14px;
+      border-radius: 16px;
+      margin-top: 12px;
+    }
+    textarea{
+      width: 100%;
+      padding: 10px;
+      border: 1px solid rgba(148,163,184,0.22);
+      border-radius: 12px;
+      margin-top: 10px;
+      min-height: 100px;
+      resize: vertical;
+      color: var(--text);
+      background: rgba(11,18,38,0.70);
+      outline:none;
+    }
+    textarea:focus{ box-shadow: var(--ring); border-color: rgba(96,165,250,0.40); }
+
+    .formrow{ display:flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; align-items:center; }
+    .range-wrap{
+      display:flex; align-items:center; gap: 12px;
+      width: 100%;
+      background: rgba(11,18,38,0.70);
+      border: 1px solid rgba(148,163,184,0.20);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .range-wrap label{
+      font-weight: 950;
+      color: rgba(234,240,255,0.92);
+      min-width: 170px;
+    }
+    .range-wrap output{
+      font-family: var(--mono);
+      font-weight: 950;
+      color: rgba(234,240,255,0.92);
+      min-width: 70px;
+      text-align:right;
+    }
+    input[type="range"]{ width: 100%; accent-color: rgba(96,165,250,0.90); }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      background: linear-gradient(135deg, rgba(96,165,250,0.92), rgba(167,139,250,0.88));
+      color: #0B1020;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-weight: 950;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+    .btn:hover{ transform: translateY(-1px); box-shadow: var(--ring2); filter: brightness(1.03); }
+    .btn:focus{ outline: none; box-shadow: var(--ring2); }
+    .btn-secondary{
+      background: linear-gradient(135deg, rgba(34,211,238,0.92), rgba(52,211,153,0.88));
+      color: #071019;
+    }
+    .btn-ghost{
+      background: rgba(11,18,38,0.70);
+      color: rgba(234,240,255,0.92);
+      border: 1px solid rgba(148,163,184,0.20);
+    }
+    .btn-ghost:hover{ box-shadow: var(--ring); }
+
+    pre{
+      background: rgba(2,6,23,0.82);
+      color: #EAF0FF;
+      padding: 14px;
+      border-radius: 16px;
+      overflow-x: auto;
+      border: 1px solid rgba(148,163,184,0.16);
+      margin-top: 10px;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    code{ font-family: var(--mono); }
+
+    /************************************************************
+     * SIDEBAR: TOC + AGENDA
+     ************************************************************/
+    .toc{ display:flex; flex-direction:column; gap: 10px; }
+    .toc a{
+      display:flex; align-items:center; gap:10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,0.16);
+      background: rgba(11,18,38,0.65);
+      font-weight: 950;
+      color: rgba(234,240,255,0.90);
+    }
+    .toc a:hover{ text-decoration:none; box-shadow: var(--ring); border-color: rgba(96,165,250,0.35); }
+
+    .agenda-item{
+      display:flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed rgba(148,163,184,0.18);
+      align-items:flex-start;
+    }
+    .agenda-item:last-child{ border-bottom:none; }
+    .agenda-time{
+      min-width: 94px;
+      text-align:center;
+      padding: 6px 10px;
+      border-radius: 12px;
+      background: rgba(96,165,250,0.12);
+      border: 1px solid rgba(96,165,250,0.20);
+      font-weight: 950;
+      font-size: 12px;
+      color: rgba(234,240,255,0.92);
+    }
+
+    .resource-list{ list-style:none; }
+    .resource-list li{
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(148,163,184,0.12);
+      display:flex;
+      gap: 10px;
+      align-items:flex-start;
+    }
+    .resource-list li:last-child{ border-bottom:none; }
+    .resource-list i{ color: rgba(96,165,250,0.90); margin-top:3px; }
+
+    .qa{
+      margin-top: 10px;
+      border: 1px solid rgba(148,163,184,0.14);
+      border-radius: 16px;
+      overflow:hidden;
+      background: rgba(11,18,38,0.65);
+    }
+    details{
+      border-top: 1px solid rgba(148,163,184,0.14);
+      padding: 10px 12px;
+    }
+    details:first-child{ border-top:none; }
+    summary{
+      cursor:pointer;
+      font-weight: 950;
+      color: rgba(234,240,255,0.92);
+      display:flex;
+      align-items:center;
+      gap:10px;
+      list-style:none;
+    }
+    summary::-webkit-details-marker{ display:none; }
+    details p{ margin-top: 8px; color: rgba(234,240,255,0.86); }
+
+    footer{
+      text-align:center;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(148,163,184,0.14);
+      color: rgba(234,240,255,0.62);
+      font-size: 0.9rem;
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *{ scroll-behavior:auto !important; transition:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <div class="container">
+    <header>
+      <div class="course-header">
+        <div class="course-info">
+          <h1>IAF 604: Machine Learning &amp; Predictive Analytics</h1>
+          <h2>Module 1 — AI Foundations → ML Mindset → Tools → Python → Cloud</h2>
+          <div class="badge"><i class="fa-solid fa-layer-group"></i> Week 1: The Big Picture + First Hands-On</div>
+          <p class="subtitle">
+            This module is designed for graduate students in Informatics &amp; Analytics. It starts from first principles (AI),
+            builds correct conceptual boundaries (AI vs ML vs DL vs GenAI), then transitions into real practice: tools, Python,
+            and why cloud becomes essential for modern ML systems.
+          </p>
+        </div>
+
+        <div class="meta">
+          <p><strong>Instructor:</strong> Dr. Ali Noori</p>
+          <p><strong>Module:</strong> 1</p>
+          <p><strong>Estimated time:</strong> 2–3 hours (lecture + setup + mini-lab)</p>
+          <div class="pillrow">
+            <span class="pill"><i class="fa-solid fa-brain"></i> AI</span>
+            <span class="pill"><i class="fa-solid fa-diagram-project"></i> AI vs ML</span>
+            <span class="pill"><i class="fa-solid fa-bullseye"></i> ML thinking</span>
+            <span class="pill"><i class="fa-solid fa-screwdriver-wrench"></i> Tools</span>
+            <span class="pill"><i class="fa-brands fa-python"></i> Python</span>
+            <span class="pill"><i class="fa-solid fa-cloud"></i> Cloud</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+
+      <!-- MAIN -->
+      <main id="main" class="panel main">
+
+        <!-- MODULE OVERVIEW -->
+        <section id="overview" class="section">
+          <h4><i class="fa-solid fa-map"></i> 1) Module overview (what you’ll learn and why it matters)</h4>
+          <p class="lead">
+            The words <strong>AI</strong> and <strong>ML</strong> are often used as marketing labels. In real practice,
+            these terms describe different capabilities, different risks, and different workflows.
+            In Module 1, you will build a strong foundation that prevents common mistakes:
+            using ML when a rule is enough, evaluating models incorrectly, confusing “prediction” with “decision,”
+            and believing tools replace reasoning.
+          </p>
+
+          <div class="callout" style="margin-top:12px;">
+            <p><strong>Learning outcomes (complete):</strong></p>
+            <ul style="padding-left:18px; margin-top:8px;">
+              <li>Define AI precisely and explain the major families: rule-based, ML-based, deep learning, and generative AI.</li>
+              <li>Explain how <strong>AI vs ML vs DL vs GenAI</strong> differ in inputs/outputs, learning mechanism, and typical use cases.</li>
+              <li>Recognize when to use rules, classical ML, or deep learning (and when none is appropriate).</li>
+              <li>Describe the end-to-end ML lifecycle and where most effort actually goes (hint: data).</li>
+              <li>Set up a working ML environment (Colab) and understand how it maps to local and cloud setups.</li>
+              <li>Write and run basic Python for data creation, visualization, and simple modeling intuition.</li>
+              <li>Explain what “cloud for ML” means (compute, storage, managed ML services, and MLOps).</li>
+            </ul>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Reality check: where ML time goes</span>
+              <span class="muted">data vs modeling vs deployment</span>
+            </div>
+            <canvas id="timeWhereGoes"></canvas>
+          </div>
+        </section>
+
+        <!-- AI FOUNDATIONS -->
+        <section id="ai" class="section">
+          <h4><i class="fa-solid fa-brain"></i> 2) Artificial Intelligence (AI): the umbrella term</h4>
+
+          <div class="definition">
+            <p>
+              <strong>Artificial Intelligence (AI)</strong> is the field of designing systems that perform tasks that normally require human intelligence:
+              perception (seeing/hearing), language understanding, reasoning, planning, and decision-making.
+            </p>
+          </div>
+
+          <p class="lead">
+            A useful way to understand AI is to treat it as a spectrum of approaches.
+            Some AI is <strong>explicit</strong> (we tell the system rules).
+            Some AI is <strong>learned</strong> (the system learns patterns from data).
+            Modern AI systems are often <strong>hybrid</strong>: learned models + hard constraints + business logic.
+          </p>
+
+          <div class="cards3">
+            <div class="mini-card violet">
+              <h5><i class="fa-solid fa-gears"></i> Symbolic / rule-based AI</h5>
+              <p>
+                Uses human-created rules, logic, or knowledge graphs.
+                It is strong when the world is stable and rules are known.
+              </p>
+              <ul>
+                <li><strong>Example:</strong> “If account is new AND transfer &gt; $10k, require verification.”</li>
+                <li><strong>Strength:</strong> transparent, predictable, auditable</li>
+                <li><strong>Weakness:</strong> brittle for messy inputs like images and free text</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-list"></i> explicit rules</span>
+                <span class="chip"><i class="fa-solid fa-scale-balanced"></i> audit-friendly</span>
+              </div>
+            </div>
+
+            <div class="mini-card blue">
+              <h5><i class="fa-solid fa-chart-line"></i> Machine learning AI</h5>
+              <p>
+                Learns statistical patterns from data and uses them to predict or classify.
+                Strong when patterns are complex or changing.
+              </p>
+              <ul>
+                <li><strong>Example:</strong> predict churn from usage history</li>
+                <li><strong>Strength:</strong> adapts with data, handles complexity</li>
+                <li><strong>Weakness:</strong> needs training data and robust evaluation</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-database"></i> data-driven</span>
+                <span class="chip"><i class="fa-solid fa-shuffle"></i> probabilistic</span>
+              </div>
+            </div>
+
+            <div class="mini-card pink">
+              <h5><i class="fa-solid fa-wand-magic-sparkles"></i> Generative AI</h5>
+              <p>
+                Generates new content (text, images, code). Often powered by deep learning.
+                Useful for drafting, summarizing, and assisting.
+              </p>
+              <ul>
+                <li><strong>Example:</strong> summarize a report into bullet points</li>
+                <li><strong>Strength:</strong> productivity and content generation</li>
+                <li><strong>Weakness:</strong> hallucinations → requires validation</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-pen-nib"></i> generates</span>
+                <span class="chip"><i class="fa-solid fa-shield-halved"></i> needs checks</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>AI landscape map</span>
+              <span class="muted">data-driven vs reasoning/structure</span>
+            </div>
+            <canvas id="aiLandscape"></canvas>
+          </div>
+
+          <div class="note">
+            <strong>Important mindset:</strong> “AI” is not automatically correct or beneficial.
+            The right question is: <em>What decision are we trying to improve, with what data, and at what cost/risk?</em>
+          </div>
+        </section>
+
+        <!-- AI VS ML VS DL -->
+        <section id="ai-vs-ml" class="section">
+          <h4><i class="fa-solid fa-diagram-project"></i> 3) AI vs ML vs Deep Learning vs GenAI (clean boundaries)</h4>
+
+          <div class="callout">
+            <p><strong>Definitions you should be able to say confidently:</strong></p>
+            <ul style="padding-left:18px; margin-top:8px;">
+              <li><strong>AI</strong> = umbrella field: intelligent behavior (may or may not learn)</li>
+              <li><strong>ML</strong> = subset of AI: learns patterns from data to make predictions/decisions</li>
+              <li><strong>Deep Learning (DL)</strong> = subset of ML: neural networks with many layers (strong for text/images/audio)</li>
+              <li><strong>Generative AI</strong> = often DL-based: generates new content; must be verified</li>
+            </ul>
+          </div>
+
+          <div class="grid2">
+            <div class="mini-card gray">
+              <h5><i class="fa-solid fa-lightbulb"></i> Practical comparison</h5>
+              <p class="muted">
+                Think about the <strong>input</strong>, the <strong>output</strong>, and the <strong>learning signal</strong>.
+                These three determine the method choice.
+              </p>
+              <ul>
+                <li><strong>Rule-based AI:</strong> input → apply logic → output</li>
+                <li><strong>ML:</strong> input + examples → learn → output</li>
+                <li><strong>DL:</strong> ML with larger capacity (neural nets) → output</li>
+                <li><strong>GenAI:</strong> prompt/context → generated output → verify</li>
+              </ul>
+            </div>
+
+            <div class="chart">
+              <div class="chart-title">
+                <span>AI ⊃ ML ⊃ DL</span>
+                <span class="muted">concept donut</span>
+              </div>
+              <canvas id="vennDonut"></canvas>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Rule-based vs ML (decision guide)</span>
+              <span class="muted">capability tradeoffs</span>
+            </div>
+            <canvas id="rulesVsMl"></canvas>
+          </div>
+
+          <div class="grid2">
+            <div class="callout good">
+              <div class="box-title"><i class="fa-solid fa-check" style="color:var(--success)"></i> Use ML when</div>
+              <ul style="padding-left:18px;">
+                <li>Patterns are complex (text/images/logs)</li>
+                <li>Rules would be too many or too brittle</li>
+                <li>You can evaluate outcomes and iterate</li>
+                <li>Data exists (or can be collected)</li>
+              </ul>
+            </div>
+            <div class="callout bad">
+              <div class="box-title"><i class="fa-solid fa-xmark" style="color:var(--danger)"></i> Avoid ML when</div>
+              <ul style="padding-left:18px;">
+                <li>A simple rule solves it reliably</li>
+                <li>You can’t define success or measure quality</li>
+                <li>Errors are high-stakes and you can’t validate</li>
+                <li>There is no relevant data</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="qa">
+            <details open>
+              <summary><i class="fa-solid fa-circle-question"></i> “Prediction” vs “Decision”: what’s the difference?</summary>
+              <p class="muted">
+                A model usually produces a <strong>prediction</strong> (probability or score).
+                A system then turns that score into a <strong>decision</strong> (approve/deny, alert/no alert) using thresholds, rules,
+                human review, and business constraints. Confusing these leads to poor deployments.
+              </p>
+            </details>
+            <details>
+              <summary><i class="fa-solid fa-circle-question"></i> Is deep learning always better?</summary>
+              <p class="muted">
+                No. DL often needs more data, more compute, and more tuning. Many business problems are solved well with simpler ML
+                (logistic regression, decision trees, gradient boosting) that is cheaper and easier to explain.
+              </p>
+            </details>
+          </div>
+        </section>
+
+        <!-- ML MINDSET -->
+        <section id="ml-thinking" class="section">
+          <h4><i class="fa-solid fa-bullseye"></i> 4) ML mindset: the lifecycle (what professionals actually do)</h4>
+
+          <p class="lead">
+            Most ML failures are not “bad algorithms.” They are <strong>bad problem framing</strong>, <strong>weak data</strong>,
+            <strong>incorrect evaluation</strong>, or <strong>no monitoring</strong>. This lifecycle is the backbone of the course.
+          </p>
+
+          <div class="cards3">
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-pen-to-square"></i> A) Frame the problem</h5>
+              <ul>
+                <li><strong>What is the task?</strong> classification, regression, ranking, clustering, anomaly detection</li>
+                <li><strong>What is success?</strong> accuracy, precision/recall, RMSE, cost savings, time saved</li>
+                <li><strong>What are constraints?</strong> privacy, fairness, latency, explainability</li>
+              </ul>
+            </div>
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-database"></i> B) Data + features</h5>
+              <ul>
+                <li>Collect/clean data, handle missingness, outliers</li>
+                <li><strong>Feature engineering:</strong> represent raw inputs into useful signals</li>
+                <li><strong>Label quality:</strong> noisy labels = noisy models</li>
+              </ul>
+            </div>
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-magnifying-glass-chart"></i> C) Train + evaluate</h5>
+              <ul>
+                <li>Split data correctly (train/validation/test)</li>
+                <li>Avoid leakage; compare against baselines</li>
+                <li>Use appropriate metrics (especially for imbalance)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="cards3">
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-rocket"></i> D) Deploy</h5>
+              <ul>
+                <li>Batch predictions or real-time API</li>
+                <li>Version model artifacts, document assumptions</li>
+                <li>Integrate with business process</li>
+              </ul>
+            </div>
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-chart-pie"></i> E) Monitor</h5>
+              <ul>
+                <li>Track prediction distribution shifts</li>
+                <li>Measure performance drift over time</li>
+                <li>Alert when model needs review</li>
+              </ul>
+            </div>
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-repeat"></i> F) Improve</h5>
+              <ul>
+                <li>Retrain with new data</li>
+                <li>Refine features and thresholds</li>
+                <li>Run experiments and compare results</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Lifecycle flow (from idea to production)</span>
+              <span class="muted">process diagram</span>
+            </div>
+            <canvas id="lifecycleFlow"></canvas>
+          </div>
+
+          <div class="interactive">
+            <h5 style="display:flex; gap:10px; align-items:center; margin-bottom:6px;">
+              <i class="fa-solid fa-sliders" style="color:var(--primary)"></i> Interactive intuition: messier data → more effort
+            </h5>
+            <p class="muted">
+              Slide data messiness to see how effort distribution shifts. This is why “data understanding” is the core job skill.
+            </p>
+
+            <div class="formrow">
+              <div class="range-wrap">
+                <label for="messiness">Data messiness</label>
+                <input id="messiness" type="range" min="0" max="100" value="55" />
+                <output id="messinessOut">55</output>
+              </div>
+            </div>
+
+            <div class="chart" style="margin-top:12px;">
+              <div class="chart-title">
+                <span>Effort distribution (updates with slider)</span>
+                <span class="muted">normalized to 100%</span>
+              </div>
+              <canvas id="workflowStacked"></canvas>
+            </div>
+          </div>
+
+          <div class="qa">
+            <details open>
+              <summary><i class="fa-solid fa-circle-question"></i> What is “overfitting”?</summary>
+              <p class="muted">
+                Overfitting happens when a model learns the training data too closely (including noise), then performs poorly on new data.
+                The cure is proper evaluation (holdout test), regularization, simpler models, or more data.
+              </p>
+            </details>
+            <details>
+              <summary><i class="fa-solid fa-circle-question"></i> What is “data leakage”?</summary>
+              <p class="muted">
+                Leakage occurs when features include information that would not be available at prediction time, or indirectly encode the label.
+                It causes unrealistic performance that collapses in real-world use. We will practice preventing leakage later.
+              </p>
+            </details>
+          </div>
+        </section>
+
+        <!-- TOOLS -->
+        <section id="tools" class="section">
+          <h4><i class="fa-solid fa-screwdriver-wrench"></i> 5) Platforms &amp; software (what we use and why)</h4>
+
+          <p class="lead">
+            ML work happens in phases: quick exploration, repeatable experiments, and structured projects.
+            You’ll use multiple tools across the semester. In Module 1 we prioritize a fast start.
+          </p>
+
+          <div class="cards3">
+            <div class="mini-card blue">
+              <h5><i class="fa-brands fa-google"></i> Google Colab</h5>
+              <p><strong>Why:</strong> no install, easy sharing, access to GPUs (optional).</p>
+              <p><strong>Best for:</strong> learning, labs, prototypes.</p>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-cloud"></i> runs in cloud</span>
+                <span class="chip"><i class="fa-solid fa-users"></i> shareable</span>
+              </div>
+              <a class="btn" href="https://colab.research.google.com/" target="_blank" rel="noreferrer">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Open Colab
+              </a>
+            </div>
+
+            <div class="mini-card violet">
+              <h5><i class="fa-solid fa-book"></i> Jupyter Notebook</h5>
+              <p><strong>Why:</strong> standard for analysis + narrative + plots.</p>
+              <p><strong>Best for:</strong> exploratory data analysis (EDA).</p>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-pen"></i> narrative</span>
+                <span class="chip"><i class="fa-solid fa-chart-line"></i> visual</span>
+              </div>
+              <a class="btn btn-ghost" href="https://jupyter.org/" target="_blank" rel="noreferrer">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Learn more
+              </a>
+            </div>
+
+            <div class="mini-card green">
+              <h5><i class="fa-solid fa-code"></i> VS Code + Git</h5>
+              <p><strong>Why:</strong> professional workflow, debugging, project structure, teamwork.</p>
+              <p><strong>Best for:</strong> assignments/projects, pipelines, reproducibility.</p>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-code-branch"></i> versioning</span>
+                <span class="chip"><i class="fa-solid fa-bug"></i> debugging</span>
+              </div>
+              <a class="btn btn-secondary" href="https://code.visualstudio.com/" target="_blank" rel="noreferrer">
+                <i class="fa-solid fa-download"></i> Download VS Code
+              </a>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Tool chooser (radar)</span>
+              <span class="muted">Colab vs Jupyter vs VS Code</span>
+            </div>
+            <canvas id="toolRadar"></canvas>
+          </div>
+
+          <div class="callout" style="margin-top:12px;">
+            <p><strong>Course stack (preview):</strong></p>
+            <ul style="padding-left:18px; margin-top:8px;">
+              <li><strong>Data:</strong> Pandas + SQL concepts</li>
+              <li><strong>Modeling:</strong> scikit-learn (classical ML) → later deep learning frameworks</li>
+              <li><strong>Experiment hygiene:</strong> train/test split, baselines, metrics</li>
+              <li><strong>MLOps (later):</strong> pipelines, deployment patterns, monitoring</li>
+            </ul>
+          </div>
+
+          <div class="interactive">
+            <h5 style="display:flex; gap:10px; align-items:center; margin-bottom:6px;">
+              <i class="fa-solid fa-list-check" style="color:var(--primary)"></i> Setup checklist (Module 1)
+            </h5>
+            <ol style="padding-left:18px;">
+              <li>Open Colab and create a notebook</li>
+              <li>Run one cell successfully (<span class="kbd">Shift</span> + <span class="kbd">Enter</span>)</li>
+              <li>(Optional) Install VS Code + Python extension</li>
+              <li>(Optional) Create a GitHub account (for later modules)</li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- PYTHON -->
+        <section id="python" class="section">
+          <h4><i class="fa-brands fa-python"></i> 6) Python for ML: essentials you’ll use immediately</h4>
+
+          <div class="callout">
+            <p>
+              <strong>Why Python?</strong> Because ML is a combination of data, math, and software engineering.
+              Python is readable (fast learning curve) and has a powerful ecosystem.
+            </p>
+            <ul style="padding-left:18px; margin-top:8px;">
+              <li><strong>NumPy</strong> for arrays and fast math</li>
+              <li><strong>Pandas</strong> for tabular data and cleaning</li>
+              <li><strong>Matplotlib</strong> for plotting and diagnostics</li>
+              <li><strong>scikit-learn</strong> for classic ML algorithms</li>
+            </ul>
+          </div>
+
+          <div class="cards3">
+            <div class="mini-card gray">
+              <h5><i class="fa-solid fa-seedling"></i> A note on randomness</h5>
+              <p>
+                Many ML processes include randomness (sampling, initialization).
+                For learning and grading, we often set a random seed to make results reproducible.
+              </p>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-dice"></i> randomness</span>
+                <span class="chip"><i class="fa-solid fa-repeat"></i> reproducibility</span>
+              </div>
+            </div>
+            <div class="mini-card gray">
+              <h5><i class="fa-solid fa-box"></i> Environments (preview)</h5>
+              <p>
+                Real projects require consistent libraries. Later you’ll learn virtual environments (venv/conda)
+                to keep dependencies stable.
+              </p>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-puzzle-piece"></i> dependencies</span>
+                <span class="chip"><i class="fa-solid fa-lock"></i> stable runs</span>
+              </div>
+            </div>
+            <div class="mini-card gray">
+              <h5><i class="fa-solid fa-code-branch"></i> Git matters</h5>
+              <p>
+                ML work is iterative. Git tracks what changed and why.
+                It also makes collaboration and submission clean.
+              </p>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-clock-rotate-left"></i> history</span>
+                <span class="chip"><i class="fa-solid fa-people-group"></i> collaboration</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="interactive">
+            <h5 style="margin-bottom:6px; display:flex; gap:10px; align-items:center;">
+              <i class="fa-solid fa-play" style="color:var(--primary)"></i> Hands-on (Colab): from data → plot → simple model intuition
+            </h5>
+            <p class="muted">
+              This mini-lab is not “full ML” yet. It builds the basic muscle: create data, inspect it, visualize, and fit a simple trend.
+            </p>
+
+            <pre><code># Module 1 Hands-On: data → visualization → simple trend (copy into Colab)
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+np.random.seed(7)
+
+# 1) Create a simulated dataset
+n = 80
+hours = np.random.uniform(0, 10, n)
+sleep = np.random.uniform(4, 9, n)
+
+# Relationship: study hours help; very low sleep hurts; noise exists
+noise = np.random.normal(0, 6, n)
+score = 40 + 4.5 * hours + 1.2 * sleep + noise
+
+df = pd.DataFrame({
+    "hours_studied": hours,
+    "sleep_hours": sleep,
+    "exam_score": score
+})
+
+# 2) Inspect (first rows + summary)
+print(df.head())
+print("\nSummary:\n", df.describe())
+
+# 3) Plot relationships
+plt.figure(figsize=(10,4))
+plt.scatter(df["hours_studied"], df["exam_score"], alpha=0.75)
+plt.title("Hours Studied vs Exam Score (Simulated)")
+plt.xlabel("Hours studied")
+plt.ylabel("Exam score")
+plt.grid(True, alpha=0.25)
+plt.show()
+
+plt.figure(figsize=(10,4))
+plt.scatter(df["sleep_hours"], df["exam_score"], alpha=0.75)
+plt.title("Sleep Hours vs Exam Score (Simulated)")
+plt.xlabel("Sleep hours")
+plt.ylabel("Exam score")
+plt.grid(True, alpha=0.25)
+plt.show()
+
+# 4) Fit a simple linear trend: score ~ hours (one-variable intuition)
+m, b = np.polyfit(df["hours_studied"], df["exam_score"], 1)
+print(f"Trend line (hours only): score ≈ {m:.2f} * hours + {b:.2f}")
+
+# 5) Predict a score for a new student (simple model)
+new_hours = 7
+pred = m * new_hours + b
+print(f"Predicted score for {new_hours} study hours: {pred:.1f}")</code></pre>
+
+            <div class="note">
+              <strong>Conceptual takeaway:</strong> ML learns relationships from examples. Even this tiny exercise shows:
+              (1) data has noise, (2) patterns can still exist, (3) models estimate a relationship, not a certainty.
+            </div>
+          </div>
+        </section>
+
+        <!-- CLOUD -->
+        <section id="cloud" class="section">
+          <h4><i class="fa-solid fa-cloud"></i> 7) Cloud for ML: how modern systems scale</h4>
+
+          <div class="definition">
+            <p><strong>Cloud computing</strong> = renting compute + storage + services on demand (instead of doing everything on your laptop).</p>
+          </div>
+
+          <p class="lead">
+            Cloud becomes necessary when data is large, training is computationally heavy, teams collaborate, or the model must be deployed reliably.
+            In short: cloud helps you move from “a notebook that works” to “a system that runs in production.”
+          </p>
+
+          <div class="cards3">
+            <div class="mini-card blue">
+              <h5><i class="fa-solid fa-server"></i> Compute</h5>
+              <p>Virtual machines, containers, and specialized hardware (GPUs/TPUs).</p>
+              <ul>
+                <li>Train models faster</li>
+                <li>Run batch jobs at scale</li>
+                <li>Serve real-time APIs</li>
+              </ul>
+            </div>
+            <div class="mini-card violet">
+              <h5><i class="fa-solid fa-database"></i> Storage</h5>
+              <p>Object storage for datasets and model artifacts.</p>
+              <ul>
+                <li>Centralized data access</li>
+                <li>Versioning of artifacts</li>
+                <li>Integration with pipelines</li>
+              </ul>
+            </div>
+            <div class="mini-card pink">
+              <h5><i class="fa-solid fa-gears"></i> Managed ML + MLOps</h5>
+              <p>Platforms that help with training, tracking, deployment, monitoring.</p>
+              <ul>
+                <li>Experiment tracking</li>
+                <li>Model registry</li>
+                <li>Monitoring + retraining</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Laptop → cloud (roadmap)</span>
+              <span class="muted">how skills evolve</span>
+            </div>
+            <canvas id="roadmap"></canvas>
+          </div>
+
+          <div class="callout warn" style="margin-top:12px;">
+            <div class="box-title"><i class="fa-solid fa-shield-halved" style="color:var(--warning)"></i> Cloud caution (professional practice)</div>
+            <ul style="padding-left:18px;">
+              <li><strong>Security:</strong> do not upload sensitive data to unapproved tools.</li>
+              <li><strong>Cost:</strong> GPUs can be expensive; shut down resources.</li>
+              <li><strong>Governance:</strong> access control, auditing, and compliance are real constraints.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- MINI-LAB + REFLECTION -->
+        <section id="mini-lab" class="section">
+          <h4><i class="fa-solid fa-flask"></i> 8) Mini-lab: from AI idea → ML framing (your turn)</h4>
+
+          <div class="callout">
+            <p>
+              <strong>Goal:</strong> practice thinking like an ML practitioner by framing a problem correctly.
+              Pick a real scenario you care about (workplace, campus, healthcare, finance, cybersecurity, etc.).
+            </p>
+            <p class="small" style="margin-top:8px;">
+              In later modules, you will implement end-to-end pipelines. For now, we build the reasoning skill.
+            </p>
+          </div>
+
+          <div class="cards3">
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-bullseye"></i> Step 1 — Define the decision</h5>
+              <p class="muted">What action will the system improve? (approve/deny, alert/no-alert, recommend/not.)</p>
+              <ul>
+                <li>What does “success” look like?</li>
+                <li>Who uses the output (human or automated)?</li>
+              </ul>
+            </div>
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-table"></i> Step 2 — Identify data</h5>
+              <p class="muted">What inputs exist? Are they available at prediction time?</p>
+              <ul>
+                <li>Where will data come from?</li>
+                <li>How will labels be defined?</li>
+              </ul>
+            </div>
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-triangle-exclamation"></i> Step 3 — Risk & constraints</h5>
+              <p class="muted">What is the cost of being wrong?</p>
+              <ul>
+                <li>Bias, fairness, privacy constraints</li>
+                <li>Explainability and audit needs</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="interactive">
+            <h5 style="display:flex; gap:10px; align-items:center; margin-bottom:6px;">
+              <i class="fa-solid fa-lightbulb" style="color:var(--primary)"></i> Reflection (saved locally)
+            </h5>
+            <p class="muted">
+              Write a short ML framing paragraph. Keep it structured: decision, data, label, metric, risk.
+            </p>
+            <textarea id="reflection" placeholder="Example: Decision—flag suspicious transactions for review. Data—amount, location, time, device, merchant history. Label—confirmed fraud cases. Metric—precision/recall (reduce false negatives). Risk—false positives annoy customers; privacy constraints..."></textarea>
+            <div class="formrow">
+              <button class="btn" id="saveReflection"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+              <button class="btn btn-ghost" id="clearReflection"><i class="fa-solid fa-eraser"></i> Clear</button>
+            </div>
+            <div id="reflectionStatus" class="muted" style="margin-top:8px;"></div>
+          </div>
+        </section>
+
+        <!-- WRAP -->
+        <section id="wrap" class="section">
+          <h4><i class="fa-solid fa-circle-check"></i> 9) Wrap-up + next steps</h4>
+
+          <div class="callout">
+            <p><strong>Module 1 completion checklist:</strong></p>
+            <ul style="padding-left:18px; margin-top:8px;">
+              <li>✅ You can define AI, ML, DL, and GenAI with examples.</li>
+              <li>✅ You can explain rules vs ML tradeoffs and why evaluation matters.</li>
+              <li>✅ You can describe the ML lifecycle (frame → data → train → deploy → monitor).</li>
+              <li>✅ You ran a Python notebook in Colab and produced plots.</li>
+              <li>✅ You understand what cloud provides and why it matters later.</li>
+            </ul>
+          </div>
+
+          <div class="note">
+            <strong>Next module preview:</strong>
+            We move into data reality: dataset structures, missing values, categorical variables, scaling, train/test split,
+            and the first reproducible preprocessing workflow.
+          </div>
+        </section>
+
+      </main>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+
+        <div class="panel card">
+          <h3><i class="fa-solid fa-compass"></i> Navigation</h3>
+          <nav class="toc" aria-label="Module 1 table of contents">
+            <a href="#overview"><i class="fa-solid fa-map"></i> Overview</a>
+            <a href="#ai"><i class="fa-solid fa-brain"></i> AI foundations</a>
+            <a href="#ai-vs-ml"><i class="fa-solid fa-diagram-project"></i> AI vs ML</a>
+            <a href="#ml-thinking"><i class="fa-solid fa-bullseye"></i> ML lifecycle</a>
+            <a href="#tools"><i class="fa-solid fa-screwdriver-wrench"></i> Tools</a>
+            <a href="#python"><i class="fa-brands fa-python"></i> Python</a>
+            <a href="#cloud"><i class="fa-solid fa-cloud"></i> Cloud</a>
+            <a href="#mini-lab"><i class="fa-solid fa-flask"></i> Mini-lab</a>
+            <a href="#wrap"><i class="fa-solid fa-circle-check"></i> Wrap</a>
+          </nav>
+        </div>
+
+        <div class="panel card">
+          <h3><i class="fa-solid fa-clock"></i> Suggested pacing (2–3 hours)</h3>
+          <div class="agenda-item"><div class="agenda-time">0:00–0:20</div><div>Overview + “What is AI?”</div></div>
+          <div class="agenda-item"><div class="agenda-time">0:20–0:50</div><div>AI approaches + examples</div></div>
+          <div class="agenda-item"><div class="agenda-time">0:50–1:15</div><div>AI vs ML vs DL + rules vs ML</div></div>
+          <div class="agenda-item"><div class="agenda-time">1:15–1:45</div><div>ML lifecycle + effort reality</div></div>
+          <div class="agenda-item"><div class="agenda-time">1:45–2:05</div><div>Tools/platforms overview</div></div>
+          <div class="agenda-item"><div class="agenda-time">2:05–2:35</div><div>Python hands-on in Colab</div></div>
+          <div class="agenda-item"><div class="agenda-time">2:35–2:55</div><div>Cloud overview + cautions</div></div>
+          <div class="agenda-item"><div class="agenda-time">2:55–3:10</div><div>Mini-lab reflection + wrap</div></div>
+        </div>
+
+        <div class="panel card">
+          <h3><i class="fa-solid fa-book"></i> Key resources</h3>
+          <ul class="resource-list">
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://colab.research.google.com/" target="_blank" rel="noreferrer">Google Colab</a> — notebooks in the cloud</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://code.visualstudio.com/" target="_blank" rel="noreferrer">VS Code</a> — editor + debugging</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://jupyter.org/" target="_blank" rel="noreferrer">Jupyter</a> — notebook standard</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://scikit-learn.org/stable/" target="_blank" rel="noreferrer">scikit-learn</a> — classic ML</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://www.python.org/" target="_blank" rel="noreferrer">Python</a> — language of ML</li>
+          </ul>
+        </div>
+
+        <div class="panel card">
+          <h3><i class="fa-solid fa-circle-question"></i> Common questions</h3>
+          <p><strong>Do I need a strong computer?</strong><br/><span class="muted">No. Colab handles early modules.</span></p>
+          <p style="margin-top:10px;"><strong>Is this course math-heavy?</strong><br/><span class="muted">We build intuition first; math comes as needed to explain models correctly.</span></p>
+          <p style="margin-top:10px;"><strong>Will we deploy models?</strong><br/><span class="muted">Yes later. Module 1 introduces the lifecycle so deployments make sense.</span></p>
+        </div>
+
+      </aside>
+    </div>
+
+    <footer>
+      IAF 604: Machine Learning &amp; Predictive Analytics | Instructor: Dr. Ali Noori | UNC Greensboro<br/>
+      © 2024 Department of Informatics and Analytics — Educational use
+    </footer>
+  </div>
+
+  <script>
+    /************************************************************
+     * Chart theme helpers (dark aurora)
+     ************************************************************/
+    const AX = {
+      text: "rgba(234,240,255,0.92)",
+      grid: "rgba(148,163,184,0.14)",
+      minor: "rgba(148,163,184,0.10)",
+      title: "rgba(234,240,255,0.94)"
+    };
+
+    function baseOptions(title){
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: AX.text,
+              usePointStyle: true,
+              pointStyle: "circle"
+            }
+          },
+          title: {
+            display: true,
+            text: title,
+            color: AX.title,
+            font: { weight:"bold" }
+          },
+          tooltip: { enabled: true }
+        },
+        scales: {
+          x: { ticks: { color: AX.text }, grid: { color: AX.minor } },
+          y: { ticks: { color: AX.text }, grid: { color: AX.minor } }
+        }
+      };
+    }
+
+    /************************************************************
+     * 1) Time where ML effort goes (doughnut)
+     ************************************************************/
+    new Chart(document.getElementById("timeWhereGoes"), {
+      type: "doughnut",
+      data: {
+        labels: ["Data collection/cleaning", "Feature work", "Modeling", "Evaluation", "Deployment/monitoring"],
+        datasets: [{ data: [35, 20, 15, 15, 15] }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins: {
+          title: { display:true, text:"Effort distribution in real ML projects (Illustrative)", color: AX.title, font:{weight:"bold"} },
+          legend: { position:"bottom", labels:{ color: AX.text, usePointStyle:true } }
+        }
+      }
+    });
+
+    /************************************************************
+     * 2) AI landscape map (bubble)
+     ************************************************************/
+    new Chart(document.getElementById("aiLandscape"), {
+      type: "bubble",
+      data: {
+        datasets: [
+          { label: "Symbolic / Rule-based AI", data: [{x: 22, y: 82, r: 14}] },
+          { label: "Machine Learning", data: [{x: 70, y: 58, r: 18}] },
+          { label: "Deep Learning", data: [{x: 84, y: 42, r: 16}] },
+          { label: "Generative AI", data: [{x: 90, y: 28, r: 16}] },
+          { label: "Planning / Optimization", data: [{x: 40, y: 90, r: 12}] }
+        ]
+      },
+      options: {
+        ...baseOptions("AI landscape (Illustrative map)"),
+        scales: {
+          x: {
+            min:0, max:100,
+            title: { display:true, text:"More data-driven learning →", color: AX.text, font:{weight:"bold"} },
+            ticks:{ color: AX.text }, grid:{ color: AX.grid }
+          },
+          y: {
+            min:0, max:100,
+            title: { display:true, text:"More reasoning / structure →", color: AX.text, font:{weight:"bold"} },
+            ticks:{ color: AX.text }, grid:{ color: AX.grid }
+          }
+        }
+      }
+    });
+
+    /************************************************************
+     * 3) AI ⊃ ML ⊃ DL (donut)
+     ************************************************************/
+    new Chart(document.getElementById("vennDonut"), {
+      type: "doughnut",
+      data: {
+        labels: ["AI (non-ML)", "ML (non-DL)", "Deep Learning"],
+        datasets: [{ data: [35, 40, 25] }]
+      },
+      options: {
+        responsive:true,
+        maintainAspectRatio:false,
+        plugins: {
+          title:{ display:true, text:"AI vs ML vs Deep Learning (Illustrative)", color: AX.title, font:{weight:"bold"} },
+          legend:{ position:"bottom", labels:{ color: AX.text, usePointStyle:true } }
+        }
+      }
+    });
+
+    /************************************************************
+     * 4) Rule-based vs ML (radar) — more visually meaningful than bar
+     ************************************************************/
+    new Chart(document.getElementById("rulesVsMl"), {
+      type: "radar",
+      data: {
+        labels: ["Complexity handling", "Data requirement", "Transparency", "Adaptability", "Start-up effort", "Maintenance at scale"],
+        datasets: [
+          { label: "Rule-based", data: [35, 15, 90, 25, 85, 40], borderWidth: 2, pointRadius: 3 },
+          { label: "Machine Learning", data: [85, 80, 45, 85, 45, 75], borderWidth: 2, pointRadius: 3 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title:{ display:true, text:"Rule-based vs ML (Tradeoffs, Illustrative)", color: AX.title, font:{weight:"bold"} },
+          legend:{ position:"bottom", labels:{ color: AX.text, usePointStyle:true } }
+        },
+        scales: {
+          r: {
+            min: 0, max: 100,
+            ticks: { display: false },
+            grid: { color: AX.grid },
+            angleLines: { color: AX.grid },
+            pointLabels: { color: AX.text, font:{weight:"bold"} }
+          }
+        }
+      }
+    });
+
+    /************************************************************
+     * 5) Lifecycle flow (horizontal bar as "stages")
+     ************************************************************/
+    new Chart(document.getElementById("lifecycleFlow"), {
+      type: "bar",
+      data: {
+        labels: ["Lifecycle stages (left → right)"],
+        datasets: [
+          { label: "Frame", data: [12], stack:"s" },
+          { label: "Data", data: [25], stack:"s" },
+          { label: "Train", data: [16], stack:"s" },
+          { label: "Evaluate", data: [16], stack:"s" },
+          { label: "Deploy", data: [16], stack:"s" },
+          { label: "Monitor", data: [15], stack:"s" }
+        ]
+      },
+      options: {
+        ...baseOptions("ML lifecycle: stages and emphasis (Illustrative)"),
+        indexAxis: "y",
+        scales: {
+          x: { stacked:true, beginAtZero:true, max:100, ticks:{ color: AX.text }, grid:{ color: AX.grid } },
+          y: { stacked:true, ticks:{ color: AX.text }, grid:{ color: AX.grid } }
+        }
+      }
+    });
+
+    /************************************************************
+     * 6) Workflow stacked (updates with slider)
+     ************************************************************/
+    const workflowChart = new Chart(document.getElementById("workflowStacked"), {
+      type: "bar",
+      data: {
+        labels: ["ML Project (effort %)"],
+        datasets: [
+          { label: "Problem framing", data: [10], stack:"s" },
+          { label: "Data cleaning", data: [35], stack:"s" },
+          { label: "Modeling", data: [25], stack:"s" },
+          { label: "Evaluation", data: [15], stack:"s" },
+          { label: "Deploy/monitor", data: [15], stack:"s" }
+        ]
+      },
+      options: {
+        ...baseOptions("Effort distribution (Illustrative)"),
+        scales: {
+          x: { stacked:true, ticks:{ color: AX.text }, grid:{ color: AX.grid } },
+          y: { stacked:true, beginAtZero:true, max:100, ticks:{ color: AX.text }, grid:{ color: AX.grid } }
+        }
+      }
+    });
+
+    const messiness = document.getElementById("messiness");
+    const messinessOut = document.getElementById("messinessOut");
+
+    function updateWorkflowFromMessiness(val){
+      // Interpretable “story”: more messiness increases cleaning + evaluation; reduces time available for modeling/deploy.
+      let framing = 10;
+      let cleaning = 28 + Math.round(val * 0.30);    // up to +30
+      let modeling = 28 - Math.round(val * 0.12);    // down to -12
+      let evaln = 16 + Math.round(val * 0.06);       // up to +6
+      let deploy = 18 - Math.round(val * 0.10);      // down to -10
+
+      const total = framing + cleaning + modeling + evaln + deploy;
+      const scale = 100 / total;
+
+      framing = Math.round(framing * scale);
+      cleaning = Math.round(cleaning * scale);
+      modeling = Math.round(modeling * scale);
+      evaln = Math.round(evaln * scale);
+      deploy = 100 - (framing + cleaning + modeling + evaln);
+
+      workflowChart.data.datasets[0].data[0] = framing;
+      workflowChart.data.datasets[1].data[0] = cleaning;
+      workflowChart.data.datasets[2].data[0] = modeling;
+      workflowChart.data.datasets[3].data[0] = evaln;
+      workflowChart.data.datasets[4].data[0] = deploy;
+      workflowChart.update();
+    }
+
+    messiness.addEventListener("input", () => {
+      messinessOut.value = messiness.value;
+      updateWorkflowFromMessiness(Number(messiness.value));
+    });
+
+    updateWorkflowFromMessiness(Number(messiness.value));
+
+    /************************************************************
+     * 7) Tool radar (Colab vs Jupyter vs VS Code)
+     ************************************************************/
+    new Chart(document.getElementById("toolRadar"), {
+      type: "radar",
+      data: {
+        labels: ["Start speed", "Project structure", "Collaboration", "Reproducibility", "Exploration", "Deployment readiness"],
+        datasets: [
+          { label: "Google Colab", data: [95, 45, 65, 60, 92, 35], borderWidth: 2, pointRadius: 3 },
+          { label: "Jupyter (local)", data: [70, 55, 55, 75, 92, 45], borderWidth: 2, pointRadius: 3 },
+          { label: "VS Code (project)", data: [55, 92, 85, 88, 65, 82], borderWidth: 2, pointRadius: 3 }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          title: { display:true, text:"Tool chooser (Illustrative)", color: AX.title, font:{weight:"bold"} },
+          legend: { position:"bottom", labels:{ color: AX.text, usePointStyle:true } }
+        },
+        scales: {
+          r: {
+            min: 0, max: 100,
+            ticks: { display: false },
+            grid: { color: AX.grid },
+            angleLines: { color: AX.grid },
+            pointLabels: { color: AX.text, font:{weight:"bold"} }
+          }
+        }
+      }
+    });
+
+    /************************************************************
+     * 8) Roadmap (line)
+     ************************************************************/
+    new Chart(document.getElementById("roadmap"), {
+      type: "line",
+      data: {
+        labels: ["Module 1", "Modules 2–4", "Modules 5–8", "Modules 9–12", "Final"],
+        datasets: [
+          { label: "Notebook / local skills", data: [78, 84, 80, 70, 65], tension: 0.35, borderWidth: 2, pointRadius: 3 },
+          { label: "Cloud / MLOps skills", data: [18, 25, 45, 65, 78], tension: 0.35, borderWidth: 2, pointRadius: 3 }
+        ]
+      },
+      options: {
+        ...baseOptions("Course progression: local → cloud (Illustrative)"),
+        scales: {
+          y: { beginAtZero:true, max:100, ticks:{ color: AX.text }, grid:{ color: AX.grid } },
+          x: { ticks:{ color: AX.text }, grid:{ color: AX.grid } }
+        }
+      }
+    });
+
+    /************************************************************
+     * Reflection storage
+     ************************************************************/
+    const reflectionKey = "iaf604_m1_reflection_aurora";
+    const reflectionEl = document.getElementById("reflection");
+    const statusEl = document.getElementById("reflectionStatus");
+
+    (function loadReflection(){
+      const saved = localStorage.getItem(reflectionKey);
+      if(saved) reflectionEl.value = saved;
+    })();
+
+    document.getElementById("saveReflection").addEventListener("click", () => {
+      const val = reflectionEl.value.trim();
+      if(!val){
+        statusEl.textContent = "Please write something before saving.";
+        return;
+      }
+      localStorage.setItem(reflectionKey, val);
+      statusEl.textContent = "Saved locally ✔";
+    });
+
+    document.getElementById("clearReflection").addEventListener("click", () => {
+      reflectionEl.value = "";
+      localStorage.removeItem(reflectionKey);
+      statusEl.textContent = "Cleared.";
+    });
+  </script>
+</body>
+</html>
