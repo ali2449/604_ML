@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IAF 604 - Module 3A: Statistics and Sampling for ML</title>
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- Chart.js (deferred) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <!-- MathJax for statistical formulas -->
+  <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    /************************************************************
+     * THEME: Aurora with Day/Night Mode
+     ************************************************************/
+    :root {
+      /* Night Mode (Default) */
+      --bg0: #070A12;
+      --bg1: #0B1020;
+      --panel: #0F172A;
+      --panel2: #0B1226;
+      --card: #101B34;
+      --text: #EAF0FF;
+      --muted: rgba(234, 240, 255, 0.75);
+      --muted2: rgba(234, 240, 255, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+
+      --primary: #60A5FA;
+      --secondary: #A78BFA;
+      --accent: #F472B6;
+      --success: #34D399;
+      --warning: #FBBF24;
+      --danger: #FB7185;
+      --cyan: #22D3EE;
+
+      --radius: 16px;
+      --radius2: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --ring: 0 0 0 4px rgba(96, 165, 250, 0.22);
+      --ring2: 0 0 0 4px rgba(167, 139, 250, 0.20);
+
+      /* Theme toggle variables */
+      --mode-icon: '\f186'; /* moon */
+      --mode-label: 'Night Mode';
+    }
+
+    /* Day Mode Theme */
+    [data-theme="day"] {
+      --bg0: #F8FAFC;
+      --bg1: #F1F5F9;
+      --panel: #FFFFFF;
+      --panel2: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --muted: rgba(15, 23, 42, 0.75);
+      --muted2: rgba(15, 23, 42, 0.62);
+      --border: rgba(148, 163, 184, 0.25);
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+
+      --primary: #2563EB;
+      --secondary: #7C3AED;
+      --accent: #DB2777;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --cyan: #06B6D4;
+
+      --ring: 0 0 0 4px rgba(37, 99, 235, 0.15);
+      --ring2: 0 0 0 4px rgba(124, 58, 237, 0.15);
+
+      /* SHOW CURRENT THEME */
+      --mode-icon: '\f185'; /* sun */
+      --mode-label: 'Day Mode';
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg0);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      transition: background-color 0.35s ease, color 0.35s ease;
+    }
+
+    /* Dynamic background gradients based on theme */
+    body:not([data-theme="day"]) {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(96, 165, 250, 0.18), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(244, 114, 182, 0.16), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(34, 211, 238, 0.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    body[data-theme="day"] {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(37, 99, 235, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(219, 39, 119, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(6, 182, 212, 0.06), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1240px; margin: 0 auto; padding: 22px; }
+
+    .skip {
+      position: absolute;
+      left: -999px;
+      top: 0;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 9999;
+      color: var(--text);
+    }
+
+    .skip:focus {
+      left: 16px;
+      top: 16px;
+      outline: none;
+      box-shadow: var(--shadow), var(--ring);
+    }
+
+    /************************************************************
+     * THEME TOGGLE
+     ************************************************************/
+    .theme-toggle-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 50px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-toggle::before {
+      content: var(--mode-icon);
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 1.1em;
+    }
+
+    .theme-toggle .label {
+      font-size: 0.9em;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /************************************************************
+     * HEADER
+     ************************************************************/
+    header {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.90), rgba(16, 27, 52, 0.92));
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      color: var(--text);
+      padding: 28px;
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] header {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      right: -180px;
+      top: -180px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle at 30% 30%, rgba(96, 165, 250, 0.15), transparent 62%);
+      filter: blur(40px);
+      opacity: 0.6;
+    }
+
+    body[data-theme="day"] header::after {
+      background: radial-gradient(circle at 30% 30%, rgba(37, 99, 235, 0.1), transparent 62%);
+      opacity: 0.4;
+    }
+
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .course-info h1 {
+      font-size: clamp(24px, 2.8vw, 38px);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .course-info h2 {
+      font-size: clamp(16px, 1.8vw, 20px);
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+
+    .subtitle { max-width: 900px; color: var(--muted); font-size: 15px; margin-top: 12px; line-height: 1.6; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      width: fit-content;
+      margin-top: 10px;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .badge { background: rgba(15, 23, 42, 0.05); }
+
+    .meta {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      padding: 20px;
+      border-radius: 20px;
+      min-width: 340px;
+      backdrop-filter: blur(8px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .meta {
+      background: rgba(15, 23, 42, 0.03);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .meta p { margin: 8px 0; font-size: 14px; color: var(--muted); }
+
+    .pillrow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 50px;
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text);
+      transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .pill { background: rgba(15, 23, 42, 0.05); }
+    .pill:hover { transform: translateY(-2px); border-color: var(--primary); }
+
+    /************************************************************
+     * LAYOUT
+     ************************************************************/
+    .layout {
+      display: grid;
+      grid-template-columns: 2.25fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      .meta { min-width: auto; width: 100%; }
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .panel:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .main { padding: 24px; }
+    .sidebar { display: flex; flex-direction: column; gap: 20px; }
+    .card { padding: 20px; }
+
+    .card h3 {
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    /************************************************************
+     * TYPOGRAPHY + SECTIONS
+     ************************************************************/
+    .section { margin: 24px 0; scroll-margin-top: 20px; }
+
+    .section h4 {
+      margin-bottom: 16px;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .lead { font-size: 16px; color: var(--muted); line-height: 1.7; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .small { font-size: 13px; color: var(--muted2); }
+
+    /************************************************************
+     * COMPONENTS
+     ************************************************************/
+    .callout {
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.05);
+      margin: 16px 0;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .callout { background: rgba(15, 23, 42, 0.02); }
+
+    .definition {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(96, 165, 250, 0.05));
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      border-left: 4px solid rgba(167, 139, 250, 0.7);
+      padding: 20px;
+      border-radius: 16px;
+      margin: 16px 0;
+    }
+
+    body[data-theme="day"] .definition {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.08), rgba(96, 165, 250, 0.04));
+    }
+
+    .note {
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      background: rgba(251, 191, 36, 0.08);
+      margin-top: 16px;
+      color: var(--text);
+    }
+
+    body[data-theme="day"] .note { background: rgba(251, 191, 36, 0.06); }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+    @media (max-width: 980px) { .grid2 { grid-template-columns: 1fr; } }
+
+    .box-title { font-weight: 600; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; color: var(--text); }
+
+    .cards3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 16px; }
+    @media (max-width: 1100px) { .cards3 { grid-template-columns: 1fr; } }
+
+    .mini-card {
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .mini-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
+
+    .mini-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -100px auto;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle at 30% 30%, rgba(96, 165, 250, 0.1), transparent 65%);
+      transform: rotate(10deg);
+      filter: blur(20px);
+      opacity: 0.5;
+    }
+
+    .mini-card h5 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-card p, .mini-card ul { position: relative; z-index: 1; color: var(--muted); }
+    .mini-card ul { padding-left: 20px; margin-top: 12px; }
+    .mini-card li { margin-bottom: 6px; line-height: 1.5; }
+
+    .mini-card.blue { border-top: 4px solid rgba(96, 165, 250, 0.9); }
+    .mini-card.violet { border-top: 4px solid rgba(167, 139, 250, 0.9); }
+    .mini-card.pink { border-top: 4px solid rgba(244, 114, 182, 0.9); }
+    .mini-card.green { border-top: 4px solid rgba(52, 211, 153, 0.9); }
+    .mini-card.cyan { border-top: 4px solid rgba(34, 211, 238, 0.9); }
+    .mini-card.gray { border-top: 4px solid rgba(148, 163, 184, 0.7); }
+    .mini-card.orange { border-top: 4px solid rgba(251, 191, 36, 0.9); }
+    .mini-card.red { border-top: 4px solid rgba(251, 113, 133, 0.9); }
+
+    .chiprow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; position: relative; z-index: 1; }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.1);
+      color: var(--text);
+      transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .chip { background: rgba(15, 23, 42, 0.05); }
+    .chip:hover { transform: translateY(-1px); border-color: var(--primary); }
+
+    /************************************************************
+     * STATS SPECIFIC STYLES
+     ************************************************************/
+    .formula-box {
+      background: rgba(15, 23, 42, 0.1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      font-family: var(--mono);
+      text-align: center;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .formula-box { background: rgba(15, 23, 42, 0.05); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 1.4em;
+    }
+
+    .stat-icon.blue { background: rgba(96, 165, 250, 0.15); color: var(--primary); }
+    .stat-icon.green { background: rgba(52, 211, 153, 0.15); color: var(--success); }
+    .stat-icon.orange { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+    .stat-icon.red { background: rgba(251, 113, 133, 0.15); color: var(--danger); }
+
+    .distribution-viz {
+      height: 180px;
+      border-radius: 12px;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      margin-top: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /************************************************************
+     * CHARTS
+     ************************************************************/
+    .chart {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.03);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .chart { background: rgba(15, 23, 42, 0.01); }
+
+    .chart-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    canvas { width: 100% !important; height: 320px !important; }
+
+    /************************************************************
+     * INTERACTIVE
+     ************************************************************/
+    .interactive {
+      background: rgba(15, 23, 42, 0.03);
+      border: 2px dashed var(--border);
+      padding: 24px;
+      border-radius: 20px;
+      margin-top: 20px;
+      transition: border-color 0.25s ease, background-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .interactive { background: rgba(15, 23, 42, 0.01); }
+    .interactive:hover { border-color: var(--primary); }
+
+    textarea, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-top: 16px;
+      min-height: 120px;
+      resize: vertical;
+      color: var(--text);
+      background: var(--panel2);
+      outline: none;
+      font-family: inherit;
+      font-size: 14px;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.35s ease, color 0.35s ease;
+    }
+
+    textarea:focus, input[type="text"]:focus, input[type="number"]:focus {
+      box-shadow: var(--ring);
+      border-color: var(--primary);
+    }
+
+    input[type="text"], input[type="number"] {
+      min-height: auto;
+      padding: 12px 16px;
+    }
+
+    .formrow { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
+
+    .range-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .range-wrap label { font-weight: 600; color: var(--text); min-width: 180px; }
+    .range-wrap output { font-family: var(--mono); font-weight: 600; color: var(--text); min-width: 80px; text-align: right; }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      accent-color: var(--primary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      margin-top: 16px;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--ring2); filter: brightness(1.1); text-decoration: none; }
+    .btn:focus { outline: none; box-shadow: var(--ring2); }
+
+    .btn-secondary { background: linear-gradient(135deg, var(--cyan), var(--success)); }
+    .btn-warning { background: linear-gradient(135deg, var(--warning), var(--danger)); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+
+    .btn-ghost:hover { background: var(--panel2); box-shadow: var(--ring); }
+
+    pre {
+      background: rgba(2, 6, 23, 0.95);
+      color: #EAF0FF;
+      padding: 24px;
+      border-radius: 16px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      margin-top: 16px;
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.6;
+      transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] pre {
+      background: rgba(15, 23, 42, 0.05);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    code {
+      font-family: var(--mono);
+      background: rgba(96, 165, 250, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    .math {
+      font-family: "Times New Roman", serif;
+      font-style: italic;
+    }
+
+    /************************************************************
+     * TABLE STYLES
+     ************************************************************/
+    .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      margin-top: 20px;
+    }
+
+    .data-table th, .data-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .data-table th {
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--panel2);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .data-table td { color: var(--text); font-size: 14px; line-height: 1.6; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { font-weight: 600; color: var(--text); width: 30%; }
+    @media (max-width: 880px) { .data-table td:first-child { width: 40%; } }
+
+    .table-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 20px; }
+
+    .mini-callout {
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      margin-top: 20px;
+    }
+
+    .badge-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text);
+      margin: 0 8px 8px 0;
+    }
+
+    .hr-soft { height: 1px; border: none; background: var(--border); margin: 24px 0; opacity: 0.5; }
+
+    /************************************************************
+     * SIDEBAR: TOC + AGENDA
+     ************************************************************/
+    .toc { display: flex; flex-direction: column; gap: 12px; }
+
+    .toc a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      font-weight: 600;
+      color: var(--text);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.35s ease;
+    }
+
+    .toc a:hover {
+      text-decoration: none;
+      box-shadow: var(--ring);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .agenda-item {
+      display: flex;
+      gap: 16px;
+      padding: 14px 0;
+      border-bottom: 1px dashed var(--border);
+      align-items: flex-start;
+    }
+
+    .agenda-item:last-child { border-bottom: none; }
+
+    .agenda-time {
+      min-width: 100px;
+      text-align: center;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(96, 165, 250, 0.1);
+      border: 1px solid rgba(96, 165, 250, 0.2);
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .resource-list { list-style: none; }
+
+    .resource-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .resource-list li:last-child { border-bottom: none; }
+    .resource-list i { color: var(--primary); margin-top: 4px; flex-shrink: 0; }
+
+    .qa { margin-top: 20px; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; background: var(--panel2); }
+    details { border-top: 1px solid var(--border); padding: 16px 20px; }
+    details:first-child { border-top: none; }
+
+    summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      list-style: none;
+    }
+
+    summary::-webkit-details-marker { display: none; }
+    details p { margin-top: 12px; color: var(--muted); padding-left: 32px; }
+
+    footer {
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted2);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /************************************************************
+     * ACCESSIBILITY
+     ************************************************************/
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto !important; }
+      * { transition: none !important; }
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    /* Print styles */
+    @media print {
+      .theme-toggle-container,
+      .interactive,
+      textarea,
+      .btn,
+      .range-wrap {
+        display: none !important;
+      }
+
+      body {
+        background: white !important;
+        color: black !important;
+      }
+
+      .panel {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+      }
+    }
+  </style>
+</head>
+
+<body data-theme="night">
+  <!-- Theme Toggle -->
+  <div class="theme-toggle-container">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Theme: Night Mode (click to toggle)">
+      <span class="label" id="themeLabel">Night Mode</span>
+    </button>
+  </div>
+
+  <a class="skip" href="#main">Skip to content</a>
+
+  <div class="container">
+    <header>
+      <div class="course-header">
+        <div class="course-info">
+          <h1>IAF 604: Machine Learning &amp; Predictive Analytics</h1>
+          <h2>Module 3A — Statistics and Sampling for ML</h2>
+          <div class="badge"><i class="fa-solid fa-chart-bar"></i> Week 3: Descriptive/Inferential Statistics, Outlier Detection, Sampling</div>
+          <p class="subtitle">
+            This module bridges statistics and machine learning. You'll learn essential statistical concepts for data understanding,
+            explore sampling techniques for training data, and practice descriptive statistics with Python. Statistics is the
+            foundation for making data-driven decisions and building reliable ML models.
+          </p>
+        </div>
+
+        <div class="meta">
+          <p><strong>Instructor:</strong> Ali Noori</p>
+          <p><strong>Module:</strong> 3A</p>
+          <p><strong>Estimated time:</strong> 3–4 hours (concepts + hands-on Python)</p>
+          <div class="pillrow">
+            <span class="pill"><i class="fa-solid fa-chart-line"></i> Descriptive Stats</span>
+            <span class="pill"><i class="fa-solid fa-magnifying-glass-chart"></i> Inferential Stats</span>
+            <span class="pill"><i class="fa-solid fa-triangle-exclamation"></i> Outlier Detection</span>
+            <span class="pill"><i class="fa-solid fa-filter"></i> Sampling</span>
+            <span class="pill"><i class="fa-brands fa-python"></i> Python</span>
+            <span class="pill"><i class="fa-solid fa-database"></i> Data Analysis</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- MAIN CONTENT -->
+      <main id="main" class="panel main">
+        <!-- MODULE OVERVIEW -->
+        <section id="overview" class="section">
+          <h4><i class="fa-solid fa-map"></i> 1) Module overview: Statistics as ML Foundation</h4>
+          <p class="lead">
+            Statistics provides the tools to understand data, detect patterns, quantify uncertainty, and make informed decisions.
+            In machine learning, statistical thinking helps you: evaluate model performance correctly, detect data quality issues,
+            choose appropriate algorithms, and interpret results meaningfully.
+          </p>
+
+          <div class="callout">
+            <p><strong>Learning outcomes (complete):</strong></p>
+            <ul style="padding-left:20px; margin-top:12px;">
+              <li>Calculate and interpret descriptive statistics (mean, median, variance, skewness, kurtosis)</li>
+              <li>Distinguish between descriptive and inferential statistics</li>
+              <li>Apply statistical tests to compare groups and assess relationships</li>
+              <li>Identify outliers using statistical methods (IQR, z-score, Mahalanobis distance)</li>
+              <li>Select appropriate sampling techniques for ML training data</li>
+              <li>Implement statistical analyses in Python using pandas, numpy, and scipy</li>
+              <li>Interpret statistical outputs in the context of ML problems</li>
+            </ul>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Statistics in ML Workflow</span>
+              <span class="muted">where statistical thinking applies</span>
+            </div>
+            <canvas id="statsWorkflowChart"></canvas>
+          </div>
+        </section>
+
+        <!-- DESCRIPTIVE STATISTICS -->
+        <section id="descriptive" class="section">
+          <h4><i class="fa-solid fa-chart-column"></i> 2) Descriptive Statistics: Summarizing Data</h4>
+
+          <div class="definition">
+            <p>
+              <strong>Descriptive Statistics</strong> summarize and describe the main features of a dataset.
+              They provide simple summaries about the sample and measures, but don't allow conclusions beyond the data analyzed.
+            </p>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-icon blue">
+                <i class="fa-solid fa-calculator"></i>
+              </div>
+              <h5>Central Tendency</h5>
+              <p class="muted">Measures of center:</p>
+              <div class="formula-box">
+                Mean: \(\bar{x} = \frac{\sum x_i}{n}\)<br>
+                Median: middle value<br>
+                Mode: most frequent value
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon green">
+                <i class="fa-solid fa-ruler-combined"></i>
+              </div>
+              <h5>Dispersion</h5>
+              <p class="muted">Measures of spread:</p>
+              <div class="formula-box">
+                Variance: \(s^2 = \frac{\sum (x_i - \bar{x})^2}{n-1}\)<br>
+                Std Dev: \(s = \sqrt{s^2}\)<br>
+                Range: max - min
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon orange">
+                <i class="fa-solid fa-chart-gantt"></i>
+              </div>
+              <h5>Distribution Shape</h5>
+              <p class="muted">Skewness & Kurtosis:</p>
+              <div class="formula-box">
+                Skewness: \(\frac{E[(X-\mu)^3]}{\sigma^3}\)<br>
+                Kurtosis: \(\frac{E[(X-\mu)^4]}{\sigma^4}\)
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon red">
+                <i class="fa-solid fa-percent"></i>
+              </div>
+              <h5>Quantiles</h5>
+              <p class="muted">Percentiles and quartiles:</p>
+              <div class="formula-box">
+                Q1: 25th percentile<br>
+                Q2: 50th (median)<br>
+                Q3: 75th percentile
+              </div>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Descriptive Statistics Dashboard</span>
+              <span class="muted">visualizing different distributions</span>
+            </div>
+            <canvas id="descriptiveStatsChart"></canvas>
+          </div>
+
+          <div class="interactive">
+            <h5 style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+              <i class="fa-solid fa-sliders" style="color:var(--primary)"></i> Interactive: Explore Distribution Parameters
+            </h5>
+            <p class="muted">
+              Adjust the parameters to see how they affect the distribution shape. This builds intuition for real data.
+            </p>
+
+            <div class="formrow">
+              <div class="range-wrap">
+                <label for="meanControl">Mean (μ)</label>
+                <input id="meanControl" type="range" min="-5" max="5" value="0" step="0.5" />
+                <output id="meanOut">0.0</output>
+              </div>
+            </div>
+
+            <div class="formrow">
+              <div class="range-wrap">
+                <label for="stdControl">Standard Deviation (σ)</label>
+                <input id="stdControl" type="range" min="0.5" max="3" value="1" step="0.1" />
+                <output id="stdOut">1.0</output>
+              </div>
+            </div>
+
+            <div class="formrow">
+              <div class="range-wrap">
+                <label for="skewControl">Skewness</label>
+                <input id="skewControl" type="range" min="-2" max="2" value="0" step="0.1" />
+                <output id="skewOut">0.0</output>
+              </div>
+            </div>
+
+            <div class="chart" style="margin-top:20px;">
+              <div class="chart-title">
+                <span>Distribution Visualization</span>
+                <span class="muted">updates with sliders</span>
+              </div>
+              <canvas id="distributionChart"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <!-- INFERENTIAL STATISTICS -->
+        <section id="inferential" class="section">
+          <h4><i class="fa-solid fa-magnifying-glass-chart"></i> 3) Inferential Statistics: From Sample to Population</h4>
+
+          <div class="definition">
+            <p>
+              <strong>Inferential Statistics</strong> make inferences and predictions about a population based on a sample.
+              They use probability theory to quantify uncertainty and test hypotheses.
+            </p>
+          </div>
+
+          <div class="cards3">
+            <div class="mini-card blue">
+              <h5><i class="fa-solid fa-hyphen"></i> Hypothesis Testing</h5>
+              <ul>
+                <li><strong>Null hypothesis (H₀):</strong> Default assumption (no effect/difference)</li>
+                <li><strong>Alternative hypothesis (H₁):</strong> What you're testing for</li>
+                <li><strong>p-value:</strong> Probability of observing data if H₀ is true</li>
+                <li><strong>Significance level (α):</strong> Threshold for rejecting H₀ (typically 0.05)</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-scale-balanced"></i> Decision</span>
+                <span class="chip"><i class="fa-solid fa-percent"></i> Probability</span>
+              </div>
+            </div>
+
+            <div class="mini-card violet">
+              <h5><i class="fa-solid fa-chart-line"></i> Confidence Intervals</h5>
+              <ul>
+                <li>Range of plausible values for a population parameter</li>
+                <li>95% CI means: 95% of such intervals contain the true parameter</li>
+                <li>Formula: \(\bar{x} \pm t_{\alpha/2} \times \frac{s}{\sqrt{n}}\)</li>
+                <li>Wider intervals indicate more uncertainty</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-arrows-left-right"></i> Range</span>
+                <span class="chip"><i class="fa-solid fa-shield-halved"></i> Uncertainty</span>
+              </div>
+            </div>
+
+            <div class="mini-card pink">
+              <h5><i class="fa-solid fa-sitemap"></i> Common Statistical Tests</h5>
+              <ul>
+                <li><strong>t-test:</strong> Compare means between two groups</li>
+                <li><strong>ANOVA:</strong> Compare means among multiple groups</li>
+                <li><strong>Chi-square:</strong> Test independence between categorical variables</li>
+                <li><strong>Correlation:</strong> Measure linear relationship between variables</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-vial"></i> Experiments</span>
+                <span class="chip"><i class="fa-solid fa-link"></i> Relationships</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Statistical Tests Decision Tree</span>
+              <span class="muted">choosing the right test</span>
+            </div>
+            <canvas id="statTestsChart"></canvas>
+          </div>
+
+          <div class="note">
+            <strong>ML Connection:</strong> Inferential statistics validate whether model improvements are real or due to chance.
+            For example: Is the difference in accuracy between two models statistically significant?
+          </div>
+        </section>
+
+        <!-- OUTLIER DETECTION -->
+        <section id="outliers" class="section">
+          <h4><i class="fa-solid fa-triangle-exclamation"></i> 4) Outlier Detection: Finding the Unusual</h4>
+
+          <p class="lead">
+            Outliers can be errors (to remove) or valuable signals (to investigate). Statistical methods help distinguish
+            between meaningful anomalies and noise.
+          </p>
+
+          <div class="grid2">
+            <div class="mini-card orange">
+              <h5><i class="fa-solid fa-ruler"></i> Univariate Methods</h5>
+              <ul>
+                <li><strong>IQR Method:</strong> Q1 - 1.5×IQR to Q3 + 1.5×IQR</li>
+                <li><strong>Z-score:</strong> |z| > 3 (or 2.5) is unusual</li>
+                <li><strong>Modified Z-score:</strong> Robust to outliers in median</li>
+                <li><strong>Percentile-based:</strong> Outside 1st-99th percentiles</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-1"></i> Single Variable</span>
+                <span class="chip"><i class="fa-solid fa-chart-simple"></i> Simple</span>
+              </div>
+            </div>
+
+            <div class="mini-card red">
+              <h5><i class="fa-solid fa-cubes"></i> Multivariate Methods</h5>
+              <ul>
+                <li><strong>Mahalanobis Distance:</strong> Distance from center, accounting for covariance</li>
+                <li><strong>Isolation Forest:</strong> ML-based, efficient for high dimensions</li>
+                <li><strong>Local Outlier Factor (LOF):</strong> Density-based approach</li>
+                <li><strong>DBSCAN:</strong> Clustering-based outlier detection</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-network-wired"></i> Multi-variable</span>
+                <span class="chip"><i class="fa-solid fa-brain"></i> ML-based</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="interactive">
+            <h5 style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+              <i class="fa-solid fa-magnet" style="color:var(--primary)"></i> Interactive Outlier Detection
+            </h5>
+            <p class="muted">
+              Generate data with different outlier levels and apply detection methods. See how each method performs.
+            </p>
+
+            <div class="formrow">
+              <div class="range-wrap">
+                <label for="outlierPercent">Outlier Percentage</label>
+                <input id="outlierPercent" type="range" min="0" max="20" value="5" />
+                <output id="outlierPercentOut">5%</output>
+              </div>
+            </div>
+
+            <div class="formrow">
+              <label class="muted" style="min-width:180px;">Detection Method:</label>
+              <select id="outlierMethod" style="padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:var(--panel2); color:var(--text);">
+                <option value="iqr">IQR Method</option>
+                <option value="zscore">Z-score (|z|>3)</option>
+                <option value="mahalanobis">Mahalanobis Distance</option>
+              </select>
+            </div>
+
+            <div class="chart" style="margin-top:20px;">
+              <div class="chart-title">
+                <span>Outlier Detection Results</span>
+                <span class="muted">points colored by detection status</span>
+              </div>
+              <canvas id="outlierChart"></canvas>
+            </div>
+          </div>
+
+          <div class="qa">
+            <details open>
+              <summary><i class="fa-solid fa-circle-question"></i> When should I remove outliers?</summary>
+              <p class="muted">
+                Remove outliers when they're measurement errors or data entry mistakes. Keep them if they represent
+                rare but important events (fraud, equipment failure, etc.). Always document your decision.
+              </p>
+            </details>
+            <details>
+              <summary><i class="fa-solid fa-circle-question"></i> How do outliers affect ML models?</summary>
+              <p class="muted">
+                Outliers can distort: 1) Linear regression (pull regression line), 2) Distance-based algorithms (k-means, k-NN),
+                3) Variance calculations, 4) Model evaluation metrics. Some models (tree-based) are more robust.
+              </p>
+            </details>
+          </div>
+        </section>
+
+        <!-- SAMPLING TECHNIQUES -->
+        <section id="sampling" class="section">
+          <h4><i class="fa-solid fa-filter"></i> 5) Sampling Techniques for ML</h4>
+
+          <div class="definition">
+            <p>
+              <strong>Sampling</strong> selects a subset of data for analysis or model training.
+              Good sampling ensures your ML model generalizes well without needing all available data.
+            </p>
+          </div>
+
+          <div class="cards3">
+            <div class="mini-card green">
+              <h5><i class="fa-solid fa-shuffle"></i> Random Sampling</h5>
+              <ul>
+                <li><strong>Simple Random:</strong> Every observation has equal chance</li>
+                <li><strong>Stratified:</strong> Preserve class proportions</li>
+                <li><strong>Systematic:</strong> Select every kth item</li>
+                <li><strong>Cluster:</strong> Randomly select groups/clusters</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-dice"></i> Probability</span>
+                <span class="chip"><i class="fa-solid fa-chart-pie"></i> Representative</span>
+              </div>
+            </div>
+
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-scale-balanced"></i> Balanced Sampling</h5>
+              <ul>
+                <li><strong>Oversampling:</strong> Duplicate minority class samples</li>
+                <li><strong>Undersampling:</strong> Remove majority class samples</li>
+                <li><strong>SMOTE:</strong> Synthetic Minority Over-sampling Technique</li>
+                <li><strong>ADASYN:</strong> Adaptive synthetic sampling</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-balance-scale"></i> Class Balance</span>
+                <span class="chip"><i class="fa-solid fa-dna"></i> Synthetic</span>
+              </div>
+            </div>
+
+            <div class="mini-card gray">
+              <h5><i class="fa-solid fa-arrow-trend-up"></i> Advanced Techniques</h5>
+              <ul>
+                <li><strong>Bootstrapping:</strong> Sample with replacement, estimate uncertainty</li>
+                <li><strong>Cross-validation:</strong> Multiple train/test splits</li>
+                <li><strong>Time-based:</strong> Respect temporal order</li>
+                <li><strong>Active Learning:</strong> ML-guided sampling</li>
+              </ul>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-repeat"></i> Resampling</span>
+                <span class="chip"><i class="fa-solid fa-clock"></i> Temporal</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Sampling Method Comparison</span>
+              <span class="muted">tradeoffs for different scenarios</span>
+            </div>
+            <canvas id="samplingChart"></canvas>
+          </div>
+
+          <div class="callout">
+            <p><strong>Sampling Best Practices for ML:</strong></p>
+            <ul style="padding-left:20px; margin-top:12px;">
+              <li>Use stratified sampling for imbalanced classification problems</li>
+              <li>Always create a separate test set before any sampling/processing</li>
+              <li>For time series: train on past, test on future (no random shuffling)</li>
+              <li>Consider computational constraints when sampling large datasets</li>
+              <li>Document your sampling methodology for reproducibility</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- HANDS-ON: PYTHON FOR DESCRIPTIVE STATISTICS -->
+        <section id="python-hands-on" class="section">
+          <h4><i class="fa-brands fa-python"></i> 6) Hands-On: Descriptive Statistics with Python</h4>
+
+          <div class="callout">
+            <p>
+              <strong>Python Libraries for Statistics:</strong>
+              pandas (data manipulation), numpy (numerical operations), scipy (statistical tests),
+              matplotlib/seaborn (visualization), statsmodels (advanced statistics).
+            </p>
+          </div>
+
+          <div class="interactive">
+            <h5 style="margin-bottom:8px; display:flex; gap:12px; align-items:center;">
+              <i class="fa-solid fa-play" style="color:var(--primary)"></i> Complete Python Example: Data Analysis Pipeline
+            </h5>
+            <p class="muted">
+              This comprehensive example shows loading data, calculating statistics, detecting outliers, and visualizing results.
+              Copy and run in Colab.
+            </p>
+
+            <pre><code># Module 3A Hands-On: Descriptive Statistics with Python
+# Complete analysis pipeline from data loading to visualization
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+import warnings
+warnings.filterwarnings('ignore')
+
+# Set random seed for reproducibility
+np.random.seed(42)
+
+# 1) CREATE SIMULATED DATASET WITH DIFFERENT DISTRIBUTIONS
+n_samples = 1000
+
+# Generate data from different distributions
+data = pd.DataFrame({
+    'normal': np.random.normal(loc=50, scale=10, size=n_samples),
+    'skewed_right': np.random.exponential(scale=20, size=n_samples) + 30,
+    'skewed_left': 100 - np.random.exponential(scale=15, size=n_samples),
+    'bimodal': np.concatenate([
+        np.random.normal(loc=30, scale=5, size=n_samples//2),
+        np.random.normal(loc=70, scale=8, size=n_samples//2)
+    ]),
+    'outliers': np.random.normal(loc=50, scale=10, size=n_samples)
+})
+
+# Add some outliers to the last column
+outlier_indices = np.random.choice(n_samples, size=20, replace=False)
+data.loc[outlier_indices, 'outliers'] += np.random.uniform(40, 80, size=20)
+
+print("Dataset shape:", data.shape)
+print("\nFirst 5 rows:")
+print(data.head())
+
+# 2) DESCRIPTIVE STATISTICS CALCULATION
+print("\n" + "="*60)
+print("DESCRIPTIVE STATISTICS SUMMARY")
+print("="*60)
+
+for col in data.columns:
+    print(f"\n--- {col.upper()} ---")
+    col_data = data[col]
+    
+    # Central tendency
+    mean_val = col_data.mean()
+    median_val = col_data.median()
+    mode_val = col_data.mode()[0] if not col_data.mode().empty else np.nan
+    
+    # Dispersion
+    std_val = col_data.std()
+    variance_val = col_data.var()
+    range_val = col_data.max() - col_data.min()
+    iqr = col_data.quantile(0.75) - col_data.quantile(0.25)
+    
+    # Shape
+    skewness = col_data.skew()
+    kurtosis = col_data.kurtosis()
+    
+    # Percentiles
+    percentiles = col_data.quantile([0.25, 0.5, 0.75, 0.95, 0.99])
+    
+    print(f"Mean: {mean_val:.2f}")
+    print(f"Median: {median_val:.2f}")
+    print(f"Mode: {mode_val:.2f}")
+    print(f"Std Dev: {std_val:.2f}")
+    print(f"Variance: {variance_val:.2f}")
+    print(f"Range: {range_val:.2f}")
+    print(f"IQR: {iqr:.2f}")
+    print(f"Skewness: {skewness:.2f} ({'right' if skewness > 0 else 'left' if skewness < 0 else 'symmetric'})")
+    print(f"Kurtosis: {kurtosis:.2f} ({'leptokurtic' if kurtosis > 3 else 'platykurtic' if kurtosis < 3 else 'mesokurtic'})")
+    print(f"25th percentile (Q1): {percentiles[0.25]:.2f}")
+    print(f"50th percentile (Median): {percentiles[0.5]:.2f}")
+    print(f"75th percentile (Q3): {percentiles[0.75]:.2f}")
+
+# 3) OUTLIER DETECTION USING IQR METHOD
+print("\n" + "="*60)
+print("OUTLIER DETECTION (IQR METHOD)")
+print("="*60)
+
+def detect_outliers_iqr(data_series):
+    Q1 = data_series.quantile(0.25)
+    Q3 = data_series.quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    outliers = data_series[(data_series < lower_bound) | (data_series > upper_bound)]
+    return outliers, lower_bound, upper_bound
+
+for col in data.columns:
+    outliers, lower, upper = detect_outliers_iqr(data[col])
+    print(f"\n{col}: {len(outliers)} outliers ({len(outliers)/len(data)*100:.1f}%)")
+    if len(outliers) > 0:
+        print(f"  Range: [{lower:.2f}, {upper:.2f}]")
+        print(f"  Outlier values: {outliers.values[:5]}")  # Show first 5
+
+# 4) STATISTICAL TESTS
+print("\n" + "="*60)
+print("STATISTICAL TESTS")
+print("="*60)
+
+# Test normality for each column
+print("\nNormality Tests (Shapiro-Wilk):")
+for col in data.columns:
+    stat, p_value = stats.shapiro(data[col])
+    is_normal = p_value > 0.05
+    print(f"{col:15s} p-value: {p_value:.4f} {'(Normal)' if is_normal else '(Not Normal)'}")
+
+# Compare means between normal and skewed_right columns
+print("\nT-test: normal vs skewed_right columns:")
+t_stat, p_value = stats.ttest_ind(data['normal'], data['skewed_right'])
+print(f"t-statistic: {t_stat:.4f}, p-value: {p_value:.4f}")
+print(f"Means are {'significantly different' if p_value < 0.05 else 'not significantly different'}")
+
+# 5) CORRELATION ANALYSIS
+print("\n" + "="*60)
+print("CORRELATION MATRIX")
+print("="*60)
+correlation_matrix = data.corr()
+print(correlation_matrix.round(3))
+
+# 6) DATA VISUALIZATION
+print("\n" + "="*60)
+print("GENERATING VISUALIZATIONS...")
+print("="*60)
+
+# Create subplots
+fig, axes = plt.subplots(3, 2, figsize=(14, 12))
+fig.suptitle('Descriptive Statistics Visualizations', fontsize=16, fontweight='bold')
+
+# Histograms with KDE
+for idx, col in enumerate(data.columns):
+    ax = axes[idx // 2, idx % 2]
+    sns.histplot(data[col], kde=True, ax=ax, bins=30)
+    ax.axvline(data[col].mean(), color='red', linestyle='--', label=f'Mean: {data[col].mean():.1f}')
+    ax.axvline(data[col].median(), color='green', linestyle=':', label=f'Median: {data[col].median():.1f}')
+    ax.set_title(f'{col} Distribution')
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+
+# Remove empty subplot if odd number of columns
+if len(data.columns) % 2 != 0:
+    fig.delaxes(axes[-1, -1])
+
+plt.tight_layout()
+plt.show()
+
+# Box plots for outlier visualization
+plt.figure(figsize=(12, 6))
+sns.boxplot(data=data, palette='Set2')
+plt.title('Box Plots with Outliers', fontweight='bold')
+plt.xticks(rotation=45)
+plt.grid(True, alpha=0.3)
+plt.show()
+
+# Correlation heatmap
+plt.figure(figsize=(10, 8))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0, 
+            square=True, linewidths=1, cbar_kws={"shrink": 0.8})
+plt.title('Correlation Heatmap', fontweight='bold')
+plt.tight_layout()
+plt.show()
+
+# Q-Q plots for normality check
+fig, axes = plt.subplots(2, 3, figsize=(14, 8))
+fig.suptitle('Q-Q Plots for Normality Assessment', fontsize=16, fontweight='bold')
+
+for idx, col in enumerate(data.columns):
+    ax = axes[idx // 3, idx % 3]
+    stats.probplot(data[col], dist="norm", plot=ax)
+    ax.set_title(f'{col}')
+    ax.grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+print("\nAnalysis complete! Key takeaways:")
+print("1. Different distributions require different statistical approaches")
+print("2. Always visualize data before applying statistical tests")
+print("3. Outliers should be investigated, not automatically removed")
+print("4. Statistical assumptions (like normality) must be checked")</code></pre>
+
+            <div class="note">
+              <strong>Statistical Thinking in Practice:</strong>
+              This pipeline shows the complete workflow from data exploration to statistical testing.
+              Notice how visualization complements numerical analysis, and how assumptions are tested before
+              applying statistical methods.
+            </div>
+          </div>
+        </section>
+
+        <!-- SAMPLING IMPLEMENTATION -->
+        <section id="sampling-implementation" class="section">
+          <h4><i class="fa-solid fa-code"></i> 7) Python Implementation: Sampling Techniques</h4>
+
+          <div class="interactive">
+            <h5 style="margin-bottom:8px; display:flex; gap:12px; align-items:center;">
+              <i class="fa-solid fa-filter" style="color:var(--primary)"></i> Sampling Methods in Python
+            </h5>
+            <p class="muted">
+              Implement various sampling techniques and compare their effects on data distribution.
+            </p>
+
+            <pre><code># Sampling Techniques Implementation
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
+
+np.random.seed(42)
+
+# Create an imbalanced dataset
+n_samples = 1000
+n_features = 5
+
+# Generate features
+X = np.random.randn(n_samples, n_features)
+
+# Create imbalanced labels (90% class 0, 10% class 1)
+y = np.zeros(n_samples)
+y[:100] = 1  # Only 10% are class 1
+
+print(f"Original class distribution:")
+print(f"Class 0: {(y == 0).sum()} samples ({(y == 0).sum()/len(y)*100:.1f}%)")
+print(f"Class 1: {(y == 1).sum()} samples ({(y == 1).sum()/len(y)*100:.1f}%)")
+
+# 1) SIMPLE RANDOM SAMPLING
+print("\n" + "="*60)
+print("1) SIMPLE RANDOM SAMPLING")
+print("="*60)
+
+sample_size = 200
+random_indices = np.random.choice(len(X), size=sample_size, replace=False)
+X_random_sample = X[random_indices]
+y_random_sample = y[random_indices]
+
+print(f"Random sample size: {sample_size}")
+print(f"Sampled class distribution:")
+print(f"Class 0: {(y_random_sample == 0).sum()} samples")
+print(f"Class 1: {(y_random_sample == 1).sum()} samples")
+
+# 2) STRATIFIED SAMPLING (preserves class proportions)
+print("\n" + "="*60)
+print("2) STRATIFIED SAMPLING")
+print("="*60)
+
+# Using sklearn's train_test_split for stratified sampling
+X_strat, _, y_strat, _ = train_test_split(
+    X, y, 
+    train_size=0.2,  # 20% sample
+    stratify=y,
+    random_state=42
+)
+
+print(f"Stratified sample size: {len(X_strat)}")
+print(f"Sampled class distribution:")
+print(f"Class 0: {(y_strat == 0).sum()} samples ({(y_strat == 0).sum()/len(y_strat)*100:.1f}%)")
+print(f"Class 1: {(y_strat == 1).sum()} samples ({(y_strat == 1).sum()/len(y_strat)*100:.1f}%)")
+
+# 3) OVERSAMPLING MINORITY CLASS (SMOTE)
+print("\n" + "="*60)
+print("3) SMOTE OVERSAMPLING")
+print("="*60)
+
+smote = SMOTE(random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X, y)
+
+print(f"After SMOTE:")
+print(f"Class 0: {(y_resampled == 0).sum()} samples ({(y_resampled == 0).sum()/len(y_resampled)*100:.1f}%)")
+print(f"Class 1: {(y_resampled == 1).sum()} samples ({(y_resampled == 1).sum()/len(y_resampled)*100:.1f}%)")
+
+# 4) UNDERSAMPLING MAJORITY CLASS
+print("\n" + "="*60)
+print("4) RANDOM UNDERSAMPLING")
+print("="*60)
+
+undersample = RandomUnderSampler(random_state=42)
+X_under, y_under = undersample.fit_resample(X, y)
+
+print(f"After undersampling:")
+print(f"Class 0: {(y_under == 0).sum()} samples ({(y_under == 0).sum()/len(y_under)*100:.1f}%)")
+print(f"Class 1: {(y_under == 1).sum()} samples ({(y_under == 1).sum()/len(y_under)*100:.1f}%)")
+
+# 5) BOOTSTRAPPING (with replacement)
+print("\n" + "="*60)
+print("5) BOOTSTRAPPING")
+print("="*60)
+
+n_bootstrap = 1000
+bootstrap_means = []
+
+for i in range(n_bootstrap):
+    # Sample with replacement
+    indices = np.random.choice(len(X), size=len(X), replace=True)
+    X_boot = X[indices]
+    # Calculate mean of first feature
+    bootstrap_means.append(X_boot[:, 0].mean())
+
+bootstrap_means = np.array(bootstrap_means)
+
+print(f"Bootstrap statistics for feature 0:")
+print(f"  Original mean: {X[:, 0].mean():.4f}")
+print(f"  Bootstrap mean: {bootstrap_means.mean():.4f}")
+print(f"  Bootstrap std: {bootstrap_means.std():.4f}")
+print(f"  95% Confidence Interval: [{np.percentile(bootstrap_means, 2.5):.4f}, "
+      f"{np.percentile(bootstrap_means, 97.5):.4f}]")
+
+# Visualization
+fig, axes = plt.subplots(2, 3, figsize=(15, 8))
+fig.suptitle('Sampling Techniques Comparison', fontsize=16, fontweight='bold')
+
+# Plot 1: Original distribution
+axes[0, 0].hist(X[:, 0], bins=30, alpha=0.7, color='blue')
+axes[0, 0].axvline(X[:, 0].mean(), color='red', linestyle='--')
+axes[0, 0].set_title('Original Data (Feature 0)')
+axes[0, 0].set_xlabel('Value')
+axes[0, 0].set_ylabel('Frequency')
+axes[0, 0].grid(True, alpha=0.3)
+
+# Plot 2: Random sample
+axes[0, 1].hist(X_random_sample[:, 0], bins=30, alpha=0.7, color='green')
+axes[0, 1].axvline(X_random_sample[:, 0].mean(), color='red', linestyle='--')
+axes[0, 1].set_title('Random Sample')
+axes[0, 1].set_xlabel('Value')
+axes[0, 1].grid(True, alpha=0.3)
+
+# Plot 3: Stratified sample
+axes[0, 2].hist(X_strat[:, 0], bins=30, alpha=0.7, color='orange')
+axes[0, 2].axvline(X_strat[:, 0].mean(), color='red', linestyle='--')
+axes[0, 2].set_title('Stratified Sample')
+axes[0, 2].set_xlabel('Value')
+axes[0, 2].grid(True, alpha=0.3)
+
+# Plot 4: Class distribution - original
+class_counts_orig = [(y == 0).sum(), (y == 1).sum()]
+axes[1, 0].bar(['Class 0', 'Class 1'], class_counts_orig, color=['blue', 'red'])
+axes[1, 0].set_title('Original Class Distribution')
+axes[1, 0].set_ylabel('Count')
+axes[1, 0].grid(True, alpha=0.3)
+
+# Plot 5: Class distribution - after SMOTE
+class_counts_smote = [(y_resampled == 0).sum(), (y_resampled == 1).sum()]
+axes[1, 1].bar(['Class 0', 'Class 1'], class_counts_smote, color=['blue', 'red'])
+axes[1, 1].set_title('After SMOTE')
+axes[1, 1].set_ylabel('Count')
+axes[1, 1].grid(True, alpha=0.3)
+
+# Plot 6: Bootstrap distribution
+axes[1, 2].hist(bootstrap_means, bins=30, alpha=0.7, color='purple')
+axes[1, 2].axvline(bootstrap_means.mean(), color='red', linestyle='--')
+axes[1, 2].axvline(np.percentile(bootstrap_means, 2.5), color='gray', linestyle=':')
+axes[1, 2].axvline(np.percentile(bootstrap_means, 97.5), color='gray', linestyle=':')
+axes[1, 2].set_title('Bootstrap Means Distribution')
+axes[1, 2].set_xlabel('Mean Value')
+axes[1, 2].set_ylabel('Frequency')
+axes[1, 2].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+print("\nKey Insights:")
+print("1. Random sampling may not preserve class proportions in imbalanced data")
+print("2. Stratified sampling maintains original class ratios")
+print("3. SMOTE creates synthetic samples for the minority class")
+print("4. Bootstrap provides confidence intervals for statistics")
+print("5. Choose sampling method based on your specific ML problem")</code></pre>
+          </div>
+        </section>
+
+        <!-- PRACTICAL APPLICATION -->
+        <section id="application" class="section">
+          <h4><i class="fa-solid fa-flask"></i> 8) Practical Application: Statistical Analysis Project</h4>
+
+          <div class="callout">
+            <p>
+              <strong>Project Scenario:</strong> You're a data scientist at an e-commerce company. The marketing team wants to
+              understand customer purchase behavior. Your task is to analyze the dataset and provide statistical insights.
+            </p>
+          </div>
+
+          <div class="cards3">
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-clipboard-question"></i> Step 1 — Understand the Data</h5>
+              <p class="muted">Load and explore the dataset:</p>
+              <ul>
+                <li>Check for missing values</li>
+                <li>Calculate descriptive statistics</li>
+                <li>Visualize distributions</li>
+                <li>Identify data types</li>
+              </ul>
+            </div>
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-chart-simple"></i> Step 2 — Analyze Relationships</h5>
+              <p class="muted">Investigate patterns:</p>
+              <ul>
+                <li>Correlation between variables</li>
+                <li>Compare groups (e.g., by region)</li>
+                <li>Time trends if applicable</li>
+                <li>Segment customers statistically</li>
+              </ul>
+            </div>
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-triangle-exclamation"></i> Step 3 — Statistical Testing</h5>
+              <p class="muted">Test hypotheses:</p>
+              <ul>
+                <li>Are purchase amounts normally distributed?</li>
+                <li>Do different customer segments have different purchase behaviors?</li>
+                <li>Is there a significant difference between marketing channels?</li>
+                <li>What factors correlate with customer loyalty?</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="interactive">
+            <h5 style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+              <i class="fa-solid fa-lightbulb" style="color:var(--primary)"></i> Project Reflection
+            </h5>
+            <p class="muted">Outline your statistical analysis approach for the e-commerce scenario.</p>
+            <textarea id="projectReflection" placeholder="Example: 
+1. Data loading and cleaning: Check for missing values in purchase_amount, customer_age, region...
+2. Descriptive statistics: Calculate mean, median, std for purchase_amount by region...
+3. Hypothesis testing: Use t-test to compare purchase amounts between mobile vs desktop users...
+4. Correlation analysis: Calculate correlation between purchase_amount and time_on_site...
+5. Sampling strategy: Use stratified sampling for train/test split by customer segment...
+6. Visualization: Create histograms, box plots, and scatter plots to support findings..."></textarea>
+            <div class="formrow">
+              <button class="btn" id="saveProjectReflection" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+              <button class="btn btn-ghost" id="clearProjectReflection" type="button"><i class="fa-solid fa-eraser"></i> Clear</button>
+            </div>
+            <div id="projectReflectionStatus" class="muted" style="margin-top:12px;"></div>
+          </div>
+
+          <div class="note">
+            <strong>Statistical Report Checklist:</strong>
+            <ul style="padding-left:20px; margin-top:8px;">
+              <li>Clearly state your research questions</li>
+              <li>Describe your data and any preprocessing steps</li>
+              <li>Report descriptive statistics with context</li>
+              <li>Include visualizations that support your findings</li>
+              <li>State statistical tests used and justify their selection</li>
+              <li>Interpret results in business terms</li>
+              <li>Acknowledge limitations of your analysis</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- WRAP-UP -->
+        <section id="wrap" class="section">
+          <h4><i class="fa-solid fa-circle-check"></i> 9) Wrap-up & Next Steps</h4>
+
+          <div class="callout">
+            <p><strong>Module 3A Completion Checklist:</strong></p>
+            <ul style="padding-left:20px; margin-top:12px;">
+              <li>✅ You can calculate and interpret descriptive statistics</li>
+              <li>✅ You understand the difference between descriptive and inferential statistics</li>
+              <li>✅ You can apply statistical tests to compare groups and assess relationships</li>
+              <li>✅ You can identify outliers using multiple methods</li>
+              <li>✅ You can select appropriate sampling techniques for different ML scenarios</li>
+              <li>✅ You implemented statistical analyses in Python</li>
+              <li>✅ You can interpret statistical outputs in the context of ML problems</li>
+            </ul>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Statistics Knowledge Progression</span>
+              <span class="muted">foundation for advanced ML topics</span>
+            </div>
+            <canvas id="progressionChart"></canvas>
+          </div>
+
+          <div class="note">
+            <strong>Next Module Preview:</strong>
+            Module 3B will cover Probability Theory for ML, including probability distributions,
+            Bayes' Theorem, maximum likelihood estimation, and their applications in machine learning algorithms.
+          </div>
+        </section>
+      </main>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="panel card">
+          <h3><i class="fa-solid fa-compass"></i> Navigation</h3>
+          <nav class="toc" aria-label="Module 3A table of contents">
+            <a href="#overview"><i class="fa-solid fa-map"></i> Overview</a>
+            <a href="#descriptive"><i class="fa-solid fa-chart-column"></i> Descriptive Statistics</a>
+            <a href="#inferential"><i class="fa-solid fa-magnifying-glass-chart"></i> Inferential Statistics</a>
+            <a href="#outliers"><i class="fa-solid fa-triangle-exclamation"></i> Outlier Detection</a>
+            <a href="#sampling"><i class="fa-solid fa-filter"></i> Sampling Techniques</a>
+            <a href="#python-hands-on"><i class="fa-brands fa-python"></i> Python Hands-On</a>
+            <a href="#sampling-implementation"><i class="fa-solid fa-code"></i> Sampling Implementation</a>
+            <a href="#application"><i class="fa-solid fa-flask"></i> Practical Application</a>
+            <a href="#wrap"><i class="fa-solid fa-circle-check"></i> Wrap-up</a>
+          </nav>
+        </div>
+
+        <div class="panel card">
+          <h3><i class="fa-solid fa-clock"></i> Suggested Pacing (3–4 hours)</h3>
+          <div class="agenda-item"><div class="agenda-time">0:00–0:30</div><div>Overview + Descriptive Statistics</div></div>
+          <div class="agenda-item"><div class="agenda-time">0:30–1:15</div><div>Inferential Statistics + Hypothesis Testing</div></div>
+          <div class="agenda-item"><div class="agenda-time">1:15–1:45</div><div>Outlier Detection Methods</div></div>
+          <div class="agenda-item"><div class="agenda-time">1:45–2:15</div><div>Sampling Techniques for ML</div></div>
+          <div class="agenda-item"><div class="agenda-time">2:15–2:45</div><div>Python Descriptive Stats</div></div>
+          <div class="agenda-item"><div class="agenda-time">2:45–3:15</div><div>Sampling Implementation</div></div>
+          <div class="agenda-item"><div class="agenda-time">3:15–3:40</div><div>Practical Application</div></div>
+          <div class="agenda-item"><div class="agenda-time">3:40–4:00</div><div>Wrap-up + Reflection</div></div>
+        </div>
+
+        <div class="panel card">
+          <h3><i class="fa-solid fa-book"></i> Key Resources</h3>
+          <ul class="resource-list">
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://pandas.pydata.org/" target="_blank" rel="noreferrer">Pandas Documentation</a> — data manipulation</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://scipy.org/" target="_blank" rel="noreferrer">SciPy Documentation</a> — scientific computing</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://seaborn.pydata.org/" target="_blank" rel="noreferrer">Seaborn</a> — statistical visualization</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://imbalanced-learn.org/" target="_blank" rel="noreferrer">Imbalanced-learn</a> — sampling techniques</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://www.statsmodels.org/" target="_blank" rel="noreferrer">Statsmodels</a> — advanced statistics</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://seeing-theory.brown.edu/" target="_blank" rel="noreferrer">Seeing Theory</a> — visual statistics</li>
+          </ul>
+        </div>
+
+        <div class="panel card">
+          <h3><i class="fa-solid fa-circle-question"></i> Common Questions</h3>
+          <p><strong>Which statistical test should I use?</strong><br/><span class="muted">Depends on data type (continuous/categorical), distribution (normal/not), and what you're comparing. Use the decision tree in Section 3.</span></p>
+          <p style="margin-top:12px;"><strong>How do I handle non-normal data?</strong><br/><span class="muted">Use non-parametric tests (Mann-Whitney, Kruskal-Wallis) or transform data (log, sqrt, Box-Cox).</span></p>
+          <p style="margin-top:12px;"><strong>When to use SMOTE vs random oversampling?</strong><br/><span class="muted">SMOTE creates synthetic samples, reducing overfitting risk. Use it when random oversampling causes overfitting.</span></p>
+          <p style="margin-top:12px;"><strong>What p-value threshold should I use?</strong><br/><span class="muted">0.05 is standard, but consider context. For high-stakes decisions, use 0.01 or 0.001. Report actual p-values.</span></p>
+        </div>
+
+        <div class="panel card">
+          <h3><i class="fa-solid fa-download"></i> Quick Formulas</h3>
+          <div class="small">
+            <p><strong>Mean:</strong> \(\bar{x} = \frac{\sum x_i}{n}\)</p>
+            <p><strong>Variance:</strong> \(s^2 = \frac{\sum (x_i - \bar{x})^2}{n-1}\)</p>
+            <p><strong>Z-score:</strong> \(z = \frac{x - \mu}{\sigma}\)</p>
+            <p><strong>Correlation:</strong> \(r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2}}\)</p>
+            <p><strong>Confidence Interval:</strong> \(\bar{x} \pm t_{\alpha/2} \times \frac{s}{\sqrt{n}}\)</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      IAF 604: Machine Learning &amp; Predictive Analytics | Instructor: Ali Noori | UNC Greensboro<br/>
+      Module 3A: Statistics and Sampling for ML | © 2024 Department of Informatics and Analytics — Educational use
+    </footer>
+  </div>
+
+  <script>
+    /************************************************************
+     * Theme Toggle Functionality
+     ************************************************************/
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+    const body = document.body;
+
+    const THEME_KEY = 'iaf604-theme';
+
+    function applyTheme(theme) {
+      body.setAttribute('data-theme', theme);
+      const isDay = theme === 'day';
+      const labelText = isDay ? 'Day Mode' : 'Night Mode';
+      themeLabel.textContent = labelText;
+      themeToggle.setAttribute('aria-label', `Theme: ${labelText} (click to toggle)`);
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme === 'day' || savedTheme === 'night') {
+        applyTheme(savedTheme);
+      } else {
+        const defaultTheme = prefersDark ? 'night' : 'day';
+        applyTheme(defaultTheme);
+        localStorage.setItem(THEME_KEY, defaultTheme);
+      }
+    }
+
+    function toggleTheme() {
+      const current = body.getAttribute('data-theme');
+      const next = current === 'night' ? 'day' : 'night';
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+      updateChartThemes();
+      themeToggle.style.transform = 'scale(0.96)';
+      setTimeout(() => (themeToggle.style.transform = 'scale(1)'), 140);
+    }
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved !== 'day' && saved !== 'night') {
+        const newTheme = e.matches ? 'night' : 'day';
+        applyTheme(newTheme);
+        updateChartThemes();
+      }
+    });
+
+    /************************************************************
+     * Chart Configuration with Theme Support
+     ************************************************************/
+    const getChartColors = () => {
+      const isDay = body.getAttribute('data-theme') === 'day';
+      return {
+        text: isDay ? 'rgba(15, 23, 42, 0.92)' : 'rgba(234, 240, 255, 0.92)',
+        grid: isDay ? 'rgba(148, 163, 184, 0.25)' : 'rgba(148, 163, 184, 0.14)',
+        minor: isDay ? 'rgba(148, 163, 184, 0.15)' : 'rgba(148, 163, 184, 0.10)',
+        title: isDay ? 'rgba(15, 23, 42, 0.94)' : 'rgba(234, 240, 255, 0.94)',
+        bg: isDay ? 'rgba(255, 255, 255, 0.8)' : 'rgba(15, 23, 42, 0.8)',
+        primary: isDay ? '#2563EB' : '#60A5FA',
+        secondary: isDay ? '#7C3AED' : '#A78BFA',
+        accent: isDay ? '#DB2777' : '#F472B6',
+        success: isDay ? '#10B981' : '#34D399',
+        warning: isDay ? '#F59E0B' : '#FBBF24',
+        danger: isDay ? '#EF4444' : '#FB7185',
+        cyan: isDay ? '#06B6D4' : '#22D3EE'
+      };
+    };
+
+    function baseOptions(title) {
+      const colors = getChartColors();
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: colors.text,
+              usePointStyle: true,
+              pointStyle: "circle",
+              font: { size: 12 }
+            },
+            position: 'bottom'
+          },
+          title: {
+            display: true,
+            text: title,
+            color: colors.title,
+            font: { weight: "bold", size: 14 }
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: colors.bg,
+            titleColor: colors.title,
+            bodyColor: colors.text,
+            borderColor: colors.grid,
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: { ticks: { color: colors.text }, grid: { color: colors.minor } },
+          y: { ticks: { color: colors.text }, grid: { color: colors.minor } }
+        }
+      };
+    }
+
+    let charts = {};
+
+    function initCharts() {
+      const colors = getChartColors();
+
+      // Statistics in ML Workflow
+      charts.statsWorkflowChart = new Chart(document.getElementById("statsWorkflowChart"), {
+        type: "bar",
+        data: {
+          labels: ["Data Understanding", "Feature Engineering", "Model Selection", "Evaluation", "Interpretation"],
+          datasets: [{
+            label: "Statistical Methods Used",
+            data: [95, 80, 70, 90, 85],
+            backgroundColor: [colors.primary, colors.secondary, colors.accent, colors.success, colors.cyan],
+            borderColor: [colors.primary, colors.secondary, colors.accent, colors.success, colors.cyan],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          ...baseOptions("Statistical Methods in ML Workflow"),
+          scales: { y: { beginAtZero: true, max: 100 } }
+        }
+      });
+
+      // Descriptive Statistics Chart
+      charts.descriptiveStatsChart = new Chart(document.getElementById("descriptiveStatsChart"), {
+        type: "line",
+        data: {
+          labels: Array.from({length: 100}, (_, i) => i),
+          datasets: [
+            {
+              label: "Normal Distribution",
+              data: Array.from({length: 100}, (_, i) => {
+                const x = (i - 50) / 10;
+                return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+              }),
+              borderColor: colors.primary,
+              backgroundColor: colors.primary + '20',
+              borderWidth: 2,
+              tension: 0.1
+            },
+            {
+              label: "Right Skewed",
+              data: Array.from({length: 100}, (_, i) => {
+                const x = i / 30;
+                return x > 0 ? Math.exp(-x) : 0;
+              }),
+              borderColor: colors.secondary,
+              backgroundColor: colors.secondary + '20',
+              borderWidth: 2,
+              tension: 0.1
+            },
+            {
+              label: "Bimodal",
+              data: Array.from({length: 100}, (_, i) => {
+                const x = (i - 50) / 10;
+                return 0.7 * Math.exp(-0.5 * (x - 2) * (x - 2)) + 0.3 * Math.exp(-0.5 * (x + 2) * (x + 2));
+              }),
+              borderColor: colors.accent,
+              backgroundColor: colors.accent + '20',
+              borderWidth: 2,
+              tension: 0.1
+            }
+          ]
+        },
+        options: baseOptions("Common Data Distributions")
+      });
+
+      // Distribution Chart (Interactive)
+      charts.distributionChart = new Chart(document.getElementById("distributionChart"), {
+        type: "line",
+        data: {
+          labels: Array.from({length: 100}, (_, i) => (i - 50) / 10),
+          datasets: [{
+            label: "Distribution",
+            data: [],
+            borderColor: colors.primary,
+            backgroundColor: colors.primary + '40',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.1
+          }]
+        },
+        options: baseOptions("Normal Distribution")
+      });
+
+      // Statistical Tests Decision Tree
+      charts.statTestsChart = new Chart(document.getElementById("statTestsChart"), {
+        type: "radar",
+        data: {
+          labels: ["Ease of Use", "Statistical Power", "Assumptions", "Interpretability", "Common Use", "ML Integration"],
+          datasets: [
+            {
+              label: "t-test",
+              data: [85, 80, 65, 90, 95, 70],
+              borderColor: colors.primary,
+              backgroundColor: colors.primary + '20',
+              borderWidth: 2
+            },
+            {
+              label: "ANOVA",
+              data: [70, 85, 60, 80, 80, 65],
+              borderColor: colors.secondary,
+              backgroundColor: colors.secondary + '20',
+              borderWidth: 2
+            },
+            {
+              label: "Chi-square",
+              data: [75, 70, 75, 85, 85, 60],
+              borderColor: colors.accent,
+              backgroundColor: colors.accent + '20',
+              borderWidth: 2
+            },
+            {
+              label: "Mann-Whitney",
+              data: [70, 75, 90, 75, 70, 65],
+              borderColor: colors.success,
+              backgroundColor: colors.success + '20',
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          ...baseOptions("Statistical Tests Comparison"),
+          scales: {
+            r: {
+              min: 0,
+              max: 100,
+              ticks: { display: false },
+              grid: { color: colors.grid },
+              angleLines: { color: colors.grid },
+              pointLabels: { color: colors.text, font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // Outlier Chart
+      charts.outlierChart = new Chart(document.getElementById("outlierChart"), {
+        type: "scatter",
+        data: {
+          datasets: [
+            {
+              label: "Normal Points",
+              data: [],
+              backgroundColor: colors.primary + '80',
+              borderColor: colors.primary,
+              borderWidth: 1,
+              pointRadius: 4
+            },
+            {
+              label: "Outliers",
+              data: [],
+              backgroundColor: colors.danger + '80',
+              borderColor: colors.danger,
+              borderWidth: 1,
+              pointRadius: 6
+            },
+            {
+              label: "Detected Outliers",
+              data: [],
+              backgroundColor: colors.warning + '80',
+              borderColor: colors.warning,
+              borderWidth: 2,
+              pointRadius: 8,
+              pointStyle: 'triangle'
+            }
+          ]
+        },
+        options: {
+          ...baseOptions("Outlier Detection Visualization"),
+          scales: {
+            x: { title: { display: true, text: "Feature 1", color: colors.text } },
+            y: { title: { display: true, text: "Feature 2", color: colors.text } }
+          }
+        }
+      });
+
+      // Sampling Chart
+      charts.samplingChart = new Chart(document.getElementById("samplingChart"), {
+        type: "bar",
+        data: {
+          labels: ["Random", "Stratified", "Oversample", "Undersample", "SMOTE", "Bootstrap"],
+          datasets: [
+            {
+              label: "Preserves Distribution",
+              data: [60, 95, 40, 30, 85, 70],
+              backgroundColor: colors.primary + '80',
+              borderColor: colors.primary,
+              borderWidth: 1
+            },
+            {
+              label: "Computational Cost",
+              data: [20, 30, 40, 20, 70, 80],
+              backgroundColor: colors.secondary + '80',
+              borderColor: colors.secondary,
+              borderWidth: 1
+            },
+            {
+              label: "Suitable for Imbalance",
+              data: [30, 90, 70, 60, 95, 50],
+              backgroundColor: colors.accent + '80',
+              borderColor: colors.accent,
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          ...baseOptions("Sampling Method Comparison (0-100 scale)"),
+          scales: { y: { beginAtZero: true, max: 100 } }
+        }
+      });
+
+      // Progression Chart
+      charts.progressionChart = new Chart(document.getElementById("progressionChart"), {
+        type: "line",
+        data: {
+          labels: ["Module 1", "Module 2", "Module 3A", "Module 4", "Module 5", "Module 6", "Capstone"],
+          datasets: [
+            {
+              label: "Statistical Knowledge",
+              data: [20, 40, 85, 90, 92, 95, 98],
+              borderColor: colors.primary,
+              backgroundColor: colors.primary + '20',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: "ML Application",
+              data: [15, 35, 60, 75, 85, 90, 95],
+              borderColor: colors.secondary,
+              backgroundColor: colors.secondary + '20',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true
+            }
+          ]
+        },
+        options: baseOptions("Knowledge Progression Through Course")
+      });
+
+      // Initialize interactive charts with data
+      updateDistributionChart();
+      updateOutlierChart();
+    }
+
+    function updateChartThemes() {
+      const colors = getChartColors();
+      Object.values(charts).forEach(chart => {
+        if (!chart) return;
+        
+        chart.options.plugins.title.color = colors.title;
+        chart.options.plugins.legend.labels.color = colors.text;
+        chart.options.plugins.tooltip.backgroundColor = colors.bg;
+        chart.options.plugins.tooltip.titleColor = colors.title;
+        chart.options.plugins.tooltip.bodyColor = colors.text;
+        chart.options.plugins.tooltip.borderColor = colors.grid;
+
+        if (chart.options.scales) {
+          Object.values(chart.options.scales).forEach(scale => {
+            if (scale.ticks) scale.ticks.color = colors.text;
+            if (scale.grid) scale.grid.color = colors.minor;
+            if (scale.title) scale.title.color = colors.text;
+          });
+        }
+
+        if (chart.options.scales && chart.options.scales.r) {
+          chart.options.scales.r.grid.color = colors.grid;
+          chart.options.scales.r.angleLines.color = colors.grid;
+          chart.options.scales.r.pointLabels.color = colors.text;
+        }
+
+        chart.update('none');
+      });
+    }
+
+    /************************************************************
+     * Interactive Components
+     ************************************************************/
+    const meanControl = document.getElementById("meanControl");
+    const meanOut = document.getElementById("meanOut");
+    const stdControl = document.getElementById("stdControl");
+    const stdOut = document.getElementById("stdOut");
+    const skewControl = document.getElementById("skewControl");
+    const skewOut = document.getElementById("skewOut");
+
+    function updateDistributionChart() {
+      if (!meanControl || !charts.distributionChart) return;
+      
+      const mean = parseFloat(meanControl.value);
+      const std = parseFloat(stdControl.value);
+      const skew = parseFloat(skewControl.value);
+      
+      meanOut.value = mean.toFixed(1);
+      stdOut.value = std.toFixed(1);
+      skewOut.value = skew.toFixed(1);
+      
+      // Generate skewed normal distribution
+      const data = [];
+      const labels = [];
+      for (let i = 0; i < 100; i++) {
+        const x = (i - 50) / 10;
+        labels.push(x);
+        // Normal distribution with skew adjustment
+        let y = Math.exp(-0.5 * Math.pow((x - mean) / std, 2)) / (std * Math.sqrt(2 * Math.PI));
+        // Apply skew
+        if (skew > 0) {
+          y *= Math.exp(skew * x / 10);
+        } else if (skew < 0) {
+          y *= Math.exp(-skew * -x / 10);
+        }
+        data.push(y);
+      }
+      
+      charts.distributionChart.data.labels = labels;
+      charts.distributionChart.data.datasets[0].data = data;
+      charts.distributionChart.update();
+    }
+
+    if (meanControl && stdControl && skewControl) {
+      meanControl.addEventListener("input", updateDistributionChart);
+      stdControl.addEventListener("input", updateDistributionChart);
+      skewControl.addEventListener("input", updateDistributionChart);
+    }
+
+    // Outlier detection
+    const outlierPercent = document.getElementById("outlierPercent");
+    const outlierPercentOut = document.getElementById("outlierPercentOut");
+    const outlierMethod = document.getElementById("outlierMethod");
+
+    function generateOutlierData(percent) {
+      const n = 200;
+      const normalData = [];
+      const outlierData = [];
+      
+      // Generate normal data (multivariate normal)
+      for (let i = 0; i < n; i++) {
+        const x = Math.random() * 100;
+        const y = 0.7 * x + 20 + (Math.random() - 0.5) * 30;
+        normalData.push({x, y});
+      }
+      
+      // Generate outliers
+      const nOutliers = Math.floor(n * percent / 100);
+      for (let i = 0; i < nOutliers; i++) {
+        const x = 30 + Math.random() * 40;
+        const y = 30 + Math.random() * 40;
+        outlierData.push({x, y});
+      }
+      
+      return { normalData, outlierData };
+    }
+
+    function detectOutliersIQR(data) {
+      const values = data.map(d => d.x);
+      const q1 = values.sort((a,b) => a-b)[Math.floor(values.length * 0.25)];
+      const q3 = values.sort((a,b) => a-b)[Math.floor(values.length * 0.75)];
+      const iqr = q3 - q1;
+      const lower = q1 - 1.5 * iqr;
+      const upper = q3 + 1.5 * iqr;
+      
+      return data.filter(d => d.x < lower || d.x > upper);
+    }
+
+    function updateOutlierChart() {
+      if (!outlierPercent || !charts.outlierChart) return;
+      
+      const percent = parseInt(outlierPercent.value);
+      outlierPercentOut.value = percent + '%';
+      
+      const { normalData, outlierData } = generateOutlierData(percent);
+      const allData = [...normalData, ...outlierData];
+      
+      charts.outlierChart.data.datasets[0].data = normalData;
+      charts.outlierChart.data.datasets[1].data = outlierData;
+      
+      // Detect outliers based on selected method
+      const method = outlierMethod.value;
+      let detectedOutliers = [];
+      
+      if (method === 'iqr') {
+        detectedOutliers = detectOutliersIQR(allData);
+      } else if (method === 'zscore') {
+        // Simple z-score detection
+        const values = allData.map(d => d.x);
+        const mean = values.reduce((a,b) => a + b) / values.length;
+        const std = Math.sqrt(values.reduce((a,b) => a + Math.pow(b - mean, 2), 0) / values.length);
+        detectedOutliers = allData.filter(d => Math.abs((d.x - mean) / std) > 3);
+      } else {
+        // Mahalanobis approximation
+        detectedOutliers = outlierData; // Simplified for demo
+      }
+      
+      charts.outlierChart.data.datasets[2].data = detectedOutliers;
+      charts.outlierChart.update();
+    }
+
+    if (outlierPercent && outlierMethod) {
+      outlierPercent.addEventListener("input", updateOutlierChart);
+      outlierMethod.addEventListener("change", updateOutlierChart);
+    }
+
+    /************************************************************
+     * Reflection Storage
+     ************************************************************/
+    const projectReflectionKey = "iaf604_m3a_project_reflection";
+    const projectReflectionEl = document.getElementById("projectReflection");
+    const projectStatusEl = document.getElementById("projectReflectionStatus");
+
+    (function loadReflection() {
+      const saved = localStorage.getItem(projectReflectionKey);
+      if (saved && projectReflectionEl) projectReflectionEl.value = saved;
+    })();
+
+    const saveProjectBtn = document.getElementById("saveProjectReflection");
+    const clearProjectBtn = document.getElementById("clearProjectReflection");
+
+    if (saveProjectBtn && projectReflectionEl) {
+      saveProjectBtn.addEventListener("click", () => {
+        const val = projectReflectionEl.value.trim();
+        if (!val) {
+          projectStatusEl.textContent = "Please write your analysis approach.";
+          return;
+        }
+        localStorage.setItem(projectReflectionKey, val);
+        projectStatusEl.textContent = "Saved locally ✔";
+      });
+    }
+
+    if (clearProjectBtn && projectReflectionEl) {
+      clearProjectBtn.addEventListener("click", () => {
+        projectReflectionEl.value = "";
+        localStorage.removeItem(projectReflectionKey);
+        projectStatusEl.textContent = "Cleared.";
+      });
+    }
+
+    /************************************************************
+     * Initialize everything
+     ************************************************************/
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initCharts();
+      updateChartThemes();
+      updateDistributionChart();
+      updateOutlierChart();
+      
+      // Initialize MathJax
+      if (window.MathJax) {
+        MathJax.typesetPromise();
+      }
+    });
+
+    // Re-render MathJax when theme changes
+    themeToggle.addEventListener('click', () => {
+      setTimeout(() => {
+        if (window.MathJax) {
+          MathJax.typesetPromise();
+        }
+      }, 350);
+    });
+  </script>
+</body>
+</html>
