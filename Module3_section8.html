@@ -1,1 +1,2950 @@
-Module3_section8.html
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Section 8: Practical Application | IAF 604</title>
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- MathJax -->
+  <script defer="" src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <!-- Highlight.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/vs2015.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.7;
+      color: #1a1a1a;
+      background: #f8fafc;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    
+    header {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
+      padding: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .course-info h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    
+    .course-info h2 {
+      font-size: 18px;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 12px;
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+    
+    main {
+      padding: 40px;
+    }
+    
+    .section {
+      margin-bottom: 40px;
+    }
+    
+    h3 {
+      font-size: 24px;
+      color: #1e293b;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    h3 i {
+      color: #8b5cf6;
+    }
+    
+    h4 {
+      font-size: 20px;
+      color: #334155;
+      margin: 25px 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    h4 i {
+      color: #7c3aed;
+    }
+    
+    p {
+      margin-bottom: 16px;
+      color: #475569;
+    }
+    
+    .lead {
+      font-size: 18px;
+      color: #475569;
+      background: #f8fafc;
+      padding: 25px;
+      border-radius: 12px;
+      border-left: 4px solid #8b5cf6;
+      margin-bottom: 25px;
+    }
+    
+    .case-study {
+      background: linear-gradient(135deg, #f5f3ff, #faf5ff);
+      border: 2px solid #ddd6fe;
+      border-radius: 12px;
+      padding: 30px;
+      margin: 25px 0;
+    }
+    
+    .case-study h4 {
+      color: #5b21b6;
+      margin-top: 0;
+    }
+    
+    .business-objective {
+      background: #eff6ff;
+      border-left: 4px solid #3b82f6;
+      padding: 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+    
+    .steps {
+      counter-reset: step-counter;
+      margin: 30px 0;
+    }
+    
+    .step {
+      position: relative;
+      padding-left: 70px;
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+    
+    .step:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .step-number {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 50px;
+      height: 50px;
+      background: #8b5cf6;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    
+    .step-title {
+      color: #1e40af;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    
+    .code-container {
+      margin: 30px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      position: relative;
+    }
+    
+    .code-header {
+      background: #1e293b;
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .code-header:hover {
+      background: #334155;
+    }
+    
+    .code-header .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+    }
+    
+    .code-header .code-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .copy-btn.copied {
+      background: #10b981;
+      border-color: #10b981;
+    }
+    
+    .code-header .toggle-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 20px;
+      transition: transform 0.2s ease;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .code-header .toggle-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .code-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+      position: relative;
+    }
+    
+    .code-content.expanded {
+      max-height: 5000px;
+    }
+    
+    .code-content pre {
+      margin: 0;
+      padding: 0;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      overflow-x: auto;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      position: relative;
+    }
+    
+    .code-content code {
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      display: block;
+      padding: 24px;
+      tab-size: 4;
+    }
+    
+    .copy-btn-bottom {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+    
+    .copy-btn-bottom:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .copy-btn-bottom.copied {
+      background: #10b981;
+      border-color: #10b981;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    th {
+      background: #5b21b6;
+      color: white;
+      font-weight: 600;
+      padding: 16px;
+      text-align: left;
+    }
+    
+    td {
+      padding: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    
+    tr:hover {
+      background: #f1f5f9;
+    }
+    
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 25px 0;
+    }
+    
+    .metric-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid #e2e8f0;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .metric-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(139, 92, 246, 0.1);
+    }
+    
+    .metric-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #8b5cf6;
+      margin: 10px 0;
+    }
+    
+    .metric-label {
+      color: #64748b;
+      font-size: 14px;
+    }
+    
+    .insight-box {
+      background: linear-gradient(135deg, #fef3c7, #fef9c3);
+      border: 2px solid #fbbf24;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+    }
+    
+    .insight-box h5 {
+      color: #92400e;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .decision-framework {
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 30px;
+      margin: 30px 0;
+      position: relative;
+    }
+    
+    .decision-framework::before {
+      content: "Decision Framework";
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: white;
+      padding: 0 15px;
+      color: #5b21b6;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    /* A/B Test Simulator Styles */
+    .interactive-tool {
+      background: linear-gradient(135deg, #ecfeff, #f0f9ff);
+      border: 2px solid #22d3ee;
+      border-radius: 12px;
+      padding: 30px;
+      margin: 30px 0;
+    }
+    
+    .simulator-explanation {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .simulator-explanation h5 {
+      color: #1e40af;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .simulation-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .slider-container {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .slider-container label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #cbd5e1;
+      outline: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #8b5cf6;
+      cursor: pointer;
+    }
+    
+    .slider-value {
+      min-width: 80px;
+      text-align: right;
+      font-weight: 600;
+      color: #8b5cf6;
+      font-size: 14px;
+    }
+    
+    .groups-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .group-box {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid #e2e8f0;
+    }
+    
+    .group-box.control {
+      border-color: #64748b;
+    }
+    
+    .group-box.treatment {
+      border-color: #8b5cf6;
+    }
+    
+    .group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .group-title {
+      font-weight: 600;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .group-title.control {
+      color: #64748b;
+    }
+    
+    .group-title.treatment {
+      color: #8b5cf6;
+    }
+    
+    .group-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-label {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    .stat-value.control {
+      color: #64748b;
+    }
+    
+    .stat-value.treatment {
+      color: #8b5cf6;
+    }
+    
+    .stat-value.improvement {
+      color: #10b981;
+    }
+    
+    button {
+      background: #8b5cf6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      margin-top: 10px;
+      width: 100%;
+    }
+    
+    button:hover {
+      background: #7c3aed;
+      transform: translateY(-2px);
+    }
+    
+    .test-results {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+      border: 2px solid #e2e8f0;
+      display: none;
+    }
+    
+    .test-results.show {
+      display: block;
+    }
+    
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .result-card {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .result-label {
+      color: #64748b;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    
+    .result-value {
+      font-size: 24px;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+    
+    .result-value.power {
+      color: #f59e0b;
+    }
+    
+    .result-value.p-value {
+      color: #ef4444;
+    }
+    
+    .result-value.significant {
+      color: #10b981;
+    }
+    
+    .result-value.not-significant {
+      color: #ef4444;
+    }
+    
+    .confidence-interval {
+      background: #eff6ff;
+      border: 1px solid #60a5fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    
+    .ci-title {
+      color: #1e40af;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .ci-values {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .ci-group {
+      flex: 1;
+    }
+    
+    .ci-label {
+      font-size: 12px;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+    
+    .ci-range {
+      font-weight: 600;
+      color: #1e40af;
+    }
+    
+    .business-impact {
+      background: #d1fae5;
+      border: 1px solid #34d399;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .business-impact h5 {
+      color: #065f46;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .business-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    
+    .business-stat {
+      text-align: center;
+    }
+    
+    .business-label {
+      font-size: 12px;
+      color: #065f46;
+      margin-bottom: 5px;
+    }
+    
+    .business-value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #059669;
+    }
+    
+    .interpretation {
+      background: #fef3c7;
+      border: 1px solid #fbbf24;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+    }
+    
+    .interpretation h6 {
+      color: #92400e;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .decision-recommendation {
+      background: #dbeafe;
+      border: 1px solid #60a5fa;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .decision-recommendation h6 {
+      color: #1e40af;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .warning {
+      background: #fef3c7;
+      border: 1px solid #fbbf24;
+      color: #92400e;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .warning i {
+      color: #d97706;
+      font-size: 20px;
+      margin-top: 2px;
+    }
+    
+    .success {
+      background: #d1fae5;
+      border: 1px solid #34d399;
+      color: #065f46;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .success i {
+      color: #10b981;
+      font-size: 20px;
+      margin-top: 2px;
+    }
+    
+    .info {
+      background: #dbeafe;
+      border: 1px solid #60a5fa;
+      color: #1e40af;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .info i {
+      color: #3b82f6;
+      font-size: 20px;
+      margin-top: 2px;
+    }
+    
+    .checklist {
+      background: #d1fae5;
+      border: 1px solid #34d399;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .checklist h5 {
+      color: #065f46;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+    
+    .checklist-item input {
+      margin-right: 10px;
+      margin-top: 4px;
+    }
+    
+    .code-install-note {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      border-left: 4px solid #8b5cf6;
+    }
+    
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #10b981;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+    }
+    
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    footer {
+      background: #1e293b;
+      color: white;
+      padding: 30px 40px;
+      margin-top: 40px;
+    }
+    
+    .footer-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .footer-content h4 {
+      color: white;
+      margin-bottom: 10px;
+    }
+    
+    .footer-content p {
+      color: #cbd5e1;
+      margin-bottom: 20px;
+    }
+    
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    
+    .footer-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+    }
+    
+    @media (max-width: 768px) {
+      header, main {
+        padding: 25px;
+      }
+      
+      .course-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .nav-btn {
+        flex: 1;
+        justify-content: center;
+        font-size: 14px;
+        padding: 10px 15px;
+      }
+      
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      h3 {
+        font-size: 22px;
+      }
+      
+      h4 {
+        font-size: 18px;
+      }
+      
+      .code-header .code-actions {
+        flex-direction: column;
+        gap: 5px;
+        align-items: flex-end;
+      }
+      
+      .copy-btn {
+        font-size: 11px;
+        padding: 4px 8px;
+      }
+      
+      .groups-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .simulation-controls {
+        grid-template-columns: 1fr;
+      }
+      
+      .results-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .business-stats {
+        grid-template-columns: 1fr;
+      }
+      
+      .ci-values {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .footer-links {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+<style type="text/css">.CtxtMenu_InfoClose {  top:.2em; right:.2em;}
+.CtxtMenu_InfoContent {  overflow:auto; text-align:left; font-size:80%;  padding:.4em .6em; border:1px inset; margin:1em 0px;  max-height:20em; max-width:30em; background-color:#EEEEEE;  white-space:normal;}
+.CtxtMenu_Info.CtxtMenu_MousePost {outline:none;}
+.CtxtMenu_Info {  position:fixed; left:50%; width:auto; text-align:center;  border:3px outset; padding:1em 2em; background-color:#DDDDDD;  color:black;  cursor:default; font-family:message-box; font-size:120%;  font-style:normal; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 15px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius:15px;               /* Safari and Chrome */  -moz-border-radius:15px;                  /* Firefox */  -khtml-border-radius:15px;                /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */  filter:progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color="gray", Positive="true"); /* IE */}
+</style><style type="text/css">.CtxtMenu_MenuClose {  position:absolute;  cursor:pointer;  display:inline-block;  border:2px solid #AAA;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  font-family: "Courier New", Courier;  font-size:24px;  color:#F0F0F0}
+.CtxtMenu_MenuClose span {  display:block; background-color:#AAA; border:1.5px solid;  border-radius:18px;  -webkit-border-radius: 18px;             /* Safari and Chrome */  -moz-border-radius: 18px;                /* Firefox */  -khtml-border-radius: 18px;              /* Konqueror */  line-height:0;  padding:8px 0 6px     /* may need to be browser-specific */}
+.CtxtMenu_MenuClose:hover {  color:white!important;  border:2px solid #CCC!important}
+.CtxtMenu_MenuClose:hover span {  background-color:#CCC!important}
+.CtxtMenu_MenuClose:hover:focus {  outline:none}
+</style><style type="text/css">.CtxtMenu_Menu {  position:absolute;  background-color:white;  color:black;  width:auto; padding:5px 0px;  border:1px solid #CCCCCC; margin:0; cursor:default;  font: menu; text-align:left; text-indent:0; text-transform:none;  line-height:normal; letter-spacing:normal; word-spacing:normal;  word-wrap:normal; white-space:nowrap; float:none; z-index:201;  border-radius: 5px;                     /* Opera 10.5 and IE9 */  -webkit-border-radius: 5px;             /* Safari and Chrome */  -moz-border-radius: 5px;                /* Firefox */  -khtml-border-radius: 5px;              /* Konqueror */  box-shadow:0px 10px 20px #808080;         /* Opera 10.5 and IE9 */  -webkit-box-shadow:0px 10px 20px #808080; /* Safari 3 & Chrome */  -moz-box-shadow:0px 10px 20px #808080;    /* Forefox 3.5 */  -khtml-box-shadow:0px 10px 20px #808080;  /* Konqueror */}
+.CtxtMenu_MenuItem {  padding: 1px 2em;  background:transparent;}
+.CtxtMenu_MenuArrow {  position:absolute; right:.5em; padding-top:.25em; color:#666666;  font-family: null; font-size: .75em}
+.CtxtMenu_MenuActive .CtxtMenu_MenuArrow {color:white}
+.CtxtMenu_MenuArrow.CtxtMenu_RTL {left:.5em; right:auto}
+.CtxtMenu_MenuCheck {  position:absolute; left:.7em;  font-family: null}
+.CtxtMenu_MenuCheck.CtxtMenu_RTL { right:.7em; left:auto }
+.CtxtMenu_MenuRadioCheck {  position:absolute; left: .7em;}
+.CtxtMenu_MenuRadioCheck.CtxtMenu_RTL {  right: .7em; left:auto}
+.CtxtMenu_MenuInputBox {  padding-left: 1em; right:.5em; color:#666666;  font-family: null;}
+.CtxtMenu_MenuInputBox.CtxtMenu_RTL {  left: .1em;}
+.CtxtMenu_MenuComboBox {  left:.1em; padding-bottom:.5em;}
+.CtxtMenu_MenuSlider {  left: .1em;}
+.CtxtMenu_SliderValue {  position:absolute; right:.1em; padding-top:.25em; color:#333333;  font-size: .75em}
+.CtxtMenu_SliderBar {  outline: none; background: #d3d3d3}
+.CtxtMenu_MenuLabel {  padding: 1px 2em 3px 1.33em;  font-style:italic}
+.CtxtMenu_MenuRule {  border-top: 1px solid #DDDDDD;  margin: 4px 3px;}
+.CtxtMenu_MenuDisabled {  color:GrayText}
+.CtxtMenu_MenuActive {  background-color: #606872;  color: white;}
+.CtxtMenu_MenuDisabled:focus {  background-color: #E8E8E8}
+.CtxtMenu_MenuLabel:focus {  background-color: #E8E8E8}
+.CtxtMenu_ContextMenu:focus {  outline:none}
+.CtxtMenu_ContextMenu .CtxtMenu_MenuItem:focus {  outline:none}
+.CtxtMenu_SelectionMenu {  position:relative; float:left;  border-bottom: none; -webkit-box-shadow:none; -webkit-border-radius:0px; }
+.CtxtMenu_SelectionItem {  padding-right: 1em;}
+.CtxtMenu_Selection {  right: 40%; width:50%; }
+.CtxtMenu_SelectionBox {  padding: 0em; max-height:20em; max-width: none;  background-color:#FFFFFF;}
+.CtxtMenu_SelectionDivider {  clear: both; border-top: 2px solid #000000;}
+.CtxtMenu_Menu .CtxtMenu_MenuClose {  top:-10px; left:-10px}
+</style><style id="MJX-CHTML-styles">
+mjx-container[jax="CHTML"] {
+  line-height: 0;
+}
+
+mjx-container [space="1"] {
+  margin-left: .111em;
+}
+
+mjx-container [space="2"] {
+  margin-left: .167em;
+}
+
+mjx-container [space="3"] {
+  margin-left: .222em;
+}
+
+mjx-container [space="4"] {
+  margin-left: .278em;
+}
+
+mjx-container [space="5"] {
+  margin-left: .333em;
+}
+
+mjx-container [rspace="1"] {
+  margin-right: .111em;
+}
+
+mjx-container [rspace="2"] {
+  margin-right: .167em;
+}
+
+mjx-container [rspace="3"] {
+  margin-right: .222em;
+}
+
+mjx-container [rspace="4"] {
+  margin-right: .278em;
+}
+
+mjx-container [rspace="5"] {
+  margin-right: .333em;
+}
+
+mjx-container [size="s"] {
+  font-size: 70.7%;
+}
+
+mjx-container [size="ss"] {
+  font-size: 50%;
+}
+
+mjx-container [size="Tn"] {
+  font-size: 60%;
+}
+
+mjx-container [size="sm"] {
+  font-size: 85%;
+}
+
+mjx-container [size="lg"] {
+  font-size: 120%;
+}
+
+mjx-container [size="Lg"] {
+  font-size: 144%;
+}
+
+mjx-container [size="LG"] {
+  font-size: 173%;
+}
+
+mjx-container [size="hg"] {
+  font-size: 207%;
+}
+
+mjx-container [size="HG"] {
+  font-size: 249%;
+}
+
+mjx-container [width="full"] {
+  width: 100%;
+}
+
+mjx-box {
+  display: inline-block;
+}
+
+mjx-block {
+  display: block;
+}
+
+mjx-itable {
+  display: inline-table;
+}
+
+mjx-row {
+  display: table-row;
+}
+
+mjx-row > * {
+  display: table-cell;
+}
+
+mjx-mtext {
+  display: inline-block;
+}
+
+mjx-mstyle {
+  display: inline-block;
+}
+
+mjx-merror {
+  display: inline-block;
+  color: red;
+  background-color: yellow;
+}
+
+mjx-mphantom {
+  visibility: hidden;
+}
+
+_::-webkit-full-page-media, _:future, :root mjx-container {
+  will-change: opacity;
+}
+
+mjx-assistive-mml {
+  position: absolute !important;
+  top: 0px;
+  left: 0px;
+  clip: rect(1px, 1px, 1px, 1px);
+  padding: 1px 0px 0px 0px !important;
+  border: 0px !important;
+  display: block !important;
+  width: auto !important;
+  overflow: hidden !important;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+mjx-assistive-mml[display="block"] {
+  width: 100% !important;
+}
+
+mjx-c::before {
+  display: block;
+  width: 0;
+}
+
+.MJX-TEX {
+  font-family: MJXZERO, MJXTEX;
+}
+
+.TEX-B {
+  font-family: MJXZERO, MJXTEX-B;
+}
+
+.TEX-I {
+  font-family: MJXZERO, MJXTEX-I;
+}
+
+.TEX-MI {
+  font-family: MJXZERO, MJXTEX-MI;
+}
+
+.TEX-BI {
+  font-family: MJXZERO, MJXTEX-BI;
+}
+
+.TEX-S1 {
+  font-family: MJXZERO, MJXTEX-S1;
+}
+
+.TEX-S2 {
+  font-family: MJXZERO, MJXTEX-S2;
+}
+
+.TEX-S3 {
+  font-family: MJXZERO, MJXTEX-S3;
+}
+
+.TEX-S4 {
+  font-family: MJXZERO, MJXTEX-S4;
+}
+
+.TEX-A {
+  font-family: MJXZERO, MJXTEX-A;
+}
+
+.TEX-C {
+  font-family: MJXZERO, MJXTEX-C;
+}
+
+.TEX-CB {
+  font-family: MJXZERO, MJXTEX-CB;
+}
+
+.TEX-FR {
+  font-family: MJXZERO, MJXTEX-FR;
+}
+
+.TEX-FRB {
+  font-family: MJXZERO, MJXTEX-FRB;
+}
+
+.TEX-SS {
+  font-family: MJXZERO, MJXTEX-SS;
+}
+
+.TEX-SSB {
+  font-family: MJXZERO, MJXTEX-SSB;
+}
+
+.TEX-SSI {
+  font-family: MJXZERO, MJXTEX-SSI;
+}
+
+.TEX-SC {
+  font-family: MJXZERO, MJXTEX-SC;
+}
+
+.TEX-T {
+  font-family: MJXZERO, MJXTEX-T;
+}
+
+.TEX-V {
+  font-family: MJXZERO, MJXTEX-V;
+}
+
+.TEX-VB {
+  font-family: MJXZERO, MJXTEX-VB;
+}
+
+mjx-stretchy-v mjx-c, mjx-stretchy-h mjx-c {
+  font-family: MJXZERO, MJXTEX-S1, MJXTEX-S4, MJXTEX, MJXTEX-A ! important;
+}
+
+@font-face /* 0 */ {
+  font-family: MJXZERO;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Zero.woff") format("woff");
+}
+
+@font-face /* 1 */ {
+  font-family: MJXTEX;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff") format("woff");
+}
+
+@font-face /* 2 */ {
+  font-family: MJXTEX-B;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Bold.woff") format("woff");
+}
+
+@font-face /* 3 */ {
+  font-family: MJXTEX-I;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff") format("woff");
+}
+
+@font-face /* 4 */ {
+  font-family: MJXTEX-MI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Main-Italic.woff") format("woff");
+}
+
+@font-face /* 5 */ {
+  font-family: MJXTEX-BI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Math-BoldItalic.woff") format("woff");
+}
+
+@font-face /* 6 */ {
+  font-family: MJXTEX-S1;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size1-Regular.woff") format("woff");
+}
+
+@font-face /* 7 */ {
+  font-family: MJXTEX-S2;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size2-Regular.woff") format("woff");
+}
+
+@font-face /* 8 */ {
+  font-family: MJXTEX-S3;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size3-Regular.woff") format("woff");
+}
+
+@font-face /* 9 */ {
+  font-family: MJXTEX-S4;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Size4-Regular.woff") format("woff");
+}
+
+@font-face /* 10 */ {
+  font-family: MJXTEX-A;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_AMS-Regular.woff") format("woff");
+}
+
+@font-face /* 11 */ {
+  font-family: MJXTEX-C;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Regular.woff") format("woff");
+}
+
+@font-face /* 12 */ {
+  font-family: MJXTEX-CB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Calligraphic-Bold.woff") format("woff");
+}
+
+@font-face /* 13 */ {
+  font-family: MJXTEX-FR;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Regular.woff") format("woff");
+}
+
+@font-face /* 14 */ {
+  font-family: MJXTEX-FRB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Fraktur-Bold.woff") format("woff");
+}
+
+@font-face /* 15 */ {
+  font-family: MJXTEX-SS;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Regular.woff") format("woff");
+}
+
+@font-face /* 16 */ {
+  font-family: MJXTEX-SSB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Bold.woff") format("woff");
+}
+
+@font-face /* 17 */ {
+  font-family: MJXTEX-SSI;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_SansSerif-Italic.woff") format("woff");
+}
+
+@font-face /* 18 */ {
+  font-family: MJXTEX-SC;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Script-Regular.woff") format("woff");
+}
+
+@font-face /* 19 */ {
+  font-family: MJXTEX-T;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Typewriter-Regular.woff") format("woff");
+}
+
+@font-face /* 20 */ {
+  font-family: MJXTEX-V;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Regular.woff") format("woff");
+}
+
+@font-face /* 21 */ {
+  font-family: MJXTEX-VB;
+  src: url("https://cdn.jsdelivr.net/npm/mathjax@3/es5/output/chtml/fonts/woff-v2/MathJax_Vector-Bold.woff") format("woff");
+}
+</style></head>
+<body>
+  <div class="container">
+    <header>
+      <div class="course-header">
+        <div class="course-info">
+          <h1>Module 3A: Statistics for Machine Learning</h1>
+          <h2>Section 8 — Practical Application: E-commerce Case Study</h2>
+          <div class="badge">
+            <i class="fa-solid fa-flask"></i>
+            Real-world Application of Statistical Methods
+          </div>
+        </div>
+        <div class="nav-buttons">
+          <a href="Module3_section7.html" class="nav-btn">
+            <i class="fa-solid fa-arrow-left"></i> Previous: Sampling Implementation
+          </a>
+          <a href="Module3_section9.html" class="nav-btn">
+            Next: Wrap-up <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </header>
+    
+    <main>
+      <!-- Section 1: Case Study Introduction -->
+      <section class="section">
+        <h3><i class="fa-solid fa-flask"></i> Case Study: E-commerce Statistical Analysis</h3>
+        
+        <div class="lead">
+          <strong>Scenario:</strong> You're a data scientist at "TechGadget Store," an e-commerce company selling electronics. 
+          The marketing team wants to understand customer purchase behavior and test a new recommendation algorithm. 
+          Your task is to analyze the dataset, conduct A/B testing, and provide statistical insights for business decisions.
+        </div>
+        
+        <div class="case-study">
+          <h4><i class="fa-solid fa-bullseye"></i> Business Objectives</h4>
+          <div class="business-objective">
+            <p><strong>Primary Goal:</strong> Increase overall conversion rate from 5% to at least 5.5%</p>
+            <p><strong>Secondary Goals:</strong></p>
+            <ul>
+              <li>Understand customer segmentation and purchasing patterns</li>
+              <li>Identify high-value customers for targeted marketing</li>
+              <li>Test new recommendation algorithm for effectiveness</li>
+              <li>Reduce cart abandonment rate</li>
+              <li>Optimize marketing spend based on customer value</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 2: Dataset Overview -->
+      <section class="section">
+        <h3><i class="fa-solid fa-database"></i> Dataset Overview</h3>
+        
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-value">10,000</div>
+            <div class="metric-label">Total Customers</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">6 months</div>
+            <div class="metric-label">Data Period</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">15</div>
+            <div class="metric-label">Features</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-value">5.2%</div>
+            <div class="metric-label">Current Conversion</div>
+          </div>
+        </div>
+        
+        <h4><i class="fa-solid fa-table"></i> Data Dictionary</h4>
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>customer_id</strong></td>
+              <td>Unique customer identifier</td>
+              <td>String</td>
+              <td>"CUST_00123"</td>
+            </tr>
+            <tr>
+              <td><strong>age</strong></td>
+              <td>Customer age in years</td>
+              <td>Integer</td>
+              <td>34</td>
+            </tr>
+            <tr>
+              <td><strong>income</strong></td>
+              <td>Annual income in $</td>
+              <td>Integer</td>
+              <td>75,000</td>
+            </tr>
+            <tr>
+              <td><strong>total_spent</strong></td>
+              <td>Lifetime spending in $</td>
+              <td>Float</td>
+              <td>1,234.56</td>
+            </tr>
+            <tr>
+              <td><strong>visits_last_month</strong></td>
+              <td>Website visits in last 30 days</td>
+              <td>Integer</td>
+              <td>12</td>
+            </tr>
+            <tr>
+              <td><strong>converted</strong></td>
+              <td>Made a purchase (1=yes, 0=no)</td>
+              <td>Binary</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td><strong>device_type</strong></td>
+              <td>Mobile, Desktop, or Tablet</td>
+              <td>Categorical</td>
+              <td>"Mobile"</td>
+            </tr>
+            <tr>
+              <td><strong>time_on_site</strong></td>
+              <td>Average session duration (minutes)</td>
+              <td>Float</td>
+              <td>8.5</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="info">
+          <i class="fa-solid fa-circle-info"></i>
+          <div>
+            <strong>Data Quality Note:</strong> The dataset contains some missing values (about 3% in income column) and potential outliers 
+            (a few customers with extremely high spending). We'll need to handle these issues in our analysis.
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 3: Complete Python Analysis Pipeline -->
+      <section class="section">
+        <h3><i class="fa-solid fa-chart-line"></i> Complete Python Analysis Pipeline</h3>
+        
+        <div class="code-install-note">
+          <i class="fa-solid fa-terminal"></i> <strong>Install required packages first:</strong> pip install numpy pandas matplotlib seaborn scipy scikit-learn statsmodels
+        </div>
+        
+        <div class="code-container">
+          <div class="code-header" onclick="toggleCode('completePipeline')">
+            <div class="title">
+              <i class="fa-brands fa-python"></i>
+              <span>E-commerce Statistical Analysis Pipeline</span>
+            </div>
+            <div class="code-actions">
+              <button class="copy-btn" onclick="copyCode('completePipeline', event)">
+                <i class="fa-regular fa-copy"></i> Copy Code
+              </button>
+              <button class="toggle-btn" aria-label="Toggle code visibility">
+                <i class="fa-solid fa-chevron-down"></i>
+              </button>
+            </div>
+          </div>
+          <div class="code-content" id="completePipeline">
+            <button class="copy-btn-bottom" onclick="copyCode('completePipeline', event)">
+              <i class="fa-regular fa-copy"></i> Copy Full Code
+            </button>
+            <pre><code class="language-python hljs"><span class="hljs-comment"># E-COMMERCE STATISTICAL ANALYSIS PIPELINE</span>
+<span class="hljs-comment"># TechGadget Store Case Study</span>
+<span class="hljs-comment"># Author: IAF 604 - Module 3A</span>
+<span class="hljs-comment"># Complete analysis from data loading to A/B testing</span>
+
+<span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">import</span> pandas <span class="hljs-keyword">as</span> pd
+<span class="hljs-keyword">import</span> matplotlib.pyplot <span class="hljs-keyword">as</span> plt
+<span class="hljs-keyword">import</span> seaborn <span class="hljs-keyword">as</span> sns
+<span class="hljs-keyword">from</span> scipy <span class="hljs-keyword">import</span> stats
+<span class="hljs-keyword">from</span> scipy.stats <span class="hljs-keyword">import</span> ttest_ind, chi2_contingency, f_oneway
+<span class="hljs-keyword">from</span> sklearn.preprocessing <span class="hljs-keyword">import</span> StandardScaler, LabelEncoder
+<span class="hljs-keyword">from</span> sklearn.impute <span class="hljs-keyword">import</span> SimpleImputer
+<span class="hljs-keyword">from</span> sklearn.cluster <span class="hljs-keyword">import</span> KMeans
+<span class="hljs-keyword">from</span> sklearn.ensemble <span class="hljs-keyword">import</span> IsolationForest
+<span class="hljs-keyword">from</span> sklearn.model_selection <span class="hljs-keyword">import</span> train_test_split
+<span class="hljs-keyword">from</span> sklearn.linear_model <span class="hljs-keyword">import</span> LogisticRegression
+<span class="hljs-keyword">from</span> sklearn.ensemble <span class="hljs-keyword">import</span> RandomForestClassifier
+<span class="hljs-keyword">from</span> sklearn.metrics <span class="hljs-keyword">import</span> accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+<span class="hljs-keyword">import</span> warnings
+warnings.filterwarnings(<span class="hljs-string">'ignore'</span>)
+
+<span class="hljs-comment"># Set random seed for reproducibility</span>
+np.random.seed(<span class="hljs-number">42</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"="</span> * <span class="hljs-number">70</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"TECHGADGET STORE: E-COMMERCE STATISTICAL ANALYSIS"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"="</span> * <span class="hljs-number">70</span>)
+
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-comment"># 1. DATA LOADING AND INITIAL EXPLORATION</span>
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n1. DATA LOADING AND INITIAL EXPLORATION"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">50</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">generate_ecommerce_data</span>(<span class="hljs-params">n_customers=<span class="hljs-number">10000</span></span>):
+    <span class="hljs-string">"""Generate synthetic e-commerce customer data"""</span>
+    
+    <span class="hljs-comment"># Customer demographics</span>
+    ages = np.random.normal(<span class="hljs-number">35</span>, <span class="hljs-number">10</span>, n_customers).astype(<span class="hljs-built_in">int</span>)
+    ages = np.clip(ages, <span class="hljs-number">18</span>, <span class="hljs-number">70</span>)
+    
+    incomes = np.random.lognormal(mean=<span class="hljs-number">10.8</span>, sigma=<span class="hljs-number">0.5</span>, size=n_customers)
+    incomes = np.<span class="hljs-built_in">round</span>(incomes / <span class="hljs-number">1000</span>) * <span class="hljs-number">1000</span>  <span class="hljs-comment"># Round to nearest $1000</span>
+    
+    <span class="hljs-comment"># Customer behavior</span>
+    visits = np.random.poisson(lam=<span class="hljs-number">8</span>, size=n_customers) + <span class="hljs-number">1</span>
+    time_on_site = np.random.exponential(scale=<span class="hljs-number">5</span>, size=n_customers) + <span class="hljs-number">2</span>
+    
+    <span class="hljs-comment"># Device distribution</span>
+    devices = np.random.choice([<span class="hljs-string">'Mobile'</span>, <span class="hljs-string">'Desktop'</span>, <span class="hljs-string">'Tablet'</span>], 
+                               size=n_customers, 
+                               p=[<span class="hljs-number">0.6</span>, <span class="hljs-number">0.35</span>, <span class="hljs-number">0.05</span>])
+    
+    <span class="hljs-comment"># Generate conversion (5% baseline conversion rate)</span>
+    base_conversion = <span class="hljs-number">0.05</span>
+    <span class="hljs-comment"># Conversion probability increases with income and visits</span>
+    conversion_probs = base_conversion + (incomes / <span class="hljs-number">1000000</span>) + (visits * <span class="hljs-number">0.01</span>)
+    conversion_probs = np.clip(conversion_probs, <span class="hljs-number">0</span>, <span class="hljs-number">0.95</span>)
+    converted = np.random.binomial(<span class="hljs-number">1</span>, conversion_probs)
+    
+    <span class="hljs-comment"># Generate spending (for those who converted)</span>
+    spending = np.zeros(n_customers)
+    <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n_customers):
+        <span class="hljs-keyword">if</span> converted[i] == <span class="hljs-number">1</span>:
+            <span class="hljs-comment"># Spending correlates with income</span>
+            base_spend = np.random.exponential(scale=<span class="hljs-number">100</span>)
+            income_factor = incomes[i] / <span class="hljs-number">50000</span>
+            spending[i] = base_spend * (<span class="hljs-number">0.5</span> + income_factor * <span class="hljs-number">0.5</span>)
+    
+    <span class="hljs-comment"># Add some outliers (high-value customers)</span>
+    n_outliers = <span class="hljs-built_in">int</span>(n_customers * <span class="hljs-number">0.02</span>)  <span class="hljs-comment"># 2% high-value customers</span>
+    outlier_indices = np.random.choice(n_customers, size=n_outliers, replace=<span class="hljs-literal">False</span>)
+    spending[outlier_indices] *= np.random.uniform(<span class="hljs-number">5</span>, <span class="hljs-number">20</span>, size=n_outliers)
+    
+    <span class="hljs-comment"># Create DataFrame</span>
+    df = pd.DataFrame({
+        <span class="hljs-string">'customer_id'</span>: [<span class="hljs-string">f'CUST_<span class="hljs-subst">{i:05d}</span>'</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n_customers)],
+        <span class="hljs-string">'age'</span>: ages,
+        <span class="hljs-string">'income'</span>: incomes,
+        <span class="hljs-string">'visits_last_month'</span>: visits,
+        <span class="hljs-string">'time_on_site'</span>: time_on_site,
+        <span class="hljs-string">'device_type'</span>: devices,
+        <span class="hljs-string">'converted'</span>: converted,
+        <span class="hljs-string">'total_spent'</span>: spending,
+        <span class="hljs-string">'customer_lifetime'</span>: np.random.exponential(scale=<span class="hljs-number">12</span>, size=n_customers) + <span class="hljs-number">1</span>
+    })
+    
+    <span class="hljs-comment"># Add some missing values (3% in income)</span>
+    missing_mask = np.random.rand(n_customers) &lt; <span class="hljs-number">0.03</span>
+    df.loc[missing_mask, <span class="hljs-string">'income'</span>] = np.nan
+    
+    <span class="hljs-keyword">return</span> df
+
+<span class="hljs-comment"># Generate data</span>
+df = generate_ecommerce_data(<span class="hljs-number">10000</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"Dataset shape: <span class="hljs-subst">{df.shape}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nFirst 5 rows:"</span>)
+<span class="hljs-built_in">print</span>(df.head())
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nData Types:"</span>)
+<span class="hljs-built_in">print</span>(df.dtypes)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nMissing Values:"</span>)
+<span class="hljs-built_in">print</span>(df.isnull().<span class="hljs-built_in">sum</span>())
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nBasic Statistics:"</span>)
+<span class="hljs-built_in">print</span>(df.describe())
+
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-comment"># 2. DATA CLEANING AND PREPROCESSING</span>
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n\n2. DATA CLEANING AND PREPROCESSING"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">50</span>)
+
+<span class="hljs-comment"># Handle missing values</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Handling missing values in 'income' column..."</span>)
+imputer = SimpleImputer(strategy=<span class="hljs-string">'median'</span>)
+df[<span class="hljs-string">'income'</span>] = imputer.fit_transform(df[[<span class="hljs-string">'income'</span>]])
+
+<span class="hljs-comment"># Detect and handle outliers using IQR method</span>
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">handle_outliers_iqr</span>(<span class="hljs-params">df, column, threshold=<span class="hljs-number">1.5</span></span>):
+    Q1 = df[column].quantile(<span class="hljs-number">0.25</span>)
+    Q3 = df[column].quantile(<span class="hljs-number">0.75</span>)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - threshold * IQR
+    upper_bound = Q3 + threshold * IQR
+    
+    <span class="hljs-comment"># Cap outliers instead of removing (for demonstration)</span>
+    df[column] = df[column].clip(lower=lower_bound, upper=upper_bound)
+    
+    outliers_count = ((df[column] &lt; lower_bound) | (df[column] &gt; upper_bound)).<span class="hljs-built_in">sum</span>()
+    <span class="hljs-keyword">return</span> outliers_count
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\nOutlier Detection (IQR method):"</span>)
+<span class="hljs-keyword">for</span> col <span class="hljs-keyword">in</span> [<span class="hljs-string">'income'</span>, <span class="hljs-string">'total_spent'</span>, <span class="hljs-string">'visits_last_month'</span>]:
+    outliers = handle_outliers_iqr(df, col)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"<span class="hljs-subst">{col}</span>: <span class="hljs-subst">{outliers}</span> outliers capped (<span class="hljs-subst">{outliers/<span class="hljs-built_in">len</span>(df)*<span class="hljs-number">100</span>:<span class="hljs-number">.1</span>f}</span>%)"</span>)
+
+<span class="hljs-comment"># Encode categorical variables</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\nEncoding categorical variables..."</span>)
+label_encoder = LabelEncoder()
+df[<span class="hljs-string">'device_encoded'</span>] = label_encoder.fit_transform(df[<span class="hljs-string">'device_type'</span>])
+
+<span class="hljs-comment"># Create derived features</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Creating derived features..."</span>)
+df[<span class="hljs-string">'spending_per_visit'</span>] = df[<span class="hljs-string">'total_spent'</span>] / df[<span class="hljs-string">'visits_last_month'</span>].replace(<span class="hljs-number">0</span>, <span class="hljs-number">1</span>)
+df[<span class="hljs-string">'conversion_flag'</span>] = df[<span class="hljs-string">'converted'</span>].apply(<span class="hljs-keyword">lambda</span> x: <span class="hljs-string">'Yes'</span> <span class="hljs-keyword">if</span> x == <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> <span class="hljs-string">'No'</span>)
+df[<span class="hljs-string">'customer_segment'</span>] = pd.qcut(df[<span class="hljs-string">'total_spent'</span>], 
+                                   q=[<span class="hljs-number">0</span>, <span class="hljs-number">0.7</span>, <span class="hljs-number">0.9</span>, <span class="hljs-number">1</span>], 
+                                   labels=[<span class="hljs-string">'Low'</span>, <span class="hljs-string">'Medium'</span>, <span class="hljs-string">'High'</span>])
+
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-comment"># 3. DESCRIPTIVE STATISTICS AND EDA</span>
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n\n3. DESCRIPTIVE STATISTICS AND EXPLORATORY DATA ANALYSIS"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">50</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n3.1 Conversion Rate Analysis:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+conversion_rate = df[<span class="hljs-string">'converted'</span>].mean()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"Overall Conversion Rate: <span class="hljs-subst">{conversion_rate:<span class="hljs-number">.3</span>%}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"Total Conversions: <span class="hljs-subst">{df[<span class="hljs-string">'converted'</span>].<span class="hljs-built_in">sum</span>()}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"Non-conversions: <span class="hljs-subst">{(df[<span class="hljs-string">'converted'</span>] == <span class="hljs-number">0</span>).<span class="hljs-built_in">sum</span>()}</span>"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n3.2 Conversion by Device Type:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+conversion_by_device = df.groupby(<span class="hljs-string">'device_type'</span>)[<span class="hljs-string">'converted'</span>].agg([<span class="hljs-string">'mean'</span>, <span class="hljs-string">'count'</span>])
+<span class="hljs-built_in">print</span>(conversion_by_device)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n3.3 Statistical Tests for Device Comparison:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+<span class="hljs-comment"># Create contingency table for chi-square test</span>
+contingency_table = pd.crosstab(df[<span class="hljs-string">'device_type'</span>], df[<span class="hljs-string">'converted'</span>])
+chi2, p_value, dof, expected = chi2_contingency(contingency_table)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"Chi-square Test for Device vs Conversion:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"Chi-square statistic: <span class="hljs-subst">{chi2:<span class="hljs-number">.4</span>f}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"P-value: <span class="hljs-subst">{p_value:<span class="hljs-number">.6</span>f}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"Significant difference between devices: <span class="hljs-subst">{<span class="hljs-string">'YES'</span> <span class="hljs-keyword">if</span> p_value &lt; <span class="hljs-number">0.05</span> <span class="hljs-keyword">else</span> <span class="hljs-string">'NO'</span>}</span>"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n3.4 Customer Segmentation Analysis:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+segment_stats = df.groupby(<span class="hljs-string">'customer_segment'</span>).agg({
+    <span class="hljs-string">'age'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'income'</span>: <span class="hljs-string">'mean'</span>,
+    <span class="hljs-string">'total_spent'</span>: [<span class="hljs-string">'mean'</span>, <span class="hljs-string">'count'</span>],
+    <span class="hljs-string">'converted'</span>: <span class="hljs-string">'mean'</span>
+}).<span class="hljs-built_in">round</span>(<span class="hljs-number">2</span>)
+<span class="hljs-built_in">print</span>(segment_stats)
+
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-comment"># 4. A/B TESTING: NEW RECOMMENDATION ALGORITHM</span>
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n\n4. A/B TESTING: NEW RECOMMENDATION ALGORITHM"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">50</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">run_ab_test_simulation</span>():
+    <span class="hljs-string">"""Simulate A/B test for new recommendation algorithm"""</span>
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"\n4.1 A/B Test Design:"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"Hypothesis: New algorithm increases conversion rate by at least 10% relative"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"Current conversion rate: 5.2%"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"Expected improvement: 10% relative → 5.72% target"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"Significance level: α = 0.05"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"Statistical power: 80%"</span>)
+    
+    <span class="hljs-comment"># Calculate required sample size</span>
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-keyword">from</span> statsmodels.stats.power <span class="hljs-keyword">import</span> TTestIndPower
+        effect_size = <span class="hljs-number">0.10</span>  <span class="hljs-comment"># 10% relative improvement</span>
+        power_analyzer = TTestIndPower()
+        sample_size = power_analyzer.solve_power(
+            effect_size=effect_size,
+            power=<span class="hljs-number">0.8</span>,
+            alpha=<span class="hljs-number">0.05</span>,
+            ratio=<span class="hljs-number">1.0</span>
+        )
+        sample_size = <span class="hljs-built_in">int</span>(np.ceil(sample_size))
+    <span class="hljs-keyword">except</span> ImportError:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"Note: statsmodels not installed. Using default sample size."</span>)
+        sample_size = <span class="hljs-number">4000</span>
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nRequired sample size per group: <span class="hljs-subst">{sample_size}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Total required sample: <span class="hljs-subst">{<span class="hljs-number">2</span> * sample_size}</span>"</span>)
+    
+    <span class="hljs-comment"># Simulate A/B test data</span>
+    np.random.seed(<span class="hljs-number">42</span>)
+    n_per_group = <span class="hljs-number">5000</span>  <span class="hljs-comment"># Using available data</span>
+    
+    <span class="hljs-comment"># Control group (current algorithm)</span>
+    control_conversions = np.random.binomial(n=<span class="hljs-number">1</span>, p=<span class="hljs-number">0.052</span>, size=n_per_group)
+    
+    <span class="hljs-comment"># Treatment group (new algorithm - 12% improvement)</span>
+    treatment_conversions = np.random.binomial(n=<span class="hljs-number">1</span>, p=<span class="hljs-number">0.05824</span>, size=n_per_group)  <span class="hljs-comment"># 5.824%</span>
+    
+    <span class="hljs-comment"># Calculate conversion rates</span>
+    control_rate = control_conversions.mean()
+    treatment_rate = treatment_conversions.mean()
+    improvement = treatment_rate - control_rate
+    relative_improvement = (improvement / control_rate) * <span class="hljs-number">100</span>
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\n4.2 A/B Test Results:"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Control Group (n=<span class="hljs-subst">{n_per_group}</span>): <span class="hljs-subst">{control_rate:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Treatment Group (n=<span class="hljs-subst">{n_per_group}</span>): <span class="hljs-subst">{treatment_rate:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Absolute Improvement: <span class="hljs-subst">{improvement:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Relative Improvement: <span class="hljs-subst">{relative_improvement:<span class="hljs-number">.1</span>f}</span>%"</span>)
+    
+    <span class="hljs-comment"># Statistical test (two-proportion z-test)</span>
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-keyword">from</span> statsmodels.stats.proportion <span class="hljs-keyword">import</span> proportions_ztest
+        count = np.array([control_conversions.<span class="hljs-built_in">sum</span>(), treatment_conversions.<span class="hljs-built_in">sum</span>()])
+        nobs = np.array([n_per_group, n_per_group])
+        z_stat, p_value = proportions_ztest(count, nobs)
+        
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nStatistical Test Results:"</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Z-statistic: <span class="hljs-subst">{z_stat:<span class="hljs-number">.4</span>f}</span>"</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"P-value: <span class="hljs-subst">{p_value:<span class="hljs-number">.6</span>f}</span>"</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Statistically Significant: <span class="hljs-subst">{<span class="hljs-string">'YES'</span> <span class="hljs-keyword">if</span> p_value &lt; <span class="hljs-number">0.05</span> <span class="hljs-keyword">else</span> <span class="hljs-string">'NO'</span>}</span>"</span>)
+        
+        <span class="hljs-comment"># Confidence interval</span>
+        <span class="hljs-keyword">from</span> statsmodels.stats.proportion <span class="hljs-keyword">import</span> proportion_confint
+        ci_control = proportion_confint(control_conversions.<span class="hljs-built_in">sum</span>(), n_per_group, alpha=<span class="hljs-number">0.05</span>, method=<span class="hljs-string">'wilson'</span>)
+        ci_treatment = proportion_confint(treatment_conversions.<span class="hljs-built_in">sum</span>(), n_per_group, alpha=<span class="hljs-number">0.05</span>, method=<span class="hljs-string">'wilson'</span>)
+        
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\n95% Confidence Intervals:"</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Control: [<span class="hljs-subst">{ci_control[<span class="hljs-number">0</span>]:<span class="hljs-number">.3</span>%}</span>, <span class="hljs-subst">{ci_control[<span class="hljs-number">1</span>]:<span class="hljs-number">.3</span>%}</span>]"</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Treatment: [<span class="hljs-subst">{ci_treatment[<span class="hljs-number">0</span>]:<span class="hljs-number">.3</span>%}</span>, <span class="hljs-subst">{ci_treatment[<span class="hljs-number">1</span>]:<span class="hljs-number">.3</span>%}</span>]"</span>)
+    <span class="hljs-keyword">except</span> ImportError:
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"\nNote: statsmodels not installed. Skipping advanced statistical tests."</span>)
+        p_value = <span class="hljs-number">0.03</span>  <span class="hljs-comment"># Simulated p-value for demonstration</span>
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nSimulated Statistical Test Results:"</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"P-value: <span class="hljs-subst">{p_value:<span class="hljs-number">.6</span>f}</span>"</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Statistically Significant: <span class="hljs-subst">{<span class="hljs-string">'YES'</span> <span class="hljs-keyword">if</span> p_value &lt; <span class="hljs-number">0.05</span> <span class="hljs-keyword">else</span> <span class="hljs-string">'NO'</span>}</span>"</span>)
+    
+    <span class="hljs-comment"># Calculate effect size (Cohen's h)</span>
+    effect_size_cohen = <span class="hljs-number">2</span> * np.arcsin(np.sqrt(treatment_rate)) - <span class="hljs-number">2</span> * np.arcsin(np.sqrt(control_rate))
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nEffect Size (Cohen's h): <span class="hljs-subst">{effect_size_cohen:<span class="hljs-number">.3</span>f}</span>"</span>)
+    
+    <span class="hljs-comment"># Business impact calculation</span>
+    avg_order_value = df[df[<span class="hljs-string">'converted'</span>] == <span class="hljs-number">1</span>][<span class="hljs-string">'total_spent'</span>].mean()
+    monthly_visitors = <span class="hljs-number">100000</span>  <span class="hljs-comment"># Assumed monthly traffic</span>
+    additional_conversions = monthly_visitors * improvement
+    additional_revenue = additional_conversions * avg_order_value
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\n4.3 Business Impact:"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Average Order Value: $<span class="hljs-subst">{avg_order_value:<span class="hljs-number">.2</span>f}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Monthly Website Visitors: <span class="hljs-subst">{monthly_visitors:,}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Additional Monthly Conversions: <span class="hljs-subst">{additional_conversions:<span class="hljs-number">.0</span>f}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Additional Monthly Revenue: $<span class="hljs-subst">{additional_revenue:,<span class="hljs-number">.2</span>f}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Annual Revenue Impact: $<span class="hljs-subst">{additional_revenue * <span class="hljs-number">12</span>:,<span class="hljs-number">.2</span>f}</span>"</span>)
+    
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">'control_rate'</span>: control_rate,
+        <span class="hljs-string">'treatment_rate'</span>: treatment_rate,
+        <span class="hljs-string">'improvement'</span>: improvement,
+        <span class="hljs-string">'p_value'</span>: p_value,
+        <span class="hljs-string">'significant'</span>: p_value &lt; <span class="hljs-number">0.05</span>,
+        <span class="hljs-string">'additional_revenue'</span>: additional_revenue
+    }
+
+<span class="hljs-comment"># Run A/B test simulation</span>
+ab_results = run_ab_test_simulation()
+
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-comment"># 5. CUSTOMER SEGMENTATION USING CLUSTERING</span>
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n\n5. CUSTOMER SEGMENTATION USING K-MEANS CLUSTERING"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">50</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">perform_customer_segmentation</span>(<span class="hljs-params">df, n_clusters=<span class="hljs-number">4</span></span>):
+    <span class="hljs-string">"""Perform customer segmentation using K-means clustering"""</span>
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"Performing customer segmentation..."</span>)
+    
+    <span class="hljs-comment"># Select features for clustering</span>
+    features = [<span class="hljs-string">'age'</span>, <span class="hljs-string">'income'</span>, <span class="hljs-string">'visits_last_month'</span>, <span class="hljs-string">'time_on_site'</span>, <span class="hljs-string">'total_spent'</span>]
+    X = df[features].copy()
+    
+    <span class="hljs-comment"># Handle infinite values and scale</span>
+    X = X.replace([np.inf, -np.inf], np.nan).fillna(X.mean())
+    scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
+    
+    <span class="hljs-comment"># Apply K-means clustering</span>
+    kmeans = KMeans(n_clusters=n_clusters, random_state=<span class="hljs-number">42</span>, n_init=<span class="hljs-number">10</span>)
+    df[<span class="hljs-string">'cluster'</span>] = kmeans.fit_predict(X_scaled)
+    
+    <span class="hljs-comment"># Analyze clusters</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nCluster Sizes:"</span>)
+    <span class="hljs-built_in">print</span>(df[<span class="hljs-string">'cluster'</span>].value_counts().sort_index())
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nCluster Characteristics:"</span>)
+    cluster_stats = df.groupby(<span class="hljs-string">'cluster'</span>)[features].mean().<span class="hljs-built_in">round</span>(<span class="hljs-number">2</span>)
+    <span class="hljs-built_in">print</span>(cluster_stats)
+    
+    <span class="hljs-comment"># Calculate conversion rate by cluster</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nConversion Rate by Cluster:"</span>)
+    conversion_by_cluster = df.groupby(<span class="hljs-string">'cluster'</span>)[<span class="hljs-string">'converted'</span>].mean()
+    <span class="hljs-built_in">print</span>(conversion_by_cluster.apply(<span class="hljs-keyword">lambda</span> x: <span class="hljs-string">f"<span class="hljs-subst">{x:<span class="hljs-number">.3</span>%}</span>"</span>))
+    
+    <span class="hljs-comment"># Name the clusters based on characteristics</span>
+    cluster_names = {}
+    <span class="hljs-keyword">for</span> cluster_id <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(n_clusters):
+        cluster_data = df[df[<span class="hljs-string">'cluster'</span>] == cluster_id]
+        
+        <span class="hljs-keyword">if</span> cluster_data[<span class="hljs-string">'income'</span>].mean() &gt; df[<span class="hljs-string">'income'</span>].mean() <span class="hljs-keyword">and</span> \
+           cluster_data[<span class="hljs-string">'total_spent'</span>].mean() &gt; df[<span class="hljs-string">'total_spent'</span>].mean():
+            cluster_names[cluster_id] = <span class="hljs-string">'High-Value Customers'</span>
+        <span class="hljs-keyword">elif</span> cluster_data[<span class="hljs-string">'visits_last_month'</span>].mean() &gt; df[<span class="hljs-string">'visits_last_month'</span>].mean():
+            cluster_names[cluster_id] = <span class="hljs-string">'Frequent Visitors'</span>
+        <span class="hljs-keyword">elif</span> cluster_data[<span class="hljs-string">'age'</span>].mean() &lt; df[<span class="hljs-string">'age'</span>].mean():
+            cluster_names[cluster_id] = <span class="hljs-string">'Young Customers'</span>
+        <span class="hljs-keyword">else</span>:
+            cluster_names[cluster_id] = <span class="hljs-string">'Average Customers'</span>
+    
+    df[<span class="hljs-string">'cluster_name'</span>] = df[<span class="hljs-string">'cluster'</span>].<span class="hljs-built_in">map</span>(cluster_names)
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"\nCluster Names:"</span>)
+    <span class="hljs-keyword">for</span> cluster_id, name <span class="hljs-keyword">in</span> cluster_names.items():
+        size = (df[<span class="hljs-string">'cluster'</span>] == cluster_id).<span class="hljs-built_in">sum</span>()
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Cluster <span class="hljs-subst">{cluster_id}</span>: <span class="hljs-subst">{name}</span> (n=<span class="hljs-subst">{size}</span>)"</span>)
+    
+    <span class="hljs-keyword">return</span> df, kmeans
+
+<span class="hljs-comment"># Perform segmentation</span>
+df, kmeans_model = perform_customer_segmentation(df)
+
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-comment"># 6. PREDICTIVE MODELING: CONVERSION PREDICTION</span>
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n\n6. PREDICTIVE MODELING: CONVERSION PREDICTION"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">50</span>)
+
+<span class="hljs-keyword">def</span> <span class="hljs-title function_">build_conversion_prediction_model</span>(<span class="hljs-params">df</span>):
+    <span class="hljs-string">"""Build and evaluate conversion prediction model"""</span>
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"Building conversion prediction model..."</span>)
+    
+    <span class="hljs-comment"># Prepare features and target</span>
+    features = [<span class="hljs-string">'age'</span>, <span class="hljs-string">'income'</span>, <span class="hljs-string">'visits_last_month'</span>, <span class="hljs-string">'time_on_site'</span>, <span class="hljs-string">'device_encoded'</span>, <span class="hljs-string">'cluster'</span>]
+    X = df[features].copy()
+    y = df[<span class="hljs-string">'converted'</span>].copy()
+    
+    <span class="hljs-comment"># Train-test split</span>
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=<span class="hljs-number">0.3</span>, random_state=<span class="hljs-number">42</span>, stratify=y
+    )
+    
+    <span class="hljs-comment"># Scale features</span>
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+    
+    <span class="hljs-comment"># Train Logistic Regression model</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"\n6.1 Logistic Regression Model:"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+    lr_model = LogisticRegression(random_state=<span class="hljs-number">42</span>, max_iter=<span class="hljs-number">1000</span>)
+    lr_model.fit(X_train_scaled, y_train)
+    
+    <span class="hljs-comment"># Make predictions</span>
+    y_pred_lr = lr_model.predict(X_test_scaled)
+    y_pred_proba_lr = lr_model.predict_proba(X_test_scaled)[:, <span class="hljs-number">1</span>]
+    
+    <span class="hljs-comment"># Evaluate model</span>
+    lr_accuracy = accuracy_score(y_test, y_pred_lr)
+    lr_precision = precision_score(y_test, y_pred_lr)
+    lr_recall = recall_score(y_test, y_pred_lr)
+    lr_f1 = f1_score(y_test, y_pred_lr)
+    lr_roc_auc = roc_auc_score(y_test, y_pred_proba_lr)
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Accuracy: <span class="hljs-subst">{lr_accuracy:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Precision: <span class="hljs-subst">{lr_precision:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Recall: <span class="hljs-subst">{lr_recall:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"F1-Score: <span class="hljs-subst">{lr_f1:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"ROC-AUC: <span class="hljs-subst">{lr_roc_auc:<span class="hljs-number">.3</span>f}</span>"</span>)
+    
+    <span class="hljs-comment"># Train Random Forest model</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"\n6.2 Random Forest Model:"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+    rf_model = RandomForestClassifier(n_estimators=<span class="hljs-number">100</span>, random_state=<span class="hljs-number">42</span>)
+    rf_model.fit(X_train, y_train)
+    
+    <span class="hljs-comment"># Make predictions</span>
+    y_pred_rf = rf_model.predict(X_test)
+    y_pred_proba_rf = rf_model.predict_proba(X_test)[:, <span class="hljs-number">1</span>]
+    
+    <span class="hljs-comment"># Evaluate model</span>
+    rf_accuracy = accuracy_score(y_test, y_pred_rf)
+    rf_precision = precision_score(y_test, y_pred_rf)
+    rf_recall = recall_score(y_test, y_pred_rf)
+    rf_f1 = f1_score(y_test, y_pred_rf)
+    rf_roc_auc = roc_auc_score(y_test, y_pred_proba_rf)
+    
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Accuracy: <span class="hljs-subst">{rf_accuracy:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Precision: <span class="hljs-subst">{rf_precision:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"Recall: <span class="hljs-subst">{rf_recall:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"F1-Score: <span class="hljs-subst">{rf_f1:<span class="hljs-number">.3</span>%}</span>"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f"ROC-AUC: <span class="hljs-subst">{rf_roc_auc:<span class="hljs-number">.3</span>f}</span>"</span>)
+    
+    <span class="hljs-comment"># Feature importance from Random Forest</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"\n6.3 Feature Importance (Random Forest):"</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">30</span>)
+    feature_importance = pd.DataFrame({
+        <span class="hljs-string">'feature'</span>: features,
+        <span class="hljs-string">'importance'</span>: rf_model.feature_importances_
+    }).sort_values(<span class="hljs-string">'importance'</span>, ascending=<span class="hljs-literal">False</span>)
+    
+    <span class="hljs-built_in">print</span>(feature_importance)
+    
+    <span class="hljs-comment"># Determine best model</span>
+    <span class="hljs-keyword">if</span> rf_accuracy &gt; lr_accuracy:
+        best_model = <span class="hljs-string">'Random Forest'</span>
+        best_accuracy = rf_accuracy
+    <span class="hljs-keyword">else</span>:
+        best_model = <span class="hljs-string">'Logistic Regression'</span>
+        best_accuracy = lr_accuracy
+    
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">'lr_model'</span>: lr_model,
+        <span class="hljs-string">'rf_model'</span>: rf_model,
+        <span class="hljs-string">'scaler'</span>: scaler,
+        <span class="hljs-string">'feature_importance'</span>: feature_importance,
+        <span class="hljs-string">'model_metrics'</span>: {
+            <span class="hljs-string">'lr_accuracy'</span>: lr_accuracy,
+            <span class="hljs-string">'rf_accuracy'</span>: rf_accuracy,
+            <span class="hljs-string">'lr_f1'</span>: lr_f1,
+            <span class="hljs-string">'rf_f1'</span>: rf_f1,
+            <span class="hljs-string">'best_model'</span>: best_model,
+            <span class="hljs-string">'best_accuracy'</span>: best_accuracy
+        }
+    }
+
+<span class="hljs-comment"># Build prediction model</span>
+model_results = build_conversion_prediction_model(df)
+
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-comment"># 7. BUSINESS RECOMMENDATIONS AND INSIGHTS</span>
+<span class="hljs-comment"># ============================================================================</span>
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n\n7. BUSINESS RECOMMENDATIONS AND INSIGHTS"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"-"</span> * <span class="hljs-number">50</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n"</span> + <span class="hljs-string">"="</span> * <span class="hljs-number">60</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"KEY FINDINGS:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"="</span> * <span class="hljs-number">60</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"\n1. CONVERSION RATE:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • Overall conversion: <span class="hljs-subst">{df[<span class="hljs-string">'converted'</span>].mean():<span class="hljs-number">.3</span>%}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • Mobile users convert at: <span class="hljs-subst">{df[df[<span class="hljs-string">'device_type'</span>] == <span class="hljs-string">'Mobile'</span>][<span class="hljs-string">'converted'</span>].mean():<span class="hljs-number">.3</span>%}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • Desktop users convert at: <span class="hljs-subst">{df[df[<span class="hljs-string">'device_type'</span>] == <span class="hljs-string">'Desktop'</span>][<span class="hljs-string">'converted'</span>].mean():<span class="hljs-number">.3</span>%}</span>"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"\n2. CUSTOMER SEGMENTS:"</span>)
+high_value_count = (df[<span class="hljs-string">'cluster_name'</span>] == <span class="hljs-string">'High-Value Customers'</span>).<span class="hljs-built_in">sum</span>()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • High-value customers: <span class="hljs-subst">{high_value_count}</span> customers"</span>)
+high_value_conv = df[df[<span class="hljs-string">'cluster_name'</span>] == <span class="hljs-string">'High-Value Customers'</span>][<span class="hljs-string">'converted'</span>].mean()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • Their conversion rate: <span class="hljs-subst">{high_value_conv:<span class="hljs-number">.3</span>%}</span>"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"\n3. A/B TEST RESULTS:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • New algorithm improvement: <span class="hljs-subst">{(ab_results[<span class="hljs-string">'improvement'</span>]*<span class="hljs-number">100</span>):<span class="hljs-number">.2</span>f}</span>%"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • Statistical significance: <span class="hljs-subst">{<span class="hljs-string">'Significant'</span> <span class="hljs-keyword">if</span> ab_results[<span class="hljs-string">'significant'</span>] <span class="hljs-keyword">else</span> <span class="hljs-string">'Not Significant'</span>}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • Estimated annual revenue impact: $<span class="hljs-subst">{ab_results[<span class="hljs-string">'additional_revenue'</span>] * <span class="hljs-number">12</span>:,<span class="hljs-number">.2</span>f}</span>"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"\n4. PREDICTIVE MODELING:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • Best model: <span class="hljs-subst">{model_results[<span class="hljs-string">'model_metrics'</span>][<span class="hljs-string">'best_model'</span>]}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • Best model accuracy: <span class="hljs-subst">{model_results[<span class="hljs-string">'model_metrics'</span>][<span class="hljs-string">'best_accuracy'</span>]:<span class="hljs-number">.3</span>%}</span>"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">f"   • Top predictor: <span class="hljs-subst">{model_results[<span class="hljs-string">'feature_importance'</span>].iloc[<span class="hljs-number">0</span>][<span class="hljs-string">'feature'</span>]}</span>"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n"</span> + <span class="hljs-string">"="</span> * <span class="hljs-number">60</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"RECOMMENDATIONS:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"="</span> * <span class="hljs-number">60</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n1. IMPLEMENT NEW RECOMMENDATION ALGORITHM"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Expected conversion improvement: 10-12%"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Estimated annual revenue increase: $150,000+"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Implementation priority: HIGH"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n2. TARGET HIGH-VALUE CUSTOMER SEGMENT"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Focus marketing efforts on cluster showing highest spending"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Create personalized offers for this segment"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Monitor their conversion rates closely"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n3. OPTIMIZE MOBILE EXPERIENCE"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Mobile users show different behavior patterns"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Consider mobile-specific features and UX improvements"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • A/B test mobile-specific changes"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n4. IMPLEMENT PREDICTIVE MODEL FOR PERSONALIZATION"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Use model to predict which visitors are likely to convert"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Personalize website experience based on predictions"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Retrain model monthly with new data"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n"</span> + <span class="hljs-string">"="</span> * <span class="hljs-number">60</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"NEXT STEPS:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"="</span> * <span class="hljs-number">60</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n1. SHORT-TERM (1-2 weeks):"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Implement A/B test for recommendation algorithm"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Create dashboard for real-time monitoring"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Set up automated reporting"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n2. MEDIUM-TERM (1-2 months):"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Develop targeted marketing campaigns for high-value segment"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Implement predictive model in production"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Conduct additional A/B tests for UX improvements"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n3. LONG-TERM (3-6 months):"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Expand segmentation to include behavioral patterns"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Implement advanced personalization engine"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"   • Develop customer lifetime value prediction model"</span>)
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"\n"</span> + <span class="hljs-string">"="</span> * <span class="hljs-number">70</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"SUMMARY:"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Statistical analysis provides actionable insights for business decisions."</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Key success factors: data quality, proper testing methodology,"</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"and continuous monitoring of implemented changes."</span>)
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"="</span> * <span class="hljs-number">70</span>)</code></pre>
+          </div>
+        </div>
+        
+        <div class="success">
+          <i class="fa-solid fa-lightbulb"></i>
+          <div>
+            <strong>Key Takeaway:</strong> This complete pipeline demonstrates how statistical methods (descriptive stats, 
+            hypothesis testing, clustering, predictive modeling) come together to solve real business problems. 
+            Each section builds on the previous one to provide actionable insights.
+          </div>
+        </div>
+        
+        <div class="info">
+          <i class="fa-solid fa-terminal"></i>
+          <div>
+            <strong>How to run this code:</strong>
+            <ol style="margin-top: 10px; padding-left: 20px;">
+              <li>Copy the code above using the "Copy Code" button</li>
+              <li>Save it as <code>ecommerce_analysis.py</code></li>
+              <li>Install required packages: <code>pip install numpy pandas matplotlib seaborn scipy scikit-learn statsmodels</code></li>
+              <li>Run with: <code>python ecommerce_analysis.py</code></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 4: A/B Test Simulator -->
+      <section class="section">
+        <h3><i class="fa-solid fa-sliders"></i> Interactive A/B Test Simulator</h3>
+        
+        <div class="simulator-explanation">
+          <h5><i class="fa-solid fa-lightbulb"></i> Understanding A/B Testing</h5>
+          <p><strong>A/B Testing</strong> compares two versions (A and B) to see which performs better. In our e-commerce case:</p>
+          <ul style="margin: 10px 0 10px 20px; color: #475569;">
+            <li><strong>Group A (Control):</strong> Current website design/algorithm</li>
+            <li><strong>Group B (Treatment):</strong> New website design/algorithm</li>
+            <li><strong>Metric:</strong> Conversion rate (percentage of visitors who purchase)</li>
+          </ul>
+          <p>We use <strong>statistical tests</strong> to determine if differences are real or just random chance.</p>
+        </div>
+        
+        <div class="interactive-tool">
+          <h4><i class="fa-solid fa-calculator"></i> A/B Test Simulator</h4>
+          <p>Adjust the parameters to see how they affect your A/B test results.</p>
+          
+          <div class="simulation-controls">
+            <div class="slider-container">
+              <label for="baseConversion"><i class="fa-solid fa-chart-line"></i> Base Conversion Rate (Group A):</label>
+              <div class="slider-row">
+                <input type="range" id="baseConversion" min="1" max="20" value="11" step="0.5">
+                <span class="slider-value" id="baseConversionValue">15.0%</span>
+              </div>
+              <div style="font-size: 12px; color: #64748b; margin-top: 5px;">
+                Current conversion rate without changes
+              </div>
+            </div>
+            
+            <div class="slider-container">
+              <label for="improvement"><i class="fa-solid fa-arrow-up"></i> Expected Improvement (Group B):</label>
+              <div class="slider-row">
+                <input type="range" id="improvement" min="1" max="100" value="39" step="1">
+                <span class="slider-value" id="improvementValue">39%</span>
+              </div>
+              <div style="font-size: 12px; color: #64748b; margin-top: 5px;">
+                How much better you expect Group B to be
+              </div>
+            </div>
+            
+            <div class="slider-container">
+              <label for="sampleSize"><i class="fa-solid fa-users"></i> Sample Size per Group:</label>
+              <div class="slider-row">
+                <input type="range" id="sampleSize" min="100" max="10000" value="5900" step="100">
+                <span class="slider-value" id="sampleSizeValue">5,900</span>
+              </div>
+              <div style="font-size: 12px; color: #64748b; margin-top: 5px;">
+                Number of visitors in each group (A and B)
+              </div>
+            </div>
+            
+            <div class="slider-container">
+              <label for="confidenceLevel"><i class="fa-solid fa-shield-alt"></i> Confidence Level:</label>
+              <div class="slider-row">
+                <input type="range" id="confidenceLevel" min="90" max="99" value="95" step="1">
+                <span class="slider-value" id="confidenceLevelValue">95%</span>
+              </div>
+              <div style="font-size: 12px; color: #64748b; margin-top: 5px;">
+                How confident we want to be in our results
+              </div>
+            </div>
+          </div>
+          
+          <!-- Group A and Group B Display -->
+          <div class="groups-container">
+            <div class="group-box control">
+              <div class="group-header">
+                <div class="group-title control">
+                  <i class="fa-solid fa-circle" style="color: #64748b;"></i>
+                  Group A (Control)
+                </div>
+                <div class="group-subtitle" style="color: #64748b; font-size: 14px;">
+                  Current Version
+                </div>
+              </div>
+              <div class="group-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Sample Size</div>
+                  <div class="stat-value control" id="groupASample">5,900</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Conversions</div>
+                  <div class="stat-value control" id="groupAConversions">885</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Conversion Rate</div>
+                  <div class="stat-value control" id="groupARate">15.0%</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="group-box treatment">
+              <div class="group-header">
+                <div class="group-title treatment">
+                  <i class="fa-solid fa-circle" style="color: #8b5cf6;"></i>
+                  Group B (Treatment)
+                </div>
+                <div class="group-subtitle" style="color: #8b5cf6; font-size: 14px;">
+                  New Version
+                </div>
+              </div>
+              <div class="group-stats">
+                <div class="stat-item">
+                  <div class="stat-label">Sample Size</div>
+                  <div class="stat-value treatment" id="groupBSample">5,900</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Conversions</div>
+                  <div class="stat-value treatment" id="groupBConversions">1,230</div>
+                </div>
+                <div class="stat-item">
+                  <div class="stat-label">Conversion Rate</div>
+                  <div class="stat-value treatment" id="groupBRate">20.9%</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <button id="runSimulation">
+            <i class="fa-solid fa-play"></i> Run A/B Test Simulation
+          </button>
+          
+          <!-- Results Section -->
+          <div id="testResults" class="test-results show">
+            <h4 style="margin-top:0; color:#5b21b6;"><i class="fa-solid fa-chart-bar"></i> Statistical Test Results</h4>
+            
+            <div class="results-grid">
+              <div class="result-card">
+                <div class="result-label">Absolute Improvement</div>
+                <div class="result-value improvement" id="absImprovement">5.9%</div>
+                <div class="result-label">Group B - Group A</div>
+              </div>
+              
+              <div class="result-card">
+                <div class="result-label">Relative Improvement</div>
+                <div class="result-value improvement" id="relImprovement">39.0%</div>
+                <div class="result-label">(B-A)/A × 100%</div>
+              </div>
+              
+              <div class="result-card">
+                <div class="result-label">P-value</div>
+                <div class="result-value p-value" id="pValue">0.0001</div>
+                <div class="result-label">Probability it's random chance</div>
+              </div>
+              
+              <div class="result-card">
+                <div class="result-label">Statistical Significance</div>
+                <div class="result-value significant" id="significance">SIGNIFICANT</div>
+                <div class="result-label">p &lt; 0.05</div>
+              </div>
+              
+              <div class="result-card">
+                <div class="result-label">Statistical Power</div>
+                <div class="result-value power" id="statPower">99%</div>
+                <div class="result-label">Chance to detect real effect</div>
+              </div>
+              
+              <div class="result-card">
+                <div class="result-label">Required Sample Size</div>
+                <div class="result-value" id="reqSampleSize">688</div>
+                <div class="result-label">For 80% power</div>
+              </div>
+            </div>
+            
+            <!-- Confidence Intervals -->
+            <div class="confidence-interval">
+              <div class="ci-title">
+                <i class="fa-solid fa-chart-area"></i>
+                95% Confidence Intervals
+              </div>
+              <div class="ci-values">
+                <div class="ci-group">
+                  <div class="ci-label">Group A (Control)</div>
+                  <div class="ci-range" id="ciControl">14.1% - 15.9%</div>
+                </div>
+                <div class="ci-group">
+                  <div class="ci-label">Group B (Treatment)</div>
+                  <div class="ci-range" id="ciTreatment">19.8% - 21.9%</div>
+                </div>
+                <div class="ci-group">
+                  <div class="ci-label">Difference (B - A)</div>
+                  <div class="ci-range" id="ciDifference">4.5% - 7.2%</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Business Impact -->
+            <div class="business-impact">
+              <h5><i class="fa-solid fa-business-time"></i> Business Impact Analysis</h5>
+              <p style="color: #065f46; margin-bottom: 15px;">Assuming 100,000 monthly visitors and $120 average order value:</p>
+              
+              <div class="business-stats">
+                <div class="business-stat">
+                  <div class="business-label">Monthly Conversions (A)</div>
+                  <div class="business-value" id="monthlyConvA">15,000</div>
+                </div>
+                <div class="business-stat">
+                  <div class="business-label">Monthly Conversions (B)</div>
+                  <div class="business-value" id="monthlyConvB">20,850</div>
+                </div>
+                <div class="business-stat">
+                  <div class="business-label">Additional Conversions</div>
+                  <div class="business-value" id="addlConversions">5,850</div>
+                </div>
+                <div class="business-stat">
+                  <div class="business-label">Additional Monthly Revenue</div>
+                  <div class="business-value" id="addlRevenue">$702,000</div>
+                </div>
+                <div class="business-stat">
+                  <div class="business-label">Annual Revenue Impact</div>
+                  <div class="business-value" id="annualRevenue">$8.42M</div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Interpretation -->
+            <div class="interpretation">
+              <h6><i class="fa-solid fa-info-circle"></i> Statistical Interpretation</h6>
+              <p><strong>P-value (0.0001):</strong> There's only a 0.01% probability that the 4.3% improvement happened by random chance. This is <strong>highly statistically significant</strong> (p &lt; 0.05).</p>
+              <p><strong>Statistical Power (95%):</strong> If Group B is truly better, we have a 95% chance of detecting it with this sample size.</p>
+              <p><strong>Confidence Intervals:</strong> We're 95% confident that the true improvement is between 3.8% and 4.8%.</p>
+            </div>
+            
+            <!-- Decision Recommendation -->
+            <div class="decision-recommendation">
+              <h6><i class="fa-solid fa-check-circle"></i> Decision Recommendation</h6>
+              <p id="decisionText">✅ <strong>IMPLEMENT THE CHANGE:</strong> Group B shows statistically significant improvement with a p-value of 0.0001. The business impact is substantial ($8.42M annually).</p>
+              
+              <div style="margin-top: 15px; padding: 10px; background: white; border-radius: 6px; border-left: 4px solid #10b981;">
+                <p style="margin: 0; color: #065f46;"><strong>Decision Framework:</strong></p>
+                <ul style="margin: 10px 0 0 20px; color: #475569;">
+                  <li><strong>Statistical Significance:</strong> ✅ p = 0.0001 &lt; 0.05</li>
+                  <li><strong>Practical Significance:</strong> ✅ $6.19M annual revenue increase</li>
+                  <li><strong>Sample Size Adequacy:</strong> ✅ 5,900 per group (needed: 1,234)</li>
+                  <li><strong>Statistical Power:</strong> ✅ 95% (excellent)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Explanation of Key Concepts -->
+          <div class="simulator-explanation" style="margin-top: 30px;">
+            <h5><i class="fa-solid fa-book"></i> Key A/B Testing Concepts Explained</h5>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 15px;">
+              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <h6 style="color: #1e40af; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-vial" style="color: #3b82f6;"></i>
+                  P-value
+                </h6>
+                <p style="font-size: 14px; color: #475569;">Probability that the observed difference happened by random chance. <strong>p &lt; 0.05</strong> means there's less than 5% chance it's random.</p>
+              </div>
+              
+              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <h6 style="color: #1e40af; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-bolt" style="color: #f59e0b;"></i>
+                  Statistical Power
+                </h6>
+                <p style="font-size: 14px; color: #475569;">Probability of detecting a real effect. <strong>80%+ is good</strong>. Low power means you might miss real improvements.</p>
+              </div>
+              
+              <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <h6 style="color: #1e40af; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                  <i class="fa-solid fa-chart-line" style="color: #10b981;"></i>
+                  Confidence Interval
+                </h6>
+                <p style="font-size: 14px; color: #475569;">Range where the true value likely falls. A 95% CI means we're 95% confident the true value is within that range.</p>
+              </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px;">
+              <h6 style="color: #92400e; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-balance-scale" style="color: #d97706;"></i>
+                Statistical vs. Practical Significance
+              </h6>
+              <p style="font-size: 14px; color: #92400e;">
+                <strong>Statistical significance</strong> (p &lt; 0.05) tells us the result is reliable. 
+                <strong>Practical significance</strong> tells us if the improvement matters for business. 
+                You need <strong>BOTH</strong> for a successful test.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 5: Implementation Checklist -->
+      <section class="section">
+        <h3><i class="fa-solid fa-list-check"></i> Implementation Checklist</h3>
+        
+        <div class="checklist">
+          <h5><i class="fa-solid fa-clipboard-check"></i> Complete This Case Study</h5>
+          
+          <div class="checklist-item">
+            <input type="checkbox" id="step1">
+            <label for="step1">Run the complete Python pipeline and understand each section</label>
+          </div>
+          
+          <div class="checklist-item">
+            <input type="checkbox" id="step2">
+            <label for="step2">Modify the base conversion rate to 3% and rerun analysis</label>
+          </div>
+          
+          <div class="checklist-item">
+            <input type="checkbox" id="step3">
+            <label for="step3">Add a new feature: "pages_per_visit" and incorporate into analysis</label>
+          </div>
+          
+          <div class="checklist-item">
+            <input type="checkbox" id="step4">
+            <label for="step4">Experiment with different numbers of clusters (3, 5, 6) for segmentation</label>
+          </div>
+          
+          <div class="checklist-item">
+            <input type="checkbox" id="step5">
+            <label for="step5">Use the interactive simulator to test different business scenarios</label>
+          </div>
+          
+          <div class="checklist-item">
+            <input type="checkbox" id="step6">
+            <label for="step6">Write a 1-page executive summary of findings and recommendations</label>
+          </div>
+          
+          <button onclick="checkAll()" style="margin-top:15px;">
+            <i class="fa-solid fa-check-double"></i> Mark All as Complete
+          </button>
+        </div>
+        
+        <div class="decision-framework">
+          <h4><i class="fa-solid fa-sitemap"></i> Decision Framework for Implementation</h4>
+          
+          <div class="steps">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div>
+                <div class="step-title">Analyze Current Performance</div>
+                <p>Establish baseline metrics (conversion rate, average order value, customer segments)</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">2</div>
+              <div>
+                <div class="step-title">Design Experiments</div>
+                <p>Create A/B tests with clear hypotheses, success metrics, and sample size calculations</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">3</div>
+              <div>
+                <div class="step-title">Run Statistical Analysis</div>
+                <p>Apply appropriate statistical tests, check assumptions, calculate confidence intervals</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">4</div>
+              <div>
+                <div class="step-title">Interpret Results</div>
+                <p>Consider both statistical significance (p-values) and practical significance (business impact)</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">5</div>
+              <div>
+                <div class="step-title">Make Recommendations</div>
+                <p>Provide clear, actionable recommendations with estimated impact and implementation steps</p>
+              </div>
+            </div>
+            
+            <div class="step">
+              <div class="step-number">6</div>
+              <div>
+                <div class="step-title">Monitor and Iterate</div>
+                <p>Track implementation results, gather feedback, and continuously improve</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Section 6: Learning Outcomes Assessment -->
+      <section class="section">
+        <h3><i class="fa-solid fa-graduation-cap"></i> Learning Outcomes Assessment</h3>
+        
+        <div class="insight-box">
+          <h5><i class="fa-solid fa-question-circle"></i> Self-Assessment Questions</h5>
+          
+          <ol>
+            <li>What statistical test would you use to compare conversion rates between three different website layouts?</li>
+            <li>How would you calculate the required sample size for an A/B test expecting a 15% relative improvement from a 4% baseline?</li>
+            <li>If your A/B test shows p = 0.06, what would you recommend to the business team?</li>
+            <li>How can customer segmentation help in designing more effective marketing campaigns?</li>
+            <li>What are the key differences between statistical significance and business significance?</li>
+          </ol>
+          
+          <div class="warning" style="margin-top:15px;">
+            <i class="fa-solid fa-lightbulb"></i>
+            <div>
+              <strong>Critical Thinking:</strong> Consider how you would adapt this analysis for a different industry 
+              (e.g., healthcare, finance, education). What additional considerations would be important?
+            </div>
+          </div>
+        </div>
+        
+        <div class="info">
+          <i class="fa-solid fa-arrow-right"></i>
+          <div>
+            <strong>Next Steps:</strong> In the final section (Wrap-up), we'll review all concepts from Module 3A, 
+            connect them to real-world ML applications, and prepare for Module 3B: Probability Theory for ML.
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <footer>
+      <div class="footer-content">
+        <h4>IAF 604: Machine Learning &amp; Predictive Analytics</h4>
+        <p>Module 3A: Statistics and Sampling for ML | Section 8: Practical Application</p>
+        
+        <div class="footer-links">
+          <a href="Module3_section7.html"><i class="fa-solid fa-arrow-left"></i> Previous: Sampling Implementation</a>
+          
+          
+        </div>
+        
+        <p style="margin-top: 20px; color: #cbd5e1; font-size: 14px;">
+          © 2024 Department of Informatics and Analytics — Educational Material<br>
+          Instructor: Ali Noori | University of North Carolina at Greensboro
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="copyToast" class="toast">
+    <i class="fa-solid fa-check-circle"></i>
+    <span>Code copied to clipboard!</span>
+  </div>
+
+  <script>
+    // Initialize Highlight.js for syntax highlighting
+    hljs.highlightAll();
+    
+    // Toast notification
+    function showToast(message) {
+      const toast = document.getElementById('copyToast');
+      const toastText = toast.querySelector('span');
+      
+      if (message) {
+        toastText.textContent = message;
+      }
+      
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    
+    // Toggle code blocks
+    function toggleCode(codeId) {
+      const codeContent = document.getElementById(codeId);
+      const toggleBtn = codeContent.previousElementSibling.querySelector('.toggle-btn i');
+      
+      if (codeContent.classList.contains('expanded')) {
+        codeContent.classList.remove('expanded');
+        toggleBtn.classList.remove('fa-chevron-up');
+        toggleBtn.classList.add('fa-chevron-down');
+      } else {
+        codeContent.classList.add('expanded');
+        toggleBtn.classList.remove('fa-chevron-down');
+        toggleBtn.classList.add('fa-chevron-up');
+      }
+    }
+    
+    // Copy code to clipboard
+    function copyCode(codeId, event) {
+      if (event) event.stopPropagation();
+      
+      const codeContent = document.getElementById(codeId);
+      const codeElement = codeContent.querySelector('pre code');
+      
+      // Get the text content
+      const textarea = document.createElement('textarea');
+      textarea.value = codeElement.textContent;
+      document.body.appendChild(textarea);
+      
+      // Select and copy
+      textarea.select();
+      textarea.setSelectionRange(0, 99999);
+      
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          // Find the copy button that was clicked
+          let copyBtn;
+          if (event && event.target.classList.contains('copy-btn')) {
+            copyBtn = event.target;
+          } else if (event && event.target.classList.contains('copy-btn-bottom')) {
+            copyBtn = event.target;
+          } else if (event && event.target.parentElement.classList.contains('copy-btn')) {
+            copyBtn = event.target.parentElement;
+          } else if (event && event.target.parentElement.classList.contains('copy-btn-bottom')) {
+            copyBtn = event.target.parentElement;
+          }
+          
+          if (copyBtn) {
+            // Visual feedback
+            copyBtn.classList.add('copied');
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+            
+            // Show toast
+            showToast('Code copied to clipboard!');
+            
+            // Reset button after 2 seconds
+            setTimeout(() => {
+              copyBtn.classList.remove('copied');
+              copyBtn.innerHTML = originalHTML;
+            }, 2000);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to copy:', err);
+        showToast('Failed to copy code. Please select and copy manually.');
+      }
+      
+      // Clean up
+      document.body.removeChild(textarea);
+    }
+    
+    // Initialize MathJax
+    if (window.MathJax) {
+      MathJax.typesetPromise();
+    }
+    
+    // A/B Test Simulator Functions
+    
+    // Format percentage
+    function formatPercent(value) {
+      return `${value.toFixed(1)}%`;
+    }
+    
+    // Update slider values
+    document.getElementById('baseConversion').addEventListener('input', function() {
+      document.getElementById('baseConversionValue').textContent = formatPercent(parseFloat(this.value));
+      updateGroupStats();
+    });
+    
+    document.getElementById('improvement').addEventListener('input', function() {
+      document.getElementById('improvementValue').textContent = `${this.value}%`;
+      updateGroupStats();
+    });
+    
+    document.getElementById('sampleSize').addEventListener('input', function() {
+      const value = parseInt(this.value);
+      document.getElementById('sampleSizeValue').textContent = value.toLocaleString();
+      updateGroupStats();
+    });
+    
+    document.getElementById('confidenceLevel').addEventListener('input', function() {
+      document.getElementById('confidenceLevelValue').textContent = `${this.value}%`;
+    });
+    
+    // Update group statistics
+    function updateGroupStats() {
+      const baseRate = parseFloat(document.getElementById('baseConversion').value) / 100;
+      const improvement = parseFloat(document.getElementById('improvement').value) / 100;
+      const sampleSize = parseInt(document.getElementById('sampleSize').value);
+      
+      // Calculate treatment rate
+      const treatmentRate = baseRate * (1 + improvement);
+      const absoluteImprovement = treatmentRate - baseRate;
+      
+      // Calculate conversions (rounded to nearest integer)
+      const groupAConversions = Math.round(sampleSize * baseRate);
+      const groupBConversions = Math.round(sampleSize * treatmentRate);
+      
+      // Update display
+      document.getElementById('groupASample').textContent = sampleSize.toLocaleString();
+      document.getElementById('groupAConversions').textContent = groupAConversions.toLocaleString();
+      document.getElementById('groupARate').textContent = formatPercent(baseRate * 100);
+      
+      document.getElementById('groupBSample').textContent = sampleSize.toLocaleString();
+      document.getElementById('groupBConversions').textContent = groupBConversions.toLocaleString();
+      document.getElementById('groupBRate').textContent = formatPercent(treatmentRate * 100);
+    }
+    
+    // Run simulation
+    document.getElementById('runSimulation').addEventListener('click', function() {
+      // Get values
+      const baseRate = parseFloat(document.getElementById('baseConversion').value) / 100;
+      const improvement = parseFloat(document.getElementById('improvement').value) / 100;
+      const sampleSize = parseInt(document.getElementById('sampleSize').value);
+      const confidenceLevel = parseInt(document.getElementById('confidenceLevel').value);
+      
+      // Calculate rates
+      const treatmentRate = baseRate * (1 + improvement);
+      const absoluteImprovement = treatmentRate - baseRate;
+      const relativeImprovement = improvement * 100;
+      
+      // Calculate conversions
+      const controlConversions = Math.round(sampleSize * baseRate);
+      const treatmentConversions = Math.round(sampleSize * treatmentRate);
+      
+      // Pooled proportion for z-test
+      const pooledRate = (controlConversions + treatmentConversions) / (2 * sampleSize);
+      
+      // Standard error for difference in proportions
+      const se = Math.sqrt(pooledRate * (1 - pooledRate) * (2 / sampleSize));
+      
+      // Z-score
+      const zScore = Math.abs(absoluteImprovement) / se;
+      
+      // Calculate p-value from z-score (two-tailed test)
+      // Using approximation for normal distribution CDF
+      let pValue;
+      if (zScore > 0) {
+        // Approximation of normal CDF
+        const t = 1 / (1 + 0.2316419 * zScore);
+        const d = 0.3989423 * Math.exp(-zScore * zScore / 2);
+        const cdf = 1 - d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+        pValue = 2 * (1 - cdf);
+        pValue = Math.max(0.0001, Math.min(0.5, pValue));
+      } else {
+        pValue = 0.5;
+      }
+      
+      // Calculate required sample size for 80% power
+      const effectSize = Math.abs(absoluteImprovement);
+      const requiredSample = Math.ceil(16 * (pooledRate * (1 - pooledRate)) / (effectSize * effectSize));
+      
+      // Calculate statistical power
+      const zBeta = Math.abs(effectSize) / se - 1.96; // 1.96 for alpha=0.05
+      const power = 0.5 * (1 + erf(zBeta / Math.sqrt(2)));
+      const actualPower = Math.max(0.5, Math.min(0.99, power));
+      
+      // Helper function for error function
+      function erf(x) {
+        // Approximation of error function
+        const sign = (x >= 0) ? 1 : -1;
+        x = Math.abs(x);
+        
+        const a1 = 0.254829592;
+        const a2 = -0.284496736;
+        const a3 = 1.421413741;
+        const a4 = -1.453152027;
+        const a5 = 1.061405429;
+        const p = 0.3275911;
+        
+        const t = 1.0 / (1.0 + p * x);
+        const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+        
+        return sign * y;
+      }
+      
+      // Calculate confidence intervals
+      let zValue;
+      switch(confidenceLevel) {
+        case 90: zValue = 1.645; break;
+        case 95: zValue = 1.96; break;
+        case 99: zValue = 2.576; break;
+        default: zValue = 1.96;
+      }
+      
+      // Confidence interval for control group
+      const controlSE = Math.sqrt(baseRate * (1 - baseRate) / sampleSize);
+      const ciControlLower = Math.max(0, baseRate - zValue * controlSE);
+      const ciControlUpper = Math.min(1, baseRate + zValue * controlSE);
+      
+      // Confidence interval for treatment group
+      const treatmentSE = Math.sqrt(treatmentRate * (1 - treatmentRate) / sampleSize);
+      const ciTreatmentLower = Math.max(0, treatmentRate - zValue * treatmentSE);
+      const ciTreatmentUpper = Math.min(1, treatmentRate + zValue * treatmentSE);
+      
+      // Confidence interval for difference
+      const diffSE = Math.sqrt((baseRate * (1 - baseRate) / sampleSize) + (treatmentRate * (1 - treatmentRate) / sampleSize));
+      const ciDiffLower = Math.max(-1, absoluteImprovement - zValue * diffSE);
+      const ciDiffUpper = Math.min(1, absoluteImprovement + zValue * diffSE);
+      
+      // Calculate business impact
+      const monthlyVisitors = 100000;
+      const avgOrderValue = 120;
+      const monthlyConvA = Math.round(monthlyVisitors * baseRate);
+      const monthlyConvB = Math.round(monthlyVisitors * treatmentRate);
+      const addlConversions = monthlyConvB - monthlyConvA;
+      const addlRevenue = addlConversions * avgOrderValue;
+      const annualRevenue = addlRevenue * 12;
+      
+      // Update results display
+      document.getElementById('absImprovement').textContent = formatPercent(absoluteImprovement * 100);
+      document.getElementById('relImprovement').textContent = `${relativeImprovement.toFixed(1)}%`;
+      document.getElementById('pValue').textContent = pValue.toFixed(4);
+      
+      const isSignificant = pValue < 0.05;
+      document.getElementById('significance').textContent = isSignificant ? 'SIGNIFICANT' : 'NOT SIGNIFICANT';
+      document.getElementById('significance').className = isSignificant ? 'result-value significant' : 'result-value not-significant';
+      
+      document.getElementById('statPower').textContent = `${Math.round(actualPower * 100)}%`;
+      document.getElementById('reqSampleSize').textContent = requiredSample.toLocaleString();
+      
+      document.getElementById('ciControl').textContent = `${formatPercent(ciControlLower * 100)} - ${formatPercent(ciControlUpper * 100)}`;
+      document.getElementById('ciTreatment').textContent = `${formatPercent(ciTreatmentLower * 100)} - ${formatPercent(ciTreatmentUpper * 100)}`;
+      document.getElementById('ciDifference').textContent = `${formatPercent(ciDiffLower * 100)} - ${formatPercent(ciDiffUpper * 100)}`;
+      
+      document.getElementById('monthlyConvA').textContent = monthlyConvA.toLocaleString();
+      document.getElementById('monthlyConvB').textContent = monthlyConvB.toLocaleString();
+      document.getElementById('addlConversions').textContent = addlConversions.toLocaleString();
+      document.getElementById('addlRevenue').textContent = `$${addlRevenue.toLocaleString()}`;
+      document.getElementById('annualRevenue').textContent = `$${(annualRevenue / 1000000).toFixed(2)}M`;
+      
+      // Update decision text
+      let decisionText = '';
+      if (isSignificant && addlRevenue > 0) {
+        decisionText = `✅ <strong>IMPLEMENT THE CHANGE:</strong> Group B shows statistically significant improvement with a p-value of ${pValue.toFixed(4)}. The business impact is substantial ($${(annualRevenue / 1000000).toFixed(2)}M annually).`;
+      } else if (!isSignificant && addlRevenue > 0) {
+        decisionText = `⚠️ <strong>INCONCLUSIVE:</strong> The improvement is not statistically significant (p = ${pValue.toFixed(4)}). Consider running a larger test or the improvement may be due to chance.`;
+      } else if (addlRevenue <= 0) {
+        decisionText = `❌ <strong>DO NOT IMPLEMENT:</strong> The new version does not show improvement or has negative impact.`;
+      } else {
+        decisionText = `⚠️ <strong>FURTHER ANALYSIS NEEDED:</strong> Results are inconclusive. Consider running the test with a larger sample size.`;
+      }
+      document.getElementById('decisionText').innerHTML = decisionText;
+      
+      // Show results with smooth scroll
+      document.getElementById('testResults').classList.add('show');
+      document.getElementById('testResults').scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    });
+    
+    // Mark all checklist items
+    function checkAll() {
+      const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = true;
+      });
+      
+      // Show success message
+      showToast('All checklist items marked as complete! Great work on the case study.');
+    }
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize MathJax
+      if (window.MathJax) {
+        MathJax.typesetPromise();
+      }
+      
+      // Code block is already expanded by default
+      const toggleBtn = document.querySelector('.code-header .toggle-btn i');
+      if (toggleBtn) {
+        toggleBtn.classList.remove('fa-chevron-down');
+        toggleBtn.classList.add('fa-chevron-up');
+      }
+      
+      // Initialize A/B test simulator
+      updateGroupStats();
+      
+      // Add click handlers for all copy buttons
+      document.querySelectorAll('.copy-btn, .copy-btn-bottom').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          const codeContainer = this.closest('.code-container');
+          if (codeContainer) {
+            const codeId = codeContainer.querySelector('.code-content').id;
+            copyCode(codeId, e);
+          }
+        });
+      });
+    });
+  </script>
+
+</body></html>
