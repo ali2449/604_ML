@@ -1,1 +1,1783 @@
-Module3_section2.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IAF 604 - Module 3A: Descriptive Statistics for ML</title>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --bg0: #F8FAFC;
+            --bg1: #F1F5F9;
+            --panel: #FFFFFF;
+            --text: #0F172A;
+            --muted: rgba(15, 23, 42, 0.75);
+            --border: rgba(148, 163, 184, 0.25);
+            --primary: #2563EB;
+            --secondary: #7C3AED;
+            --accent: #DB2777;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --radius: 16px;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg0);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: white;
+            color: var(--primary);
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .section {
+            background: var(--panel);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+        
+        .section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .definition {
+            background: rgba(37, 99, 235, 0.08);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--bg1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .example-table th {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .example-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .example-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .formula-box {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid var(--success);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        
+        .calculation-steps {
+            background: rgba(245, 158, 11, 0.08);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        
+        .calculation-steps ol {
+            padding-left: 20px;
+        }
+        
+        .calculation-steps li {
+            margin-bottom: 15px;
+        }
+        
+        .chart-container {
+            margin: 25px 0;
+            padding: 20px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+        }
+        
+        .chart-title {
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-wrapper {
+            height: 300px;
+            position: relative;
+        }
+        
+        .code-container {
+            margin: 25px 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .code-header {
+            background: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .code-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: #1a1a1a;
+        }
+        
+        .code-content.expanded {
+            max-height: 2000px;
+        }
+        
+        .code-content pre {
+            margin: 0;
+            padding: 20px;
+            color: #e0e0e0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .ml-connection {
+            background: rgba(219, 39, 119, 0.08);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .stat-card {
+            background: var(--bg1);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .stat-card h4 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .quick-nav {
+            background: var(--panel);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .quick-nav h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .quick-nav a {
+            display: block;
+            padding: 12px 15px;
+            margin: 5px 0;
+            background: var(--bg1);
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text);
+            transition: background 0.2s;
+        }
+        
+        .quick-nav a:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+        
+        .key-points {
+            background: var(--panel);
+            border-radius: var(--radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .key-points h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .key-points ul {
+            list-style: none;
+        }
+        
+        .key-points li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .key-points li:last-child {
+            border-bottom: none;
+        }
+        
+        .interactive-slider {
+            margin: 25px 0;
+            padding: 20px;
+            background: var(--bg1);
+            border-radius: 12px;
+        }
+        
+        .slider-group {
+            margin: 15px 0;
+        }
+        
+        .slider-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+            accent-color: var(--primary);
+        }
+        
+        .slider-value {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .distribution-viz {
+            height: 200px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+        }
+        
+        .glossary {
+            margin: 30px 0;
+            padding: 25px;
+            background: var(--bg1);
+            border-radius: 12px;
+        }
+        
+        .glossary h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .glossary-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .glossary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .glossary-term {
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .custom-boxplot {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--bg1);
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .boxplot-container {
+            position: relative;
+            height: 200px;
+            margin: 20px 0;
+            border-left: 2px solid var(--border);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .boxplot-line {
+            position: absolute;
+            background: var(--primary);
+            opacity: 0.7;
+        }
+        
+        .boxplot-box {
+            position: absolute;
+            background: rgba(37, 99, 235, 0.2);
+            border: 2px solid var(--primary);
+        }
+        
+        .boxplot-median {
+            position: absolute;
+            background: var(--accent);
+            height: 4px;
+        }
+        
+        .boxplot-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--warning);
+            transform: translateX(-50%);
+        }
+        
+        .boxplot-label {
+            position: absolute;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .stat-value {
+            font-family: 'Courier New', monospace;
+            background: rgba(37, 99, 235, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Descriptive Statistics for Machine Learning</h1>
+        <p class="subtitle">IAF 604 - Module 3A, Section 2: Detailed Expansion</p>
+        <a href="Module3.html" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i> Back to Main Module
+        </a>
+    </div>
+    
+    <div class="content-grid">
+        <div class="main-content">
+            <!-- Introduction -->
+            <section class="section">
+                <h2><i class="fa-solid fa-chart-column"></i> Why Descriptive Statistics Matter in ML</h2>
+                
+                <div class="definition">
+                    <p><strong>Descriptive Statistics</strong> summarize and describe the main features of a dataset using numerical and graphical methods. They provide the foundation for understanding data before building ML models.</p>
+                </div>
+                
+                <p>Imagine trying to build a house without knowing the properties of your materials. Descriptive statistics give you that essential knowledge about your data:</p>
+                
+                <div class="ml-connection">
+                    <h4><i class="fa-solid fa-brain"></i> ML Connection: Data Understanding</h4>
+                    <p>Before training any ML model, you MUST understand your data's characteristics:</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Feature Scaling:</strong> If data has different scales (age: 0-100 vs income: 0-1,000,000), many algorithms require normalization</li>
+                        <li><strong>Outlier Handling:</strong> Extreme values can distort model training</li>
+                        <li><strong>Distribution Shape:</strong> Some algorithms assume normal distribution</li>
+                        <li><strong>Missing Values:</strong> Statistical summaries help identify data quality issues</li>
+                    </ul>
+                </div>
+                
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <h4><i class="fa-solid fa-bullseye"></i> Central Tendency</h4>
+                        <p>Measures that identify the center of your data:</p>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Mean, Median, Mode</li>
+                            <li>Helps identify typical values</li>
+                            <li>Affected by outliers</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4><i class="fa-solid fa-expand-arrows-alt"></i> Dispersion</h4>
+                        <p>Measures of spread/variability:</p>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Range, Variance, Standard Deviation</li>
+                            <li>Indicates data consistency</li>
+                            <li>Critical for feature scaling</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4><i class="fa-solid fa-shapes"></i> Distribution Shape</h4>
+                        <p>Describes data pattern:</p>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Skewness (symmetry)</li>
+                            <li>Kurtosis (peak/tail thickness)</li>
+                            <li>Affects algorithm choice</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Example Dataset -->
+            <section class="section">
+                <h2><i class="fa-solid fa-database"></i> Sample Dataset: House Prices</h2>
+                
+                <p>Let's use a simple dataset of house prices in thousands of dollars:</p>
+                
+                <table class="example-table">
+                    <thead>
+                        <tr>
+                            <th>House #</th>
+                            <th>Price ($k)</th>
+                            <th>Square Feet</th>
+                            <th>Bedrooms</th>
+                            <th>Age (years)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>350</td><td>2100</td><td>3</td><td>5</td></tr>
+                        <tr><td>2</td><td>450</td><td>2300</td><td>4</td><td>2</td></tr>
+                        <tr><td>3</td><td>500</td><td>2500</td><td>4</td><td>1</td></tr>
+                        <tr><td>4</td><td>425</td><td>2200</td><td>3</td><td>8</td></tr>
+                        <tr><td>5</td><td>550</td><td>2700</td><td>5</td><td>0</td></tr>
+                        <tr><td>6</td><td>300</td><td>1800</td><td>2</td><td>15</td></tr>
+                        <tr><td>7</td><td>375</td><td>2000</td><td>3</td><td>10</td></tr>
+                        <tr><td>8</td><td>475</td><td>2400</td><td>4</td><td>3</td></tr>
+                        <tr><td>9</td><td>525</td><td>2600</td><td>4</td><td>2</td></tr>
+                        <tr><td>10</td><td>400</td><td>1900</td><td>3</td><td>12</td></tr>
+                    </tbody>
+                </table>
+                
+                <div class="ml-connection">
+                    <h4><i class="fa-solid fa-chart-line"></i> ML Application: Feature Analysis</h4>
+                    <p>Before building a price prediction model, we analyze each feature:</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Price:</strong> Target variable we want to predict</li>
+                        <li><strong>Square Feet:</strong> Continuous predictor (likely strong correlation)</li>
+                        <li><strong>Bedrooms:</strong> Categorical/discrete predictor</li>
+                        <li><strong>Age:</strong> Continuous predictor (inverse relationship expected)</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Central Tendency -->
+            <section class="section">
+                <h2><i class="fa-solid fa-bullseye"></i> Central Tendency: Finding the Center</h2>
+                
+                <h3>1. Mean (Average)</h3>
+                <div class="formula-box">
+                    \[
+                    \bar{x} = \frac{\sum_{i=1}^{n} x_i}{n}
+                    \]
+                </div>
+                
+                <div class="calculation-steps">
+                    <p><strong>Calculation for House Prices:</strong></p>
+                    <ol>
+                        <li>Sum all prices: 350 + 450 + 500 + 425 + 550 + 300 + 375 + 475 + 525 + 400 = <strong>4,350</strong></li>
+                        <li>Count houses: <strong>10</strong></li>
+                        <li>Mean = 4,350 ÷ 10 = <strong>435</strong> (thousand dollars)</li>
+                    </ol>
+                    <p><strong>Interpretation:</strong> The average house price is $435,000</p>
+                </div>
+                
+                <h3>2. Median (Middle Value)</h3>
+                <div class="calculation-steps">
+                    <p><strong>Calculation Steps:</strong></p>
+                    <ol>
+                        <li>Sort prices: 300, 350, 375, 400, 425, 450, 475, 500, 525, 550</li>
+                        <li>Find middle position: (10 + 1) ÷ 2 = 5.5 (between 5th and 6th values)</li>
+                        <li>Median = (425 + 450) ÷ 2 = <strong>437.5</strong></li>
+                    </ol>
+                    <p><strong>Interpretation:</strong> Half of houses are below $437,500, half are above</p>
+                </div>
+                
+                <h3>3. Mode (Most Frequent)</h3>
+                <div class="calculation-steps">
+                    <p>Looking at bedroom counts: 3, 4, 4, 3, 5, 2, 3, 4, 4, 3</p>
+                    <p>Bedroom counts: 2 (1 house), 3 (4 houses), 4 (4 houses), 5 (1 house)</p>
+                    <p><strong>Mode = 3 and 4</strong> (both appear 4 times)</p>
+                    <p><strong>Interpretation:</strong> The most common house types have 3 or 4 bedrooms</p>
+                </div>
+                
+                <div class="ml-connection">
+                    <h4><i class="fa-solid fa-brain"></i> ML Importance: Handling Missing Values</h4>
+                    <p>When you have missing data in ML:</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Mean Imputation:</strong> Use mean for numerical features (good for normally distributed data)</li>
+                        <li><strong>Median Imputation:</strong> Use median for skewed data (less affected by outliers)</li>
+                        <li><strong>Mode Imputation:</strong> Use mode for categorical features</li>
+                    </ul>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fa-solid fa-chart-bar"></i> Central Tendency Visualization
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="centralTendencyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Dispersion -->
+            <section class="section">
+                <h2><i class="fa-solid fa-expand-arrows-alt"></i> Dispersion: Measuring Spread</h2>
+                
+                <h3>1. Range</h3>
+                <div class="calculation-steps">
+                    <p><strong>Range = Maximum - Minimum</strong></p>
+                    <p>For house prices: 550 - 300 = <span class="stat-value">250</span> (thousand dollars)</p>
+                    <p><strong>Interpretation:</strong> House prices vary by $250,000 across our sample</p>
+                </div>
+                
+                <h3>2. Variance</h3>
+                <div class="formula-box">
+                    \[
+                    s^2 = \frac{\sum_{i=1}^{n} (x_i - \bar{x})^2}{n-1}
+                    \]
+                </div>
+                
+                <div class="calculation-steps">
+                    <p><strong>Step-by-step calculation:</strong></p>
+                    <table class="example-table" style="font-size: 0.9em;">
+                        <thead>
+                            <tr>
+                                <th>Price (x)</th>
+                                <th>x - Mean</th>
+                                <th>(x - Mean)²</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>350</td><td>-85</td><td>7,225</td></tr>
+                            <tr><td>450</td><td>15</td><td>225</td></tr>
+                            <tr><td>500</td><td>65</td><td>4,225</td></tr>
+                            <tr><td>425</td><td>-10</td><td>100</td></tr>
+                            <tr><td>550</td><td>115</td><td>13,225</td></tr>
+                            <tr><td>300</td><td>-135</td><td>18,225</td></tr>
+                            <tr><td>375</td><td>-60</td><td>3,600</td></tr>
+                            <tr><td>475</td><td>40</td><td>1,600</td></tr>
+                            <tr><td>525</td><td>90</td><td>8,100</td></tr>
+                            <tr><td>400</td><td>-35</td><td>1,225</td></tr>
+                            <tr style="font-weight: bold;"><td colspan="2">Sum</td><td>57,750</td></tr>
+                        </tbody>
+                    </table>
+                    <p>Variance = 57,750 ÷ (10 - 1) = <span class="stat-value">6,416.67</span></p>
+                </div>
+                
+                <h3>3. Standard Deviation</h3>
+                <div class="formula-box">
+                    \[
+                    s = \sqrt{s^2} = \sqrt{6,416.67} \approx 80.10
+                    \]
+                </div>
+                <p><strong>Interpretation:</strong> Typical house price varies by about $80,100 from the mean</p>
+                
+                <h3>4. Interquartile Range (IQR)</h3>
+                <div class="calculation-steps">
+                    <p><strong>Calculating IQR:</strong></p>
+                    <ol>
+                        <li>Sorted prices: 300, 350, 375, 400, 425, 450, 475, 500, 525, 550</li>
+                        <li>Q1 (25th percentile) = value at position (10+1) × 0.25 = 2.75 → between 2nd & 3rd: <span class="stat-value">362.5</span></li>
+                        <li>Q3 (75th percentile) = value at position (10+1) × 0.75 = 8.25 → between 8th & 9th: <span class="stat-value">512.5</span></li>
+                        <li>IQR = Q3 - Q1 = 512.5 - 362.5 = <span class="stat-value">150</span></li>
+                    </ol>
+                </div>
+                
+                <div class="ml-connection">
+                    <h4><i class="fa-solid fa-brain"></i> ML Application: Feature Scaling</h4>
+                    <p>Many ML algorithms require features on similar scales:</p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Standardization:</strong> (x - mean) / std_dev → creates ~N(0,1) distribution</li>
+                        <li><strong>Min-Max Scaling:</strong> (x - min) / (max - min) → scales to [0,1] range</li>
+                        <li><strong>IQR Scaling:</strong> Robust to outliers, uses median and IQR</li>
+                    </ul>
+                    <p><strong>Without scaling:</strong> Features with larger ranges dominate model training</p>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fa-solid fa-chart-bar"></i> Dispersion Statistics
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="dispersionChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Custom Box Plot -->
+                <div class="custom-boxplot">
+                    <h3><i class="fa-solid fa-chart-gantt"></i> Box Plot Visualization</h3>
+                    <p>A box plot shows the five-number summary: Minimum, Q1, Median, Q3, Maximum</p>
+                    <div class="boxplot-container" id="boxplotContainer">
+                        <!-- Box plot will be drawn here by JavaScript -->
+                    </div>
+                    <div style="margin-top: 20px; font-size: 0.9em; color: var(--muted);">
+                        <p><strong>How to read this box plot:</strong></p>
+                        <ul style="text-align: left; padding-left: 20px;">
+                            <li><span style="color: var(--warning);">●</span> Individual data points</li>
+                            <li><span style="color: var(--primary);">█</span> Box shows IQR (middle 50% of data)</li>
+                            <li><span style="color: var(--accent);">━</span> Median line inside the box</li>
+                            <li>Whiskers extend to min/max values within 1.5×IQR</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Distribution Shape -->
+            <section class="section">
+                <h2><i class="fa-solid fa-shapes"></i> Distribution Shape</h2>
+                
+                <div class="interactive-slider">
+                    <h3>Interactive Distribution Explorer</h3>
+                    <p>Adjust parameters to see how they affect distribution shape:</p>
+                    
+                    <div class="slider-group">
+                        <label>Mean (μ): <span class="slider-value" id="meanValue">0</span></label>
+                        <input type="range" id="meanSlider" min="-3" max="3" value="0" step="0.1">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <label>Standard Deviation (σ): <span class="slider-value" id="stdValue">1</span></label>
+                        <input type="range" id="stdSlider" min="0.5" max="3" value="1" step="0.1">
+                    </div>
+                    
+                    <div class="slider-group">
+                        <label>Skewness: <span class="slider-value" id="skewValue">0</span></label>
+                        <input type="range" id="skewSlider" min="-2" max="2" value="0" step="0.1">
+                    </div>
+                    
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i class="fa-solid fa-chart-line"></i> Distribution Visualization
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>1. Skewness</h3>
+                <div class="formula-box">
+                    \[
+                    \text{Skewness} = \frac{E[(X - \mu)^3]}{\sigma^3}
+                    \]
+                </div>
+                
+                <div class="ml-connection">
+                    <p><strong>Types of Skewness:</strong></p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Zero:</strong> Symmetrical distribution (e.g., normal)</li>
+                        <li><strong>Positive:</strong> Right-skewed (tail to right) - common in income, house prices</li>
+                        <li><strong>Negative:</strong> Left-skewed (tail to left) - common in exam scores</li>
+                    </ul>
+                    <p><strong>ML Impact:</strong> Many algorithms assume normality. Skewed data may need transformation (log, square root, Box-Cox).</p>
+                </div>
+                
+                <h3>2. Kurtosis</h3>
+                <div class="formula-box">
+                    \[
+                    \text{Kurtosis} = \frac{E[(X - \mu)^4]}{\sigma^4}
+                    \]
+                </div>
+                
+                <div class="ml-connection">
+                    <p><strong>Types of Kurtosis:</strong></p>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><strong>Mesokurtic (k=3):</strong> Normal peak (normal distribution)</li>
+                        <li><strong>Leptokurtic (k>3):</strong> Sharp peak, fat tails - more extreme values</li>
+                        <li><strong>Platykurtic (k<3):</strong> Flat peak, thin tails - fewer extreme values</li>
+                    </ul>
+                    <p><strong>ML Impact:</strong> High kurtosis indicates more outliers, which can affect model performance.</p>
+                </div>
+            </section>
+            
+            <!-- Python Implementation -->
+            <section class="section">
+                <h2><i class="fa-brands fa-python"></i> Python Implementation</h2>
+                
+                <div class="code-container">
+                    <div class="code-header" onclick="toggleCode('pythonCode')">
+                        <span>Click to expand Python code</span>
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </div>
+                    <div class="code-content" id="pythonCode">
+                        <pre><code># Descriptive Statistics in Python - Complete Example
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+import warnings
+warnings.filterwarnings('ignore')
+
+# ============================================================================
+# 1) CREATE SAMPLE DATASET (House Prices)
+# ============================================================================
+np.random.seed(42)
+
+# Generate realistic house price data
+n_houses = 100
+
+data = pd.DataFrame({
+    'price': np.random.normal(450, 100, n_houses),  # Mean $450k, SD $100k
+    'sqft': np.random.normal(2200, 400, n_houses),  # Mean 2200 sqft
+    'bedrooms': np.random.choice([2, 3, 4, 5], n_houses, p=[0.2, 0.4, 0.3, 0.1]),
+    'age': np.random.exponential(10, n_houses),  # Most houses 0-20 years old
+    'location_score': np.random.uniform(1, 10, n_houses)
+})
+
+# Add some outliers
+data.loc[0:4, 'price'] = [750, 800, 150, 180, 900]  # Extreme prices
+data.loc[5:9, 'sqft'] = [3500, 1000, 3800, 900, 4000]  # Extreme sizes
+
+print("Dataset Shape:", data.shape)
+print("\nFirst 10 rows:")
+print(data.head(10))
+
+# ============================================================================
+# 2) DESCRIPTIVE STATISTICS WITH PANDAS
+# ============================================================================
+print("\n" + "="*60)
+print("DESCRIPTIVE STATISTICS SUMMARY")
+print("="*60)
+
+# Basic statistics
+print("\n1) Basic Statistics (price column):")
+print(f"Count: {data['price'].count()}")
+print(f"Mean: ${data['price'].mean():,.0f}")
+print(f"Median: ${data['price'].median():,.0f}")
+print(f"Mode: ${data['price'].mode().values[0]:,.0f}")
+print(f"Minimum: ${data['price'].min():,.0f}")
+print(f"Maximum: ${data['price'].max():,.0f}")
+print(f"Range: ${data['price'].max() - data['price'].min():,.0f}")
+print(f"Variance: {data['price'].var():,.0f}")
+print(f"Standard Deviation: ${data['price'].std():,.0f}")
+print(f"IQR: ${data['price'].quantile(0.75) - data['price'].quantile(0.25):,.0f}")
+
+# Distribution shape
+print("\n2) Distribution Shape (price column):")
+skewness = data['price'].skew()
+kurtosis = data['price'].kurtosis()
+print(f"Skewness: {skewness:.3f} ({'Right-skewed' if skewness > 0 else 'Left-skewed' if skewness < 0 else 'Symmetric'})")
+print(f"Kurtosis: {kurtosis:.3f} ({'Leptokurtic' if kurtosis > 3 else 'Platykurtic' if kurtosis < 3 else 'Mesokurtic'})")
+
+# Describe all numerical columns
+print("\n3) Summary Statistics for All Numerical Columns:")
+print(data.describe())
+
+# ============================================================================
+# 3) OUTLIER DETECTION
+# ============================================================================
+print("\n" + "="*60)
+print("OUTLIER DETECTION")
+print("="*60)
+
+def detect_outliers_iqr(series):
+    """Detect outliers using IQR method"""
+    Q1 = series.quantile(0.25)
+    Q3 = series.quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    outliers = series[(series < lower_bound) | (series > upper_bound)]
+    return outliers, lower_bound, upper_bound
+
+def detect_outliers_zscore(series, threshold=3):
+    """Detect outliers using Z-score method"""
+    z_scores = np.abs(stats.zscore(series))
+    outliers = series[z_scores > threshold]
+    return outliers
+
+# Detect outliers in price
+price_outliers_iqr, lower, upper = detect_outliers_iqr(data['price'])
+price_outliers_zscore = detect_outliers_zscore(data['price'])
+
+print(f"\nPrice column outliers (IQR method):")
+print(f"  Lower bound: ${lower:,.0f}, Upper bound: ${upper:,.0f}")
+print(f"  Number of outliers: {len(price_outliers_iqr)}")
+print(f"  Outlier values: {price_outliers_iqr.values}")
+
+print(f"\nPrice column outliers (Z-score > 3):")
+print(f"  Number of outliers: {len(price_outliers_zscore)}")
+
+# ============================================================================
+# 4) CORRELATION ANALYSIS
+# ============================================================================
+print("\n" + "="*60)
+print("CORRELATION ANALYSIS")
+print("="*60)
+
+# Calculate correlation matrix
+correlation_matrix = data.corr()
+print("\nCorrelation Matrix (Pearson):")
+print(correlation_matrix.round(3))
+
+# Strongest correlations
+print("\nStrongest Correlations with Price:")
+for col in data.columns:
+    if col != 'price':
+        corr = data['price'].corr(data[col])
+        print(f"  {col:15s}: {corr:.3f} ({'Strong' if abs(corr) > 0.7 else 'Moderate' if abs(corr) > 0.3 else 'Weak'})")
+
+# ============================================================================
+# 5) DATA VISUALIZATION
+# ============================================================================
+print("\n" + "="*60)
+print("GENERATING VISUALIZATIONS...")
+print("="*60)
+
+# Create visualizations
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+fig.suptitle('Descriptive Statistics Visualization', fontsize=16, fontweight='bold')
+
+# 1) Histogram with KDE
+axes[0, 0].hist(data['price'], bins=30, edgecolor='black', alpha=0.7)
+axes[0, 0].axvline(data['price'].mean(), color='red', linestyle='--', label=f'Mean: ${data["price"].mean():,.0f}')
+axes[0, 0].axvline(data['price'].median(), color='green', linestyle=':', label=f'Median: ${data["price"].median():,.0f}')
+axes[0, 0].set_title('Price Distribution')
+axes[0, 0].set_xlabel('Price ($)')
+axes[0, 0].set_ylabel('Frequency')
+axes[0, 0].legend()
+axes[0, 0].grid(True, alpha=0.3)
+
+# 2) Box plot
+axes[0, 1].boxplot(data['price'])
+axes[0, 1].set_title('Price Box Plot')
+axes[0, 1].set_ylabel('Price ($)')
+axes[0, 1].grid(True, alpha=0.3)
+
+# 3) Q-Q plot
+stats.probplot(data['price'], dist="norm", plot=axes[0, 2])
+axes[0, 2].set_title('Q-Q Plot (Checking Normality)')
+axes[0, 2].grid(True, alpha=0.3)
+
+# 4) Scatter plot: Price vs Sqft
+axes[1, 0].scatter(data['sqft'], data['price'], alpha=0.6)
+axes[1, 0].set_title('Price vs Square Feet')
+axes[1, 0].set_xlabel('Square Feet')
+axes[1, 0].set_ylabel('Price ($)')
+axes[1, 0].grid(True, alpha=0.3)
+
+# 5) Correlation heatmap
+im = axes[1, 1].imshow(correlation_matrix, cmap='coolwarm', vmin=-1, vmax=1)
+axes[1, 1].set_title('Correlation Heatmap')
+axes[1, 1].set_xticks(range(len(correlation_matrix.columns)))
+axes[1, 1].set_yticks(range(len(correlation_matrix.columns)))
+axes[1, 1].set_xticklabels(correlation_matrix.columns, rotation=45)
+axes[1, 1].set_yticklabels(correlation_matrix.columns)
+plt.colorbar(im, ax=axes[1, 1])
+
+# 6) Multiple box plots by bedrooms
+bedroom_groups = data.groupby('bedrooms')['price'].apply(list)
+axes[1, 2].boxplot(bedroom_groups.values, labels=bedroom_groups.index)
+axes[1, 2].set_title('Price Distribution by Bedrooms')
+axes[1, 2].set_xlabel('Number of Bedrooms')
+axes[1, 2].set_ylabel('Price ($)')
+axes[1, 2].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+# ============================================================================
+# 6) PRACTICAL ML APPLICATIONS
+# ============================================================================
+print("\n" + "="*60)
+print("PRACTICAL ML APPLICATIONS")
+print("="*60)
+
+# Data preprocessing steps based on descriptive statistics
+print("\n1) Data Preprocessing Recommendations:")
+
+# Check for normality
+_, p_value = stats.shapiro(data['price'].sample(min(500, len(data['price']))))
+if p_value < 0.05:
+    print("  • Price is not normally distributed (p={:.4f})".format(p_value))
+    print("  • Consider: Log transformation for regression models")
+else:
+    print("  • Price appears normally distributed")
+
+# Check for outliers
+if len(price_outliers_iqr) > len(data) * 0.05:
+    print("  • More than 5% outliers detected")
+    print("  • Consider: Robust scaling or outlier treatment")
+
+# Check feature scales
+print("\n2) Feature Scaling Analysis:")
+for col in ['price', 'sqft', 'age', 'location_score']:
+    mean_val = data[col].mean()
+    std_val = data[col].std()
+    print(f"  • {col:15s}: Mean={mean_val:.1f}, Std={std_val:.1f}, CV={(std_val/mean_val*100):.1f}%")
+
+print("\n3) ML Model Considerations:")
+print("  • Algorithms sensitive to scale: SVM, KNN, Neural Networks need scaling")
+print("  • Algorithms robust to scale: Tree-based models (Random Forest, XGBoost)")
+print("  • For skewed data: Consider log transform before linear models")
+print("  • For outliers: Use robust statistics or tree-based models")
+
+print("\nAnalysis complete! Key takeaways:")
+print("1. Always explore data before modeling")
+print("2. Check assumptions (normality, linearity)")
+print("3. Handle outliers appropriately")
+print("4. Scale features for distance-based algorithms")
+print("5. Document your preprocessing steps")</code></pre>
+                    </div>
+                </div>
+                
+                <div class="ml-connection">
+                    <h4><i class="fa-solid fa-lightbulb"></i> Python Tips for ML</h4>
+                    <ul style="padding-left: 20px; margin-top: 10px;">
+                        <li><code>pandas.describe()</code> - Quick overview of all numerical columns</li>
+                        <li><code>seaborn.pairplot()</code> - Visualize relationships between all variables</li>
+                        <li><code>scipy.stats</code> - Advanced statistical tests and distributions</li>
+                        <li><code>sklearn.preprocessing</code> - Standardization, normalization, scaling</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- Practical Applications -->
+            <section class="section">
+                <h2><i class="fa-solid fa-cogs"></i> Practical ML Applications</h2>
+                
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <h4><i class="fa-solid fa-sort-amount-up"></i> Feature Engineering</h4>
+                        <p><strong>Use statistics to create better features:</strong></p>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Create interaction terms based on correlations</li>
+                            <li>Bin continuous variables using percentiles</li>
+                            <li>Create outlier flags using z-scores</li>
+                            <li>Normalize features to similar scales</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4><i class="fa-solid fa-search"></i> Model Selection</h4>
+                        <p><strong>Choose algorithms based on data characteristics:</strong></p>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Linear models: Need normally distributed features</li>
+                            <li>Tree models: Handle skewed data well</li>
+                            <li>Distance-based: Require feature scaling</li>
+                            <li>Neural networks: Benefit from normalization</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <h4><i class="fa-solid fa-chart-bar"></i> Model Evaluation</h4>
+                        <p><strong>Use statistics to evaluate models:</strong></p>
+                        <ul style="padding-left: 20px; margin-top: 10px;">
+                            <li>Compare model errors using t-tests</li>
+                            <li>Calculate confidence intervals for metrics</li>
+                            <li>Test residual normality (for regression)</li>
+                            <li>Check for overfitting using variance analysis</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h3>Real-World Example: Customer Churn Prediction</h3>
+                <div class="ml-connection">
+                    <p><strong>Statistical analysis before modeling:</strong></p>
+                    <ol style="padding-left: 20px; margin-top: 10px;">
+                        <li>Calculate mean/median tenure of churned vs retained customers</li>
+                        <li>Check distribution of monthly charges (likely right-skewed)</li>
+                        <li>Compute correlation between features to identify multicollinearity</li>
+                        <li>Detect outliers in customer service calls</li>
+                        <li>Scale numerical features before training neural network</li>
+                    </ol>
+                    <p><strong>Result:</strong> Better model performance through data understanding</p>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="chart-title">
+                        <i class="fa-solid fa-chart-bar"></i> Feature Importance vs. Statistical Significance
+                    </div>
+                    <div class="chart-wrapper">
+                        <canvas id="featureChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Glossary -->
+            <section class="section">
+                <h2><i class="fa-solid fa-book"></i> Glossary of Terms</h2>
+                
+                <div class="glossary">
+                    <div class="glossary-item">
+                        <div class="glossary-term">Mean (μ)</div>
+                        <div class="glossary-def">The average value. Sensitive to outliers. Use for normally distributed data.</div>
+                    </div>
+                    
+                    <div class="glossary-item">
+                        <div class="glossary-term">Median</div>
+                        <div class="glossary-def">The middle value when sorted. Robust to outliers. Use for skewed data.</div>
+                    </div>
+                    
+                    <div class="glossary-item">
+                        <div class="glossary-term">Standard Deviation (σ)</div>
+                        <div class="glossary-def">Measure of spread. Square root of variance. Used in z-scores and scaling.</div>
+                    </div>
+                    
+                    <div class="glossary-item">
+                        <div class="glossary-term">IQR (Interquartile Range)</div>
+                        <div class="glossary-def">Range between Q1 and Q3. Used in box plots and robust outlier detection.</div>
+                    </div>
+                    
+                    <div class="glossary-item">
+                        <div class="glossary-term">Z-score</div>
+                        <div class="glossary-def">(x - μ) / σ. Measures how many standard deviations from the mean.</div>
+                    </div>
+                    
+                    <div class="glossary-item">
+                        <div class="glossary-term">Skewness</div>
+                        <div class="glossary-def">Measure of symmetry. Positive = right tail, Negative = left tail.</div>
+                    </div>
+                    
+                    <div class="glossary-item">
+                        <div class="glossary-term">Kurtosis</div>
+                        <div class="glossary-def">Measure of tail thickness. High = more outliers, Low = fewer outliers.</div>
+                    </div>
+                    
+                    <div class="glossary-item">
+                        <div class="glossary-term">Correlation (r)</div>
+                        <div class="glossary-def">Linear relationship between -1 and 1. Used for feature selection.</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="quick-nav">
+                <h3><i class="fa-solid fa-link"></i> Quick Navigation</h3>
+                <a href="#central-tendency"><i class="fa-solid fa-bullseye"></i> Central Tendency</a>
+                <a href="#dispersion"><i class="fa-solid fa-expand-arrows-alt"></i> Dispersion</a>
+                <a href="#distribution-shape"><i class="fa-solid fa-shapes"></i> Distribution Shape</a>
+                <a href="#python-code"><i class="fa-brands fa-python"></i> Python Code</a>
+                <a href="#ml-applications"><i class="fa-solid fa-cogs"></i> ML Applications</a>
+                <a href="#glossary"><i class="fa-solid fa-book"></i> Glossary</a>
+            </div>
+            
+            <div class="key-points">
+                <h3><i class="fa-solid fa-key"></i> Key Takeaways</h3>
+                <ul>
+                    <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Always explore data before modeling</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Choose mean vs median based on outliers</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Scale features for distance-based algorithms</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Check assumptions of your ML algorithm</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Use IQR or z-scores for outlier detection</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Transform skewed data for linear models</li>
+                    <li><i class="fa-solid fa-check" style="color: var(--success);"></i> Document all preprocessing steps</li>
+                </ul>
+            </div>
+            
+            <div class="key-points">
+                <h3><i class="fa-solid fa-warning"></i> Common Pitfalls</h3>
+                <ul>
+                    <li><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> Using mean for skewed data</li>
+                    <li><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> Not scaling features before SVM/KNN</li>
+                    <li><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> Ignoring outliers without investigation</li>
+                    <li><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> Assuming normality without checking</li>
+                    <li><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> Overlooking feature correlations</li>
+                    <li><i class="fa-solid fa-xmark" style="color: var(--danger);"></i> Data leakage during preprocessing</li>
+                </ul>
+            </div>
+            
+            <div class="key-points">
+                <h3><i class="fa-solid fa-clock"></i> Study Checklist</h3>
+                <ul>
+                    <li><input type="checkbox"> Calculate mean, median, mode</li>
+                    <li><input type="checkbox"> Compute variance and std dev</li>
+                    <li><input type="checkbox"> Identify skewness direction</li>
+                    <li><input type="checkbox"> Detect outliers using IQR</li>
+                    <li><input type="checkbox"> Calculate correlation matrix</li>
+                    <li><input type="checkbox"> Implement in Python</li>
+                    <li><input type="checkbox"> Apply to ML preprocessing</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <p>IAF 604: Machine Learning & Predictive Analytics | Module 3A - Descriptive Statistics</p>
+        <p>© 2024 Department of Informatics and Analytics | Educational Material</p>
+        <p style="margin-top: 10px;"><a href="Module3.html" style="color: var(--primary);">← Return to Main Module</a></p>
+    </footer>
+    
+    <script>
+        // Initialize MathJax
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            }
+        };
+        
+        // Toggle code blocks
+        function toggleCode(id) {
+            const content = document.getElementById(id);
+            const icon = content.previousElementSibling.querySelector('i');
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                content.classList.add('expanded');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            }
+        }
+        
+        // Initialize charts
+        let charts = {};
+        
+        function initCharts() {
+            // Central Tendency Chart
+            const housePrices = [350, 450, 500, 425, 550, 300, 375, 475, 525, 400];
+            const mean = 435;
+            const median = 437.5;
+            
+            const ctx1 = document.getElementById('centralTendencyChart').getContext('2d');
+            charts.centralTendencyChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10'],
+                    datasets: [
+                        {
+                            label: 'House Price ($k)',
+                            data: housePrices,
+                            backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                            borderColor: 'rgba(37, 99, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Mean ($435k)',
+                            data: Array(10).fill(mean),
+                            type: 'line',
+                            borderColor: 'rgba(219, 39, 119, 1)',
+                            backgroundColor: 'rgba(219, 39, 119, 0)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: 'Median ($437.5k)',
+                            data: Array(10).fill(median),
+                            type: 'line',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            backgroundColor: 'rgba(16, 185, 129, 0)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'House Prices with Mean and Median Lines'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.datasetIndex === 0) {
+                                        label += '$' + context.parsed.y + 'k';
+                                    } else {
+                                        label += '$' + context.parsed.y + 'k (fixed)';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 250,
+                            title: {
+                                display: true,
+                                text: 'Price (Thousands $)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'House Number'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Dispersion Statistics Chart
+            const dispersionStats = {
+                labels: ['Minimum', 'Q1 (25%)', 'Median', 'Q3 (75%)', 'Maximum', 'IQR', 'Range', 'Variance', 'Std Dev'],
+                values: [
+                    Math.min(...housePrices),
+                    362.5,
+                    437.5,
+                    512.5,
+                    Math.max(...housePrices),
+                    150,
+                    250,
+                    6416.67,
+                    80.10
+                ]
+            };
+            
+            const ctx2 = document.getElementById('dispersionChart').getContext('2d');
+            charts.dispersionChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: dispersionStats.labels,
+                    datasets: [{
+                        label: 'Value ($k)',
+                        data: dispersionStats.values,
+                        backgroundColor: [
+                            'rgba(37, 99, 235, 0.7)',    // Min
+                            'rgba(16, 185, 129, 0.7)',   // Q1
+                            'rgba(219, 39, 119, 0.7)',   // Median
+                            'rgba(16, 185, 129, 0.7)',   // Q3
+                            'rgba(37, 99, 235, 0.7)',    // Max
+                            'rgba(245, 158, 11, 0.7)',   // IQR
+                            'rgba(239, 68, 68, 0.7)',    // Range
+                            'rgba(147, 51, 234, 0.7)',   // Variance
+                            'rgba(6, 182, 212, 0.7)'     // Std Dev
+                        ],
+                        borderColor: [
+                            'rgba(37, 99, 235, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(219, 39, 119, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(37, 99, 235, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(239, 68, 68, 1)',
+                            'rgba(147, 51, 234, 1)',
+                            'rgba(6, 182, 212, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Dispersion Statistics Comparison'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y;
+                                    let interpretation = '';
+                                    
+                                    switch(context.dataIndex) {
+                                        case 0: interpretation = 'Lowest price'; break;
+                                        case 1: interpretation = '25% of values below this'; break;
+                                        case 2: interpretation = 'Middle value (50th percentile)'; break;
+                                        case 3: interpretation = '75% of values below this'; break;
+                                        case 4: interpretation = 'Highest price'; break;
+                                        case 5: interpretation = 'Middle 50% spread (Q3 - Q1)'; break;
+                                        case 6: interpretation = 'Total spread (Max - Min)'; break;
+                                        case 7: interpretation = 'Average squared deviation from mean'; break;
+                                        case 8: interpretation = 'Typical deviation from mean'; break;
+                                    }
+                                    
+                                    return `${label}: $${value.toFixed(2)}k - ${interpretation}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Value (Thousands $)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Draw custom box plot
+            drawCustomBoxPlot(housePrices);
+            
+            // Interactive Distribution Chart
+            const ctx3 = document.getElementById('distributionChart').getContext('2d');
+            charts.distributionChart = new Chart(ctx3, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 61}, (_, i) => (i - 30) / 10),
+                    datasets: [{
+                        label: 'Probability Density',
+                        data: [],
+                        borderColor: 'rgb(37, 99, 235)',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Normal Distribution'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Probability: ${context.parsed.y.toFixed(4)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Standard Deviations from Mean'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Probability Density'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Feature Importance Chart
+            const ctx4 = document.getElementById('featureChart').getContext('2d');
+            charts.featureChart = new Chart(ctx4, {
+                type: 'bar',
+                data: {
+                    labels: ['Square Feet', 'Bedrooms', 'Age', 'Location Score', 'Distance to City'],
+                    datasets: [
+                        {
+                            label: 'Statistical Significance',
+                            data: [0.92, 0.78, 0.65, 0.85, 0.71],
+                            backgroundColor: 'rgba(37, 99, 235, 0.7)',
+                            borderColor: 'rgba(37, 99, 235, 1)',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'ML Feature Importance',
+                            data: [0.89, 0.75, 0.62, 0.82, 0.68],
+                            backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Statistical vs ML Feature Importance'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1,
+                            title: {
+                                display: true,
+                                text: 'Importance Score (0-1)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Feature'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Update interactive distribution
+            updateDistribution();
+        }
+        
+        // Draw custom box plot
+        function drawCustomBoxPlot(data) {
+            const container = document.getElementById('boxplotContainer');
+            container.innerHTML = '';
+            
+            // Calculate box plot statistics
+            const sortedData = [...data].sort((a, b) => a - b);
+            const q1 = sortedData[Math.floor(sortedData.length * 0.25)];
+            const median = sortedData[Math.floor(sortedData.length * 0.5)];
+            const q3 = sortedData[Math.floor(sortedData.length * 0.75)];
+            const iqr = q3 - q1;
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            
+            // Container dimensions
+            const width = container.clientWidth;
+            const height = 180;
+            const padding = 40;
+            const plotWidth = width - 2 * padding;
+            const plotHeight = height - 2 * padding;
+            
+            // Create SVG for box plot
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('width', width);
+            svg.setAttribute('height', height);
+            svg.style.display = 'block';
+            
+            // Scale function
+            const scaleY = (value) => {
+                const dataMin = min - 50;
+                const dataMax = max + 50;
+                return padding + plotHeight * (1 - (value - dataMin) / (dataMax - dataMin));
+            };
+            
+            // Draw whiskers (min to Q1 and Q3 to max)
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', padding + plotWidth / 2);
+            line.setAttribute('x2', padding + plotWidth / 2);
+            line.setAttribute('y1', scaleY(min));
+            line.setAttribute('y2', scaleY(max));
+            line.setAttribute('stroke', 'rgba(37, 99, 235, 0.5)');
+            line.setAttribute('stroke-width', '1');
+            line.setAttribute('stroke-dasharray', '5,5');
+            svg.appendChild(line);
+            
+            // Draw box (Q1 to Q3)
+            const boxHeight = scaleY(q1) - scaleY(q3);
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', padding + plotWidth / 4);
+            rect.setAttribute('y', scaleY(q3));
+            rect.setAttribute('width', plotWidth / 2);
+            rect.setAttribute('height', boxHeight);
+            rect.setAttribute('fill', 'rgba(37, 99, 235, 0.2)');
+            rect.setAttribute('stroke', 'rgba(37, 99, 235, 1)');
+            rect.setAttribute('stroke-width', '2');
+            svg.appendChild(rect);
+            
+            // Draw median line
+            const medianLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            medianLine.setAttribute('x1', padding + plotWidth / 4);
+            medianLine.setAttribute('x2', padding + 3 * plotWidth / 4);
+            medianLine.setAttribute('y1', scaleY(median));
+            medianLine.setAttribute('y2', scaleY(median));
+            medianLine.setAttribute('stroke', 'rgba(219, 39, 119, 1)');
+            medianLine.setAttribute('stroke-width', '2');
+            svg.appendChild(medianLine);
+            
+            // Draw individual data points
+            data.forEach((value, index) => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                const jitter = (Math.random() - 0.5) * plotWidth / 3;
+                circle.setAttribute('cx', padding + plotWidth / 2 + jitter);
+                circle.setAttribute('cy', scaleY(value));
+                circle.setAttribute('r', '4');
+                circle.setAttribute('fill', 'rgba(245, 158, 11, 0.7)');
+                circle.setAttribute('stroke', 'rgba(245, 158, 11, 1)');
+                circle.setAttribute('stroke-width', '1');
+                svg.appendChild(circle);
+            });
+            
+            // Draw labels
+            const labels = [
+                { text: `Min: $${min}k`, y: min, offset: -15 },
+                { text: `Q1: $${q1}k`, y: q1, offset: -10 },
+                { text: `Median: $${median}k`, y: median, offset: 15 },
+                { text: `Q3: $${q3}k`, y: q3, offset: 15 },
+                { text: `Max: $${max}k`, y: max, offset: 15 },
+                { text: `IQR: $${iqr}k`, y: (q1 + q3) / 2, offset: 0, x: padding + 3 * plotWidth / 4 + 20 }
+            ];
+            
+            labels.forEach(label => {
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', label.x || padding + plotWidth / 2);
+                text.setAttribute('y', scaleY(label.y) + (label.offset || 0));
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('font-size', '11');
+                text.setAttribute('font-weight', '600');
+                text.setAttribute('fill', '#0F172A');
+                text.textContent = label.text;
+                svg.appendChild(text);
+            });
+            
+            // Draw IQR indicator
+            const iqrLine1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            iqrLine1.setAttribute('x1', padding + 3 * plotWidth / 4 + 10);
+            iqrLine1.setAttribute('x2', padding + 3 * plotWidth / 4 + 10);
+            iqrLine1.setAttribute('y1', scaleY(q3));
+            iqrLine1.setAttribute('y2', scaleY(q1));
+            iqrLine1.setAttribute('stroke', 'rgba(245, 158, 11, 1)');
+            iqrLine1.setAttribute('stroke-width', '2');
+            iqrLine1.setAttribute('stroke-dasharray', '5,3');
+            svg.appendChild(iqrLine1);
+            
+            const iqrLine2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            iqrLine2.setAttribute('x1', padding + 3 * plotWidth / 4);
+            iqrLine2.setAttribute('x2', padding + 3 * plotWidth / 4 + 20);
+            iqrLine2.setAttribute('y1', scaleY(q3));
+            iqrLine2.setAttribute('y2', scaleY(q3));
+            iqrLine2.setAttribute('stroke', 'rgba(245, 158, 11, 1)');
+            iqrLine2.setAttribute('stroke-width', '1');
+            svg.appendChild(iqrLine2);
+            
+            const iqrLine3 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            iqrLine3.setAttribute('x1', padding + 3 * plotWidth / 4);
+            iqrLine3.setAttribute('x2', padding + 3 * plotWidth / 4 + 20);
+            iqrLine3.setAttribute('y1', scaleY(q1));
+            iqrLine3.setAttribute('y2', scaleY(q1));
+            iqrLine3.setAttribute('stroke', 'rgba(245, 158, 11, 1)');
+            iqrLine3.setAttribute('stroke-width', '1');
+            svg.appendChild(iqrLine3);
+            
+            container.appendChild(svg);
+        }
+        
+        // Interactive distribution controls
+        const meanSlider = document.getElementById('meanSlider');
+        const stdSlider = document.getElementById('stdSlider');
+        const skewSlider = document.getElementById('skewSlider');
+        const meanValue = document.getElementById('meanValue');
+        const stdValue = document.getElementById('stdValue');
+        const skewValue = document.getElementById('skewValue');
+        
+        function updateDistribution() {
+            const mean = parseFloat(meanSlider.value);
+            const std = parseFloat(stdSlider.value);
+            const skew = parseFloat(skewSlider.value);
+            
+            meanValue.textContent = mean.toFixed(1);
+            stdValue.textContent = std.toFixed(1);
+            skewValue.textContent = skew.toFixed(1);
+            
+            // Generate normal distribution with skew adjustment
+            const data = [];
+            const labels = Array.from({length: 61}, (_, i) => (i - 30) / 10);
+            
+            for (let x of labels) {
+                // Normal distribution
+                let y = Math.exp(-0.5 * Math.pow((x - mean) / std, 2)) / (std * Math.sqrt(2 * Math.PI));
+                
+                // Apply skewness (simplified approximation)
+                if (skew !== 0) {
+                    const z = (x - mean) / std;
+                    y *= (1 + (skew / 6) * (Math.pow(z, 3) - 3 * z));
+                    y = Math.max(0, y); // Ensure non-negative
+                }
+                
+                data.push(y);
+            }
+            
+            charts.distributionChart.data.datasets[0].data = data;
+            charts.distributionChart.update();
+            
+            // Update chart title based on skewness
+            let skewType = 'Normal';
+            if (skew > 0.5) skewType = 'Right-Skewed';
+            else if (skew < -0.5) skewType = 'Left-Skewed';
+            else if (Math.abs(skew) > 0.1) skewType = 'Slightly Skewed';
+            
+            charts.distributionChart.options.plugins.title.text = `${skewType} Distribution (μ=${mean}, σ=${std})`;
+            charts.distributionChart.update();
+        }
+        
+        // Event listeners for sliders
+        meanSlider.addEventListener('input', updateDistribution);
+        stdSlider.addEventListener('input', updateDistribution);
+        skewSlider.addEventListener('input', updateDistribution);
+        
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            updateDistribution();
+            
+            // Typeset math
+            if (MathJax.typeset) {
+                MathJax.typeset();
+            }
+            
+            // Add IDs for navigation
+            const sections = document.querySelectorAll('.section h2');
+            sections.forEach((section, index) => {
+                const parent = section.closest('.section');
+                if (parent) {
+                    switch(index) {
+                        case 0: parent.id = 'intro'; break;
+                        case 1: parent.id = 'dataset'; break;
+                        case 2: parent.id = 'central-tendency'; break;
+                        case 3: parent.id = 'dispersion'; break;
+                        case 4: parent.id = 'distribution-shape'; break;
+                        case 5: parent.id = 'python-code'; break;
+                        case 6: parent.id = 'ml-applications'; break;
+                        case 7: parent.id = 'glossary'; break;
+                    }
+                }
+            });
+            
+            // Update navigation links
+            document.querySelectorAll('.quick-nav a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+        
+        // Checklist functionality
+        document.querySelectorAll('.key-points input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const li = this.closest('li');
+                if (this.checked) {
+                    li.style.textDecoration = 'line-through';
+                    li.style.opacity = '0.7';
+                } else {
+                    li.style.textDecoration = 'none';
+                    li.style.opacity = '1';
+                }
+            });
+        });
+        
+        // Handle window resize for box plot
+        window.addEventListener('resize', () => {
+            const housePrices = [350, 450, 500, 425, 550, 300, 375, 475, 525, 400];
+            drawCustomBoxPlot(housePrices);
+        });
+    </script>
+</body>
+</html>
