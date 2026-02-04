@@ -1334,10 +1334,7 @@
 
           <!-- SECTION FOOTER WITH READ MORE BUTTON -->
           <div class="section-footer">
-            <div class="section-info">
-              <i class="fa-solid fa-clock"></i> Estimated time: 30-40 minutes
-              <i class="fa-solid fa-file-lines"></i> Full details: 15+ pages
-            </div>
+           
             <a href="Module3_section1.html" class="read-more-btn" target="_blank">
               <i class="fa-solid fa-book-open"></i> Read Full Details
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1460,10 +1457,7 @@
 
           <!-- SECTION FOOTER WITH READ MORE BUTTON -->
           <div class="section-footer">
-            <div class="section-info">
-              <i class="fa-solid fa-clock"></i> Estimated time: 45-60 minutes
-              <i class="fa-solid fa-file-lines"></i> Full details: 20+ pages
-            </div>
+            
             <a href="Module3_section2.html" class="read-more-btn" target="_blank">
               <i class="fa-solid fa-book-open"></i> Read Full Details
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1616,10 +1610,7 @@
 
           <!-- SECTION FOOTER WITH READ MORE BUTTON -->
           <div class="section-footer">
-            <div class="section-info">
-              <i class="fa-solid fa-clock"></i> Estimated time: 50-70 minutes
-              <i class="fa-solid fa-file-lines"></i> Full details: 25+ pages
-            </div>
+            
             <a href="Module3_section3.html" class="read-more-btn" target="_blank">
               <i class="fa-solid fa-book-open"></i> Read Full Details
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1732,10 +1723,7 @@
 
           <!-- SECTION FOOTER WITH READ MORE BUTTON -->
           <div class="section-footer">
-            <div class="section-info">
-              <i class="fa-solid fa-clock"></i> Estimated time: 30-45 minutes
-              <i class="fa-solid fa-file-lines"></i> Full details: 18+ pages
-            </div>
+           
             <a href="Module3_section4.html" class="read-more-btn" target="_blank">
               <i class="fa-solid fa-book-open"></i> Read Full Details
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -1825,10 +1813,7 @@
 
           <!-- SECTION FOOTER WITH READ MORE BUTTON -->
           <div class="section-footer">
-            <div class="section-info">
-              <i class="fa-solid fa-clock"></i> Estimated time: 40-55 minutes
-              <i class="fa-solid fa-file-lines"></i> Full details: 22+ pages
-            </div>
+          
             <a href="Module3_section5.html" class="read-more-btn" target="_blank">
               <i class="fa-solid fa-book-open"></i> Read Full Details
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -2171,10 +2156,7 @@ print("5. Consider outliers' impact on both descriptive stats and A/B tests")</c
 
           <!-- SECTION FOOTER WITH READ MORE BUTTON -->
           <div class="section-footer">
-            <div class="section-info">
-              <i class="fa-solid fa-clock"></i> Estimated time: 60-80 minutes
-              <i class="fa-solid fa-file-lines"></i> Full details: 30+ pages
-            </div>
+           
             <a href="Module3_section6.html" class="read-more-btn" target="_blank">
               <i class="fa-solid fa-book-open"></i> Read Full Details
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -2525,10 +2507,7 @@ print("5. Always report confidence intervals alongside point estimates")</code><
 
           <!-- SECTION FOOTER WITH READ MORE BUTTON -->
           <div class="section-footer">
-            <div class="section-info">
-              <i class="fa-solid fa-clock"></i> Estimated time: 45-60 minutes
-              <i class="fa-solid fa-file-lines"></i> Full details: 25+ pages
-            </div>
+           
             <a href="Module3_section7.html" class="read-more-btn" target="_blank">
               <i class="fa-solid fa-book-open"></i> Read Full Details
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -2608,52 +2587,7 @@ print("5. Always report confidence intervals alongside point estimates")</code><
             </div>
           </div>
 
-          <div class="interactive">
-            <h5 style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
-              <i class="fa-solid fa-lightbulb" style="color:var(--primary)"></i> Project Reflection: Statistical Analysis Plan
-            </h5>
-            <p class="muted">Outline your statistical analysis approach for the e-commerce scenario.</p>
-            <textarea id="projectReflection" placeholder="Example Statistical Analysis Plan:
-
-1. DATA PREPARATION:
-   - Load customer purchase data (purchase_amount, customer_age, region, device_type, session_duration)
-   - Handle missing values: Impute with median for continuous, mode for categorical
-   - Detect outliers using IQR method for purchase_amount
-   - Check for data quality issues (negative purchase amounts, impossible ages)
-
-2. DESCRIPTIVE ANALYSIS:
-   - Calculate summary statistics by region and device type
-   - Visualize purchase_amount distribution (histogram, box plot)
-   - Calculate correlation matrix for numerical variables
-   - Segment customers using K-means clustering on purchase behavior
-
-3. A/B TESTING DESIGN:
-   - Primary hypothesis: New recommendation algorithm increases add-to-cart rate by 10%
-   - Sample size calculation: Need 5,000 users per group (90% power, α=0.05)
-   - Random assignment with stratification by customer tier (high/medium/low value)
-   - Test duration: 14 days to capture weekly patterns
-   - Guardrail metrics: Check for negative impact on other KPIs
-
-4. STATISTICAL TESTS:
-   - Normality test (Shapiro-Wilk) for purchase amounts
-   - T-test to compare average order value between mobile vs desktop users
-   - Chi-square test for add-to-cart rate in A/B test
-   - ANOVA to compare purchase amounts across regions
-   - Calculate 95% confidence intervals for all key metrics
-
-5. REPORTING:
-   - Present effect sizes alongside p-values
-   - Include visualizations: confidence interval plots, distribution comparisons
-   - Discuss practical significance (minimum business effect)
-   - Address limitations: novelty effect, external factors, sample representativeness
-   - Make clear recommendations with confidence levels"></textarea>
-            <div class="formrow">
-              <button class="btn" id="saveProjectReflection" type="button"><i class="fa-solid fa-floppy-disk"></i> Save Analysis Plan</button>
-              <button class="btn btn-ghost" id="clearProjectReflection" type="button"><i class="fa-solid fa-eraser"></i> Clear</button>
-            </div>
-            <div id="projectReflectionStatus" class="muted" style="margin-top:12px;"></div>
-          </div>
-
+      
           <div class="note">
             <strong>Statistical Report Checklist:</strong>
             <ul style="padding-left:20px; margin-top:8px;">
@@ -2672,10 +2606,7 @@ print("5. Always report confidence intervals alongside point estimates")</code><
 
           <!-- SECTION FOOTER WITH READ MORE BUTTON -->
           <div class="section-footer">
-            <div class="section-info">
-              <i class="fa-solid fa-clock"></i> Estimated time: 60-90 minutes
-              <i class="fa-solid fa-file-lines"></i> Full details: 35+ pages
-            </div>
+            
             <a href="Module3_section8.html" class="read-more-btn" target="_blank">
               <i class="fa-solid fa-book-open"></i> Read Full Details
               <i class="fa-solid fa-arrow-up-right-from-square"></i>
@@ -2710,24 +2641,7 @@ print("5. Always report confidence intervals alongside point estimates")</code><
             <canvas id="progressionChart"></canvas>
           </div>
 
-          <div class="note">
-            <strong>Next Module Preview:</strong>
-            Module 3B will cover Probability Theory for ML, including probability distributions,
-            Bayes' Theorem, maximum likelihood estimation, and their applications in machine learning algorithms.
-            You'll learn how probability theory underpins ML algorithms and enables uncertainty quantification.
-          </div>
-
-          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
-          <div class="section-footer">
-            <div class="section-info">
-              <i class="fa-solid fa-clock"></i> Estimated time: 20-30 minutes
-              <i class="fa-solid fa-file-lines"></i> Full summary: 10+ pages
-            </div>
-            <a href="Module3_section9.html" class="read-more-btn" target="_blank">
-              <i class="fa-solid fa-book-open"></i> Read Full Summary
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
-            </a>
-          </div>
+      
         </section>
       </main>
 
