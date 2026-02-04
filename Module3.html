@@ -87,6 +87,7 @@
       box-sizing: border-box;
     }
 
+    /* Enable smooth scrolling */
     html { scroll-behavior: smooth; }
 
     body {
@@ -96,6 +97,7 @@
       line-height: 1.7;
       min-height: 100vh;
       transition: background-color 0.35s ease, color 0.35s ease;
+      overflow-x: hidden;
     }
 
     /* Dynamic background gradients based on theme */
@@ -138,6 +140,155 @@
       top: 16px;
       outline: none;
       box-shadow: var(--shadow), var(--ring);
+    }
+
+    /************************************************************
+     * SECTION NAVIGATION SYSTEM - REVISED
+     ************************************************************/
+    .section-nav {
+      position: fixed;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      opacity: 0;
+      animation: fadeIn 0.5s ease 0.5s forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .nav-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .nav-dot.active {
+      background: var(--primary);
+      transform: scale(1.4);
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    .nav-dot:hover:not(.active) {
+      background: var(--secondary);
+      transform: scale(1.2);
+    }
+
+    .nav-dot::after {
+      content: attr(data-section);
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--panel);
+      color: var(--text);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      border: 1px solid var(--border);
+    }
+
+    .nav-dot:hover::after {
+      opacity: 1;
+    }
+
+    /* Navigation buttons */
+    .nav-buttons {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 100;
+      opacity: 0;
+      animation: fadeIn 0.5s ease 0.7s forwards;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      border-radius: 50px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow);
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--ring2);
+      background: var(--primary);
+      color: white;
+    }
+
+    .nav-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+      background: var(--panel) !important;
+      color: var(--text) !important;
+    }
+
+    .section-counter {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text);
+      z-index: 100;
+      opacity: 0;
+      animation: fadeIn 0.5s ease 0.3s forwards;
+      box-shadow: var(--shadow);
+    }
+
+    /* Progress bar */
+    .progress-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      z-index: 1000;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      width: 0%;
+      transition: width 0.3s ease;
     }
 
     /************************************************************
@@ -321,6 +472,8 @@
     @media (max-width: 980px) {
       .layout { grid-template-columns: 1fr; }
       .meta { min-width: auto; width: 100%; }
+      .section-nav { display: none; }
+      .nav-buttons { bottom: 10px; }
     }
 
     .panel {
@@ -354,23 +507,119 @@
     }
 
     /************************************************************
-     * TYPOGRAPHY + SECTIONS
+     * TYPOGRAPHY + SECTIONS - REVISED FOR NORMAL SCROLLING
      ************************************************************/
-    .section { margin: 24px 0; scroll-margin-top: 20px; }
+    .section { 
+      margin: 40px 0; 
+      scroll-margin-top: 80px; /* Space for fixed header */
+      padding: 24px;
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    /* Highlight active section */
+    .section.highlighted {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary), var(--shadow);
+    }
+
+    /* Section headers with better visibility */
+    .section-header {
+      position: relative;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header::before {
+      content: attr(data-number);
+      position: absolute;
+      left: -10px;
+      top: -5px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      z-index: 1;
+    }
 
     .section h4 {
       margin-bottom: 16px;
-      font-size: 1.4rem;
+      font-size: 1.6rem;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
       color: var(--text);
-      font-weight: 600;
+      font-weight: 700;
+      margin-left: 30px;
     }
 
     .lead { font-size: 16px; color: var(--muted); line-height: 1.7; }
     .muted { color: var(--muted); font-size: 14px; }
     .small { font-size: 13px; color: var(--muted2); }
+
+    /************************************************************
+     * SECTION FOOTER WITH "READ MORE" BUTTON
+     ************************************************************/
+    .section-footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .read-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow);
+      border: none;
+      cursor: pointer;
+    }
+
+    .read-more-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--ring2);
+      text-decoration: none;
+      color: white;
+      filter: brightness(1.1);
+    }
+
+    .read-more-btn i {
+      font-size: 0.9em;
+    }
+
+    .section-info {
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-info i {
+      color: var(--primary);
+    }
 
     /************************************************************
      * COMPONENTS
@@ -673,24 +922,86 @@
 
     .btn-ghost:hover { background: var(--panel2); box-shadow: var(--ring); }
 
-    pre {
+    /************************************************************
+     * EXPANDABLE CODE BLOCKS
+     ************************************************************/
+    .code-container {
+      margin-top: 16px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .code-header {
+      background: rgba(15, 23, 42, 0.1);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border-bottom: 1px solid transparent;
+    }
+
+    .code-header:hover {
+      background: rgba(15, 23, 42, 0.15);
+    }
+
+    .code-header .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .code-header .toggle-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 18px;
+      transition: transform 0.3s ease;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+
+    .code-header .toggle-btn:hover {
+      background: rgba(15, 23, 42, 0.2);
+      transform: scale(1.1);
+    }
+
+    .code-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+
+    .code-content.expanded {
+      max-height: 2000px;
+    }
+
+    .code-content pre {
+      margin: 0;
+      border-radius: 0;
+      border: none;
       background: rgba(2, 6, 23, 0.95);
       color: #EAF0FF;
       padding: 24px;
-      border-radius: 16px;
       overflow-x: auto;
-      border: 1px solid var(--border);
-      margin-top: 16px;
       font-family: var(--mono);
-      font-size: 14px;
-      line-height: 1.6;
-      transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
-    body[data-theme="day"] pre {
+    body[data-theme="day"] .code-content pre {
       background: rgba(15, 23, 42, 0.05);
       color: var(--text);
-      border: 1px solid var(--border);
     }
 
     code {
@@ -859,8 +1170,8 @@
      * ACCESSIBILITY
      ************************************************************/
     @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto !important; }
       * { transition: none !important; }
+      .section { transition: none !important; }
     }
 
     .visually-hidden {
@@ -883,7 +1194,13 @@
       .interactive,
       textarea,
       .btn,
-      .range-wrap {
+      .range-wrap,
+      .section-nav,
+      .nav-buttons,
+      .section-counter,
+      .progress-container,
+      .read-more-btn,
+      .section-footer {
         display: none !important;
       }
 
@@ -896,11 +1213,50 @@
         box-shadow: none !important;
         border: 1px solid #ddd !important;
       }
+
+      .section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .code-content {
+        max-height: none !important;
+        display: block !important;
+      }
     }
   </style>
 </head>
 
 <body data-theme="night">
+  <!-- Progress bar -->
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  
+  <!-- Navigation Elements -->
+  <div class="section-counter" id="sectionCounter">Section 1 of 9</div>
+  
+  <div class="section-nav" id="sectionNav">
+    <div class="nav-dot active" data-section="Overview" data-index="0"></div>
+    <div class="nav-dot" data-section="Descriptive Stats" data-index="1"></div>
+    <div class="nav-dot" data-section="Inferential Stats" data-index="2"></div>
+    <div class="nav-dot" data-section="Outlier Detection" data-index="3"></div>
+    <div class="nav-dot" data-section="Sampling" data-index="4"></div>
+    <div class="nav-dot" data-section="Python Hands-On" data-index="5"></div>
+    <div class="nav-dot" data-section="Sampling Code" data-index="6"></div>
+    <div class="nav-dot" data-section="Application" data-index="7"></div>
+    <div class="nav-dot" data-section="Wrap-up" data-index="8"></div>
+  </div>
+
+  <div class="nav-buttons">
+    <button class="nav-btn" id="prevBtn" disabled>
+      <i class="fa-solid fa-arrow-up"></i> Previous
+    </button>
+    <button class="nav-btn" id="nextBtn">
+      Next <i class="fa-solid fa-arrow-down"></i>
+    </button>
+  </div>
+
   <!-- Theme Toggle -->
   <div class="theme-toggle-container">
     <button class="theme-toggle" id="themeToggle" type="button" aria-label="Theme: Night Mode (click to toggle)">
@@ -943,9 +1299,9 @@
 
     <div class="layout">
       <!-- MAIN CONTENT -->
-      <main id="main" class="panel main">
+      <main id="main">
         <!-- MODULE OVERVIEW -->
-        <section id="overview" class="section">
+        <section id="overview" class="section" data-number="1">
           <h4><i class="fa-solid fa-map"></i> 1) Module Overview: Statistics as ML Foundation</h4>
           <p class="lead">
             Statistics provides the tools to understand data, detect patterns, quantify uncertainty, and make informed decisions.
@@ -974,10 +1330,22 @@
             </div>
             <canvas id="statsWorkflowChart"></canvas>
           </div>
+
+          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 30-40 minutes
+              <i class="fa-solid fa-file-lines"></i> Full details: 15+ pages
+            </div>
+            <a href="Module3_section1.html" class="read-more-btn" target="_blank">
+              <i class="fa-solid fa-book-open"></i> Read Full Details
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
         </section>
 
         <!-- DESCRIPTIVE STATISTICS -->
-        <section id="descriptive" class="section">
+        <section id="descriptive" class="section" data-number="2">
           <h4><i class="fa-solid fa-chart-column"></i> 2) Descriptive Statistics: Summarizing Data</h4>
 
           <div class="definition">
@@ -1088,10 +1456,22 @@
               <canvas id="distributionChart"></canvas>
             </div>
           </div>
+
+          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 45-60 minutes
+              <i class="fa-solid fa-file-lines"></i> Full details: 20+ pages
+            </div>
+            <a href="Module3_section2.html" class="read-more-btn" target="_blank">
+              <i class="fa-solid fa-book-open"></i> Read Full Details
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
         </section>
 
         <!-- INFERENTIAL STATISTICS & A/B TESTING -->
-        <section id="inferential" class="section">
+        <section id="inferential" class="section" data-number="3">
           <h4><i class="fa-solid fa-magnifying-glass-chart"></i> 3) Inferential Statistics & A/B Testing</h4>
 
           <div class="definition">
@@ -1232,10 +1612,22 @@
             For example: Is the difference in accuracy between two models statistically significant?
             A/B testing provides a framework for making data-driven decisions about model deployment.
           </div>
+
+          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 50-70 minutes
+              <i class="fa-solid fa-file-lines"></i> Full details: 25+ pages
+            </div>
+            <a href="Module3_section3.html" class="read-more-btn" target="_blank">
+              <i class="fa-solid fa-book-open"></i> Read Full Details
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
         </section>
 
         <!-- OUTLIER DETECTION -->
-        <section id="outliers" class="section">
+        <section id="outliers" class="section" data-number="4">
           <h4><i class="fa-solid fa-triangle-exclamation"></i> 4) Outlier Detection: Finding the Unusual</h4>
 
           <p class="lead">
@@ -1336,10 +1728,22 @@
               </p>
             </details>
           </div>
+
+          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 30-45 minutes
+              <i class="fa-solid fa-file-lines"></i> Full details: 18+ pages
+            </div>
+            <a href="Module3_section4.html" class="read-more-btn" target="_blank">
+              <i class="fa-solid fa-book-open"></i> Read Full Details
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
         </section>
 
         <!-- SAMPLING TECHNIQUES -->
-        <section id="sampling" class="section">
+        <section id="sampling" class="section" data-number="5">
           <h4><i class="fa-solid fa-filter"></i> 5) Sampling Techniques for ML</h4>
 
           <div class="definition">
@@ -1417,10 +1821,22 @@
               <li>Document your sampling methodology for reproducibility</li>
             </ul>
           </div>
+
+          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 40-55 minutes
+              <i class="fa-solid fa-file-lines"></i> Full details: 22+ pages
+            </div>
+            <a href="Module3_section5.html" class="read-more-btn" target="_blank">
+              <i class="fa-solid fa-book-open"></i> Read Full Details
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
         </section>
 
         <!-- HANDS-ON: PYTHON FOR STATISTICS & A/B TESTING -->
-        <section id="python-hands-on" class="section">
+        <section id="python-hands-on" class="section" data-number="6">
           <h4><i class="fa-brands fa-python"></i> 6) Hands-On: Statistics & A/B Testing with Python</h4>
 
           <div class="callout">
@@ -1437,10 +1853,21 @@
             </h5>
             <p class="muted">
               This comprehensive example shows loading data, calculating statistics, A/B testing, outlier detection, and visualizing results.
-              Copy and run in Colab.
+              Click the button below to expand the code.
             </p>
 
-            <pre><code># Module 3A Hands-On: Statistics & A/B Testing with Python
+            <div class="code-container">
+              <div class="code-header" onclick="toggleCode('pythonCode1')">
+                <div class="title">
+                  <i class="fa-brands fa-python"></i>
+                  <span>Statistical Analysis Pipeline (Click to Expand)</span>
+                </div>
+                <button class="toggle-btn" aria-label="Toggle code visibility">
+                  <i class="fa-solid fa-chevron-down"></i>
+                </button>
+              </div>
+              <div class="code-content" id="pythonCode1">
+                <pre><code># Module 3A Hands-On: Statistics & A/B Testing with Python
 # Complete analysis pipeline from data loading to A/B testing
 
 import numpy as np
@@ -1730,6 +2157,8 @@ print("2. A/B testing requires proper sample size calculation")
 print("3. Report effect sizes and confidence intervals, not just p-values")
 print("4. Visualize data to complement numerical analysis")
 print("5. Consider outliers' impact on both descriptive stats and A/B tests")</code></pre>
+              </div>
+            </div>
 
             <div class="note">
               <strong>Statistical Thinking in Practice:</strong>
@@ -1738,10 +2167,22 @@ print("5. Consider outliers' impact on both descriptive stats and A/B tests")</c
               alongside p-values for more meaningful interpretation.
             </div>
           </div>
+
+          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 60-80 minutes
+              <i class="fa-solid fa-file-lines"></i> Full details: 30+ pages
+            </div>
+            <a href="Module3_section6.html" class="read-more-btn" target="_blank">
+              <i class="fa-solid fa-book-open"></i> Read Full Details
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
         </section>
 
         <!-- SAMPLING & A/B TESTING IMPLEMENTATION -->
-        <section id="sampling-implementation" class="section">
+        <section id="sampling-implementation" class="section" data-number="7">
           <h4><i class="fa-solid fa-code"></i> 7) Python Implementation: Sampling & A/B Testing</h4>
 
           <div class="interactive">
@@ -1750,9 +2191,21 @@ print("5. Consider outliers' impact on both descriptive stats and A/B tests")</c
             </h5>
             <p class="muted">
               Implement various sampling techniques and A/B testing with power analysis.
+              Click to expand the code examples.
             </p>
 
-            <pre><code># Sampling Techniques & A/B Testing Implementation
+            <div class="code-container">
+              <div class="code-header" onclick="toggleCode('pythonCode2')">
+                <div class="title">
+                  <i class="fa-solid fa-code"></i>
+                  <span>Sampling & A/B Testing Implementation (Click to Expand)</span>
+                </div>
+                <button class="toggle-btn" aria-label="Toggle code visibility">
+                  <i class="fa-solid fa-chevron-down"></i>
+                </button>
+              </div>
+              <div class="code-content" id="pythonCode2">
+                <pre><code># Sampling Techniques & A/B Testing Implementation
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -2065,11 +2518,25 @@ print("2. Power analysis is essential for designing valid A/B tests")
 print("3. Bootstrap provides robust CIs without distributional assumptions")
 print("4. Sample size dramatically affects statistical power")
 print("5. Always report confidence intervals alongside point estimates")</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 45-60 minutes
+              <i class="fa-solid fa-file-lines"></i> Full details: 25+ pages
+            </div>
+            <a href="Module3_section7.html" class="read-more-btn" target="_blank">
+              <i class="fa-solid fa-book-open"></i> Read Full Details
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
           </div>
         </section>
 
         <!-- PRACTICAL APPLICATION: E-COMMERCE CASE STUDY -->
-        <section id="application" class="section">
+        <section id="application" class="section" data-number="8">
           <h4><i class="fa-solid fa-flask"></i> 8) Practical Application: E-commerce Statistical Analysis</h4>
 
           <div class="callout">
@@ -2201,10 +2668,22 @@ print("5. Always report confidence intervals alongside point estimates")</code><
               <li>Include reproducibility information (code, seed values)</li>
             </ul>
           </div>
+
+          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 60-90 minutes
+              <i class="fa-solid fa-file-lines"></i> Full details: 35+ pages
+            </div>
+            <a href="Module3_section8.html" class="read-more-btn" target="_blank">
+              <i class="fa-solid fa-book-open"></i> Read Full Details
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
         </section>
 
         <!-- WRAP-UP -->
-        <section id="wrap" class="section">
+        <section id="wrap" class="section" data-number="9">
           <h4><i class="fa-solid fa-circle-check"></i> 9) Wrap-up & Next Steps</h4>
 
           <div class="callout">
@@ -2236,6 +2715,18 @@ print("5. Always report confidence intervals alongside point estimates")</code><
             Bayes' Theorem, maximum likelihood estimation, and their applications in machine learning algorithms.
             You'll learn how probability theory underpins ML algorithms and enables uncertainty quantification.
           </div>
+
+          <!-- SECTION FOOTER WITH READ MORE BUTTON -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 20-30 minutes
+              <i class="fa-solid fa-file-lines"></i> Full summary: 10+ pages
+            </div>
+            <a href="Module3_section9.html" class="read-more-btn" target="_blank">
+              <i class="fa-solid fa-book-open"></i> Read Full Summary
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </a>
+          </div>
         </section>
       </main>
 
@@ -2244,15 +2735,15 @@ print("5. Always report confidence intervals alongside point estimates")</code><
         <div class="panel card">
           <h3><i class="fa-solid fa-compass"></i> Navigation</h3>
           <nav class="toc" aria-label="Module 3A table of contents">
-            <a href="#overview"><i class="fa-solid fa-map"></i> Overview</a>
-            <a href="#descriptive"><i class="fa-solid fa-chart-column"></i> Descriptive Statistics</a>
-            <a href="#inferential"><i class="fa-solid fa-magnifying-glass-chart"></i> Inferential Stats & A/B Testing</a>
-            <a href="#outliers"><i class="fa-solid fa-triangle-exclamation"></i> Outlier Detection</a>
-            <a href="#sampling"><i class="fa-solid fa-filter"></i> Sampling Techniques</a>
-            <a href="#python-hands-on"><i class="fa-brands fa-python"></i> Python Hands-On</a>
-            <a href="#sampling-implementation"><i class="fa-solid fa-code"></i> Sampling & A/B Testing</a>
-            <a href="#application"><i class="fa-solid fa-flask"></i> Practical Application</a>
-            <a href="#wrap"><i class="fa-solid fa-circle-check"></i> Wrap-up</a>
+            <a href="#overview" class="nav-toc-link" data-index="0"><i class="fa-solid fa-map"></i> Overview</a>
+            <a href="#descriptive" class="nav-toc-link" data-index="1"><i class="fa-solid fa-chart-column"></i> Descriptive Statistics</a>
+            <a href="#inferential" class="nav-toc-link" data-index="2"><i class="fa-solid fa-magnifying-glass-chart"></i> Inferential Stats & A/B Testing</a>
+            <a href="#outliers" class="nav-toc-link" data-index="3"><i class="fa-solid fa-triangle-exclamation"></i> Outlier Detection</a>
+            <a href="#sampling" class="nav-toc-link" data-index="4"><i class="fa-solid fa-filter"></i> Sampling Techniques</a>
+            <a href="#python-hands-on" class="nav-toc-link" data-index="5"><i class="fa-brands fa-python"></i> Python Hands-On</a>
+            <a href="#sampling-implementation" class="nav-toc-link" data-index="6"><i class="fa-solid fa-code"></i> Sampling & A/B Testing</a>
+            <a href="#application" class="nav-toc-link" data-index="7"><i class="fa-solid fa-flask"></i> Practical Application</a>
+            <a href="#wrap" class="nav-toc-link" data-index="8"><i class="fa-solid fa-circle-check"></i> Wrap-up</a>
           </nav>
         </div>
 
@@ -2304,6 +2795,40 @@ print("5. Always report confidence intervals alongside point estimates")</code><
             <p><strong>Sample Size (proportions):</strong> \(n = \frac{(Z_{1-\alpha/2} + Z_{1-\beta})^2 \cdot (p_1(1-p_1) + p_2(1-p_2))}{(p_1 - p_2)^2}\)</p>
           </div>
         </div>
+
+        <div class="panel card">
+          <h3><i class="fa-solid fa-file-export"></i> Export Sections</h3>
+          <p class="muted">Access detailed versions of each section:</p>
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+            <a href="Module3_section1.html" class="btn btn-ghost" style="text-align: left; justify-content: flex-start;" target="_blank">
+              <i class="fa-solid fa-map"></i> Section 1: Overview
+            </a>
+            <a href="Module3_section2.html" class="btn btn-ghost" style="text-align: left; justify-content: flex-start;" target="_blank">
+              <i class="fa-solid fa-chart-column"></i> Section 2: Descriptive Stats
+            </a>
+            <a href="Module3_section3.html" class="btn btn-ghost" style="text-align: left; justify-content: flex-start;" target="_blank">
+              <i class="fa-solid fa-magnifying-glass-chart"></i> Section 3: Inferential Stats
+            </a>
+            <a href="Module3_section4.html" class="btn btn-ghost" style="text-align: left; justify-content: flex-start;" target="_blank">
+              <i class="fa-solid fa-triangle-exclamation"></i> Section 4: Outlier Detection
+            </a>
+            <a href="Module3_section5.html" class="btn btn-ghost" style="text-align: left; justify-content: flex-start;" target="_blank">
+              <i class="fa-solid fa-filter"></i> Section 5: Sampling
+            </a>
+            <a href="Module3_section6.html" class="btn btn-ghost" style="text-align: left; justify-content: flex-start;" target="_blank">
+              <i class="fa-brands fa-python"></i> Section 6: Python Hands-On
+            </a>
+            <a href="Module3_section7.html" class="btn btn-ghost" style="text-align: left; justify-content: flex-start;" target="_blank">
+              <i class="fa-solid fa-code"></i> Section 7: Sampling Code
+            </a>
+            <a href="Module3_section8.html" class="btn btn-ghost" style="text-align: left; justify-content: flex-start;" target="_blank">
+              <i class="fa-solid fa-flask"></i> Section 8: Application
+            </a>
+            <a href="Module3_section9.html" class="btn btn-ghost" style="text-align: left; justify-content: flex-start;" target="_blank">
+              <i class="fa-solid fa-circle-check"></i> Section 9: Wrap-up
+            </a>
+          </div>
+        </div>
       </aside>
     </div>
 
@@ -2314,6 +2839,197 @@ print("5. Always report confidence intervals alongside point estimates")</code><
   </div>
 
   <script>
+    /************************************************************
+     * IMPROVED SECTION NAVIGATION SYSTEM
+     ************************************************************/
+    const sections = document.querySelectorAll('.section');
+    const navDots = document.querySelectorAll('.nav-dot');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const sectionCounter = document.getElementById('sectionCounter');
+    const tocLinks = document.querySelectorAll('.nav-toc-link');
+    const progressBar = document.getElementById('progressBar');
+    
+    let currentSectionIndex = 0;
+    let isScrolling = false;
+
+    // Initialize navigation
+    function initNavigation() {
+      // Highlight first section
+      sections[0].classList.add('highlighted');
+      updateNavigation();
+      
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+
+    // Update navigation state
+    function updateNavigation() {
+      // Update navigation dots
+      navDots.forEach((dot, index) => {
+        if (index === currentSectionIndex) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+      
+      // Update button states
+      prevBtn.disabled = currentSectionIndex === 0;
+      nextBtn.disabled = currentSectionIndex === sections.length - 1;
+      
+      // Update counter
+      sectionCounter.textContent = `Section ${currentSectionIndex + 1} of ${sections.length}`;
+    }
+
+    // Update section highlighting based on scroll position
+    function updateActiveSection() {
+      if (isScrolling) return;
+      
+      const scrollPosition = window.scrollY + 100; // Offset for header
+      let currentIndex = 0;
+      let minDistance = Infinity;
+      
+      // Find which section is closest to the viewport center
+      sections.forEach((section, index) => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        const sectionCenter = sectionTop + sectionHeight / 2;
+        const distance = Math.abs(sectionCenter - scrollPosition);
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+          currentIndex = index;
+        }
+      });
+      
+      if (currentIndex !== currentSectionIndex) {
+        currentSectionIndex = currentIndex;
+        updateNavigation();
+        
+        // Highlight current section
+        sections.forEach((section, index) => {
+          if (index === currentSectionIndex) {
+            section.classList.add('highlighted');
+          } else {
+            section.classList.remove('highlighted');
+          }
+        });
+      }
+    }
+
+    // Jump to section
+    function goToSection(index) {
+      if (index < 0 || index >= sections.length || isScrolling) return;
+      
+      isScrolling = true;
+      currentSectionIndex = index;
+      
+      // Scroll to section
+      const targetSection = sections[currentSectionIndex];
+      const offset = 80; // Space for fixed elements
+      const targetPosition = targetSection.offsetTop - offset;
+      
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
+      });
+      
+      updateNavigation();
+      
+      // Reset scrolling flag after animation
+      setTimeout(() => {
+        isScrolling = false;
+      }, 500);
+    }
+
+    // Next section
+    function nextSection() {
+      if (currentSectionIndex < sections.length - 1) {
+        goToSection(currentSectionIndex + 1);
+      }
+    }
+
+    // Previous section
+    function prevSection() {
+      if (currentSectionIndex > 0) {
+        goToSection(currentSectionIndex - 1);
+      }
+    }
+
+    // Keyboard navigation
+    function handleKeyDown(e) {
+      if (e.key === 'ArrowDown' || e.key === ' ') {
+        e.preventDefault();
+        nextSection();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        prevSection();
+      } else if (e.key >= '1' && e.key <= '9') {
+        const num = parseInt(e.key);
+        if (num <= sections.length) {
+          e.preventDefault();
+          goToSection(num - 1);
+        }
+      }
+    }
+
+    // Update progress bar
+    function updateProgressBar() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = scrollTop / docHeight;
+      progressBar.style.width = (scrollPercent * 100) + '%';
+    }
+
+    // Event listeners
+    prevBtn.addEventListener('click', prevSection);
+    nextBtn.addEventListener('click', nextSection);
+    document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('scroll', () => {
+      updateActiveSection();
+      updateProgressBar();
+    });
+
+    // Navigation dots
+    navDots.forEach((dot, index) => {
+      dot.addEventListener('click', () => goToSection(index));
+    });
+
+    // TOC links
+    tocLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const index = parseInt(link.dataset.index);
+        goToSection(index);
+      });
+    });
+
+    /************************************************************
+     * EXPANDABLE CODE BLOCKS
+     ************************************************************/
+    function toggleCode(codeId) {
+      const codeContent = document.getElementById(codeId);
+      const toggleBtn = codeContent.previousElementSibling.querySelector('.toggle-btn i');
+      
+      if (codeContent.classList.contains('expanded')) {
+        codeContent.classList.remove('expanded');
+        toggleBtn.classList.remove('fa-chevron-up');
+        toggleBtn.classList.add('fa-chevron-down');
+      } else {
+        codeContent.classList.add('expanded');
+        toggleBtn.classList.remove('fa-chevron-down');
+        toggleBtn.classList.add('fa-chevron-up');
+      }
+    }
+
+    // Initialize all code blocks as collapsed
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-content').forEach(content => {
+        content.classList.remove('expanded');
+      });
+    });
+
     /************************************************************
      * Theme Toggle Functionality
      ************************************************************/
@@ -2600,20 +3316,6 @@ print("5. Always report confidence intervals alongside point estimates")</code><
                 display: true,
                 text: 'Test Group',
                 color: colors.text
-              }
-            }
-          },
-          plugins: {
-            annotation: {
-              annotations: {
-                line1: {
-                  type: 'line',
-                  yMin: 0.15,
-                  yMax: 0.15,
-                  borderColor: colors.text,
-                  borderWidth: 1,
-                  borderDash: [5, 5]
-                }
               }
             }
           }
@@ -3017,6 +3719,7 @@ print("5. Always report confidence intervals alongside point estimates")</code><
      ************************************************************/
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
+      initNavigation();
       initCharts();
       updateChartThemes();
       updateDistributionChart();
