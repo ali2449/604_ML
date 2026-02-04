@@ -1,1 +1,2333 @@
-Module3_section7.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IAF 604 - Module 3A: Section 7 - Sampling & A/B Testing Implementation</title>
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <!-- MathJax -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    /************************************************************
+     * THEME: Aurora with Day/Night Mode
+     ************************************************************/
+    :root {
+      /* Night Mode (Default) */
+      --bg0: #070A12;
+      --bg1: #0B1020;
+      --panel: #0F172A;
+      --panel2: #0B1226;
+      --card: #101B34;
+      --text: #EAF0FF;
+      --muted: rgba(234, 240, 255, 0.75);
+      --muted2: rgba(234, 240, 255, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+
+      --primary: #60A5FA;
+      --secondary: #A78BFA;
+      --accent: #F472B6;
+      --success: #34D399;
+      --warning: #FBBF24;
+      --danger: #FB7185;
+      --cyan: #22D3EE;
+
+      --radius: 16px;
+      --radius2: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --ring: 0 0 0 4px rgba(96, 165, 250, 0.22);
+      --ring2: 0 0 0 4px rgba(167, 139, 250, 0.20);
+
+      /* Theme toggle variables */
+      --mode-icon: '\f186'; /* moon */
+      --mode-label: 'Night Mode';
+    }
+
+    /* Day Mode Theme */
+    [data-theme="day"] {
+      --bg0: #F8FAFC;
+      --bg1: #F1F5F9;
+      --panel: #FFFFFF;
+      --panel2: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --muted: rgba(15, 23, 42, 0.75);
+      --muted2: rgba(15, 23, 42, 0.62);
+      --border: rgba(148, 163, 184, 0.25);
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+
+      --primary: #2563EB;
+      --secondary: #7C3AED;
+      --accent: #DB2777;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --cyan: #06B6D4;
+
+      --ring: 0 0 0 4px rgba(37, 99, 235, 0.15);
+      --ring2: 0 0 0 4px rgba(124, 58, 237, 0.15);
+
+      /* SHOW CURRENT THEME */
+      --mode-icon: '\f185'; /* sun */
+      --mode-label: 'Day Mode';
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Enable smooth scrolling */
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg0);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      transition: background-color 0.35s ease, color 0.35s ease;
+      overflow-x: hidden;
+    }
+
+    /* Dynamic background gradients based on theme */
+    body:not([data-theme="day"]) {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(96, 165, 250, 0.18), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(244, 114, 182, 0.16), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(34, 211, 238, 0.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    body[data-theme="day"] {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(37, 99, 235, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(219, 39, 119, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(6, 182, 212, 0.06), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1240px; margin: 0 auto; padding: 22px; }
+
+    .skip {
+      position: absolute;
+      left: -999px;
+      top: 0;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 9999;
+      color: var(--text);
+    }
+
+    .skip:focus {
+      left: 16px;
+      top: 16px;
+      outline: none;
+      box-shadow: var(--shadow), var(--ring);
+    }
+
+    /************************************************************
+     * THEME TOGGLE
+     ************************************************************/
+    .theme-toggle-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 50px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-toggle::before {
+      content: var(--mode-icon);
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 1.1em;
+    }
+
+    .theme-toggle .label {
+      font-size: 0.9em;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /************************************************************
+     * HEADER
+     ************************************************************/
+    header {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.90), rgba(16, 27, 52, 0.92));
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      color: var(--text);
+      padding: 28px;
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] header {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      right: -180px;
+      top: -180px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle at 30% 30%, rgba(96, 165, 250, 0.15), transparent 62%);
+      filter: blur(40px);
+      opacity: 0.6;
+    }
+
+    body[data-theme="day"] header::after {
+      background: radial-gradient(circle at 30% 30%, rgba(37, 99, 235, 0.1), transparent 62%);
+      opacity: 0.4;
+    }
+
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .course-info h1 {
+      font-size: clamp(24px, 2.8vw, 38px);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .course-info h2 {
+      font-size: clamp(16px, 1.8vw, 20px);
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+
+    .subtitle { max-width: 900px; color: var(--muted); font-size: 15px; margin-top: 12px; line-height: 1.6; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(8px);
+      width: fit-content;
+      margin-top: 10px;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .badge { background: rgba(15, 23, 42, 0.05); }
+
+    .meta {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      padding: 20px;
+      border-radius: 20px;
+      min-width: 340px;
+      backdrop-filter: blur(8px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .meta {
+      background: rgba(15, 23, 42, 0.03);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .meta p { margin: 8px 0; font-size: 14px; color: var(--muted); }
+
+    .pillrow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 50px;
+      background: rgba(15, 23, 42, 0.35);
+      border: 1px solid var(--border);
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text);
+      transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .pill { background: rgba(15, 23, 42, 0.05); }
+    .pill:hover { transform: translateY(-2px); border-color: var(--primary); }
+
+    /************************************************************
+     * LAYOUT
+     ************************************************************/
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .panel:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .main { padding: 24px; }
+
+    /************************************************************
+     * TYPOGRAPHY + SECTIONS
+     ************************************************************/
+    .section { 
+      margin: 40px 0; 
+      scroll-margin-top: 80px;
+      padding: 24px;
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .section.highlighted {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary), var(--shadow);
+    }
+
+    .section-header {
+      position: relative;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-header::before {
+      content: attr(data-number);
+      position: absolute;
+      left: -10px;
+      top: -5px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      z-index: 1;
+    }
+
+    .section h4 {
+      margin-bottom: 16px;
+      font-size: 1.6rem;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text);
+      font-weight: 700;
+      margin-left: 30px;
+    }
+
+    .lead { font-size: 16px; color: var(--muted); line-height: 1.7; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .small { font-size: 13px; color: var(--muted2); }
+
+    /************************************************************
+     * SECTION FOOTER
+     ************************************************************/
+    .section-footer {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .read-more-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow);
+      border: none;
+      cursor: pointer;
+    }
+
+    .read-more-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--ring2);
+      text-decoration: none;
+      color: white;
+      filter: brightness(1.1);
+    }
+
+    .read-more-btn i {
+      font-size: 0.9em;
+    }
+
+    .section-info {
+      font-size: 14px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-info i {
+      color: var(--primary);
+    }
+
+    /************************************************************
+     * COMPONENTS
+     ************************************************************/
+    .callout {
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.05);
+      margin: 16px 0;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .callout { background: rgba(15, 23, 42, 0.02); }
+
+    .definition {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(96, 165, 250, 0.05));
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      border-left: 4px solid rgba(167, 139, 250, 0.7);
+      padding: 20px;
+      border-radius: 16px;
+      margin: 16px 0;
+    }
+
+    body[data-theme="day"] .definition {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.08), rgba(96, 165, 250, 0.04));
+    }
+
+    .note {
+      padding: 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      background: rgba(251, 191, 36, 0.08);
+      margin-top: 16px;
+      color: var(--text);
+    }
+
+    body[data-theme="day"] .note { background: rgba(251, 191, 36, 0.06); }
+
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; }
+    @media (max-width: 980px) { .grid2 { grid-template-columns: 1fr; } }
+
+    .cards3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 16px; }
+    @media (max-width: 1100px) { .cards3 { grid-template-columns: 1fr; } }
+
+    .mini-card {
+      border-radius: 20px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .mini-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); }
+
+    .mini-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -100px auto;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle at 30% 30%, rgba(96, 165, 250, 0.1), transparent 65%);
+      transform: rotate(10deg);
+      filter: blur(20px);
+      opacity: 0.5;
+    }
+
+    .mini-card h5 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      color: var(--text);
+      font-size: 1.1rem;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-card p, .mini-card ul { position: relative; z-index: 1; color: var(--muted); }
+    .mini-card ul { padding-left: 20px; margin-top: 12px; }
+    .mini-card li { margin-bottom: 6px; line-height: 1.5; }
+
+    .mini-card.blue { border-top: 4px solid rgba(96, 165, 250, 0.9); }
+    .mini-card.violet { border-top: 4px solid rgba(167, 139, 250, 0.9); }
+    .mini-card.pink { border-top: 4px solid rgba(244, 114, 182, 0.9); }
+    .mini-card.green { border-top: 4px solid rgba(52, 211, 153, 0.9); }
+    .mini-card.cyan { border-top: 4px solid rgba(34, 211, 238, 0.9); }
+    .mini-card.gray { border-top: 4px solid rgba(148, 163, 184, 0.7); }
+    .mini-card.orange { border-top: 4px solid rgba(251, 191, 36, 0.9); }
+    .mini-card.red { border-top: 4px solid rgba(251, 113, 133, 0.9); }
+
+    .chiprow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; position: relative; z-index: 1; }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.1);
+      color: var(--text);
+      transition: transform 0.15s ease, border-color 0.2s ease, background-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .chip { background: rgba(15, 23, 42, 0.05); }
+    .chip:hover { transform: translateY(-1px); border-color: var(--primary); }
+
+    /************************************************************
+     * INTERACTIVE
+     ************************************************************/
+    .interactive {
+      background: rgba(15, 23, 42, 0.03);
+      border: 2px dashed var(--border);
+      padding: 24px;
+      border-radius: 20px;
+      margin-top: 20px;
+      transition: border-color 0.25s ease, background-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .interactive { background: rgba(15, 23, 42, 0.01); }
+    .interactive:hover { border-color: var(--primary); }
+
+    textarea, input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-top: 16px;
+      min-height: 120px;
+      resize: vertical;
+      color: var(--text);
+      background: var(--panel2);
+      outline: none;
+      font-family: inherit;
+      font-size: 14px;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.35s ease, color 0.35s ease;
+    }
+
+    textarea:focus, input[type="text"]:focus, input[type="number"]:focus {
+      box-shadow: var(--ring);
+      border-color: var(--primary);
+    }
+
+    input[type="text"], input[type="number"] {
+      min-height: auto;
+      padding: 12px 16px;
+    }
+
+    .formrow { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; align-items: center; }
+
+    .range-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      background: var(--panel2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 20px;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .range-wrap label { font-weight: 600; color: var(--text); min-width: 180px; }
+    .range-wrap output { font-family: var(--mono); font-weight: 600; color: var(--text); min-width: 80px; text-align: right; }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      accent-color: var(--primary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      margin-top: 16px;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--ring2); filter: brightness(1.1); text-decoration: none; }
+    .btn:focus { outline: none; box-shadow: var(--ring2); }
+
+    .btn-secondary { background: linear-gradient(135deg, var(--cyan), var(--success)); }
+    .btn-warning { background: linear-gradient(135deg, var(--warning), var(--danger)); }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 2px solid var(--border);
+    }
+
+    .btn-ghost:hover { background: var(--panel2); box-shadow: var(--ring); }
+
+    /************************************************************
+     * EXPANDABLE CODE BLOCKS
+     ************************************************************/
+    .code-container {
+      margin-top: 16px;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .code-header {
+      background: rgba(15, 23, 42, 0.1);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      border-bottom: 1px solid transparent;
+    }
+
+    .code-header:hover {
+      background: rgba(15, 23, 42, 0.15);
+    }
+
+    .code-header .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .code-header .toggle-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-size: 18px;
+      transition: transform 0.3s ease;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+    }
+
+    .code-header .toggle-btn:hover {
+      background: rgba(15, 23, 42, 0.2);
+      transform: scale(1.1);
+    }
+
+    .code-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+
+    .code-content.expanded {
+      max-height: 2000px;
+    }
+
+    .code-content pre {
+      margin: 0;
+      border-radius: 0;
+      border: none;
+      background: rgba(2, 6, 23, 0.95);
+      color: #EAF0FF;
+      padding: 24px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    body[data-theme="day"] .code-content pre {
+      background: rgba(15, 23, 42, 0.05);
+      color: var(--text);
+    }
+
+    code {
+      font-family: var(--mono);
+      background: rgba(96, 165, 250, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    .math {
+      font-family: "Times New Roman", serif;
+      font-style: italic;
+    }
+
+    /************************************************************
+     * CHARTS
+     ************************************************************/
+    .chart {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.03);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .chart { background: rgba(15, 23, 42, 0.01); }
+
+    .chart-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    canvas { width: 100% !important; height: 320px !important; }
+
+    /************************************************************
+     * TABLE STYLES
+     ************************************************************/
+    .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      margin-top: 20px;
+    }
+
+    .data-table th, .data-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .data-table th {
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--panel2);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .data-table td { color: var(--text); font-size: 14px; line-height: 1.6; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child { font-weight: 600; color: var(--text); width: 30%; }
+    @media (max-width: 880px) { .data-table td:first-child { width: 40%; } }
+
+    .table-actions { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 20px; }
+
+    .mini-callout {
+      padding: 20px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      margin-top: 20px;
+    }
+
+    .badge-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 50px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      font-weight: 600;
+      font-size: 12px;
+      color: var(--text);
+      margin: 0 8px 8px 0;
+    }
+
+    .hr-soft { height: 1px; border: none; background: var(--border); margin: 24px 0; opacity: 0.5; }
+
+    /************************************************************
+     * ACCESSIBILITY
+     ************************************************************/
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+      .section { transition: none !important; }
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    /* Print styles */
+    @media print {
+      .theme-toggle-container,
+      .interactive,
+      textarea,
+      .btn,
+      .range-wrap,
+      .section-footer {
+        display: none !important;
+      }
+
+      body {
+        background: white !important;
+        color: black !important;
+      }
+
+      .panel {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+      }
+
+      .section {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .code-content {
+        max-height: none !important;
+        display: block !important;
+      }
+    }
+
+    /************************************************************
+     * BACK NAVIGATION
+     ************************************************************/
+    .back-nav {
+      margin-bottom: 24px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .back-link:hover {
+      background: var(--primary);
+      color: white;
+      transform: translateX(-4px);
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body data-theme="night">
+  <!-- Theme Toggle -->
+  <div class="theme-toggle-container">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Theme: Night Mode (click to toggle)">
+      <span class="label" id="themeLabel">Night Mode</span>
+    </button>
+  </div>
+
+  <a class="skip" href="#main">Skip to content</a>
+
+  <div class="container">
+    <!-- Back Navigation -->
+    <div class="back-nav">
+      <a href="Module3A.html" class="back-link">
+        <i class="fa-solid fa-arrow-left"></i> Back to Module 3A Overview
+      </a>
+    </div>
+
+    <header>
+      <div class="course-header">
+        <div class="course-info">
+          <h1>IAF 604: Machine Learning &amp; Predictive Analytics</h1>
+          <h2>Module 3A — Section 7: Python Implementation - Sampling & A/B Testing</h2>
+          <div class="badge"><i class="fa-solid fa-code"></i> Hands-On Python: Sampling Techniques & A/B Testing Implementation</div>
+          <p class="subtitle">
+            This section provides complete Python implementations of sampling techniques and A/B testing with power analysis.
+            You'll learn to implement various sampling methods, calculate sample sizes, run A/B tests, and visualize results
+            using Python's statistical and machine learning libraries.
+          </p>
+        </div>
+
+        <div class="meta">
+          <p><strong>Section:</strong> 7 of 9</p>
+          <p><strong>Estimated time:</strong> 45-60 minutes</p>
+          <p><strong>Difficulty:</strong> Intermediate</p>
+          <div class="pillrow">
+            <span class="pill"><i class="fa-solid fa-filter"></i> Sampling Methods</span>
+            <span class="pill"><i class="fa-solid fa-flask-vial"></i> A/B Testing</span>
+            <span class="pill"><i class="fa-solid fa-calculator"></i> Power Analysis</span>
+            <span class="pill"><i class="fa-brands fa-python"></i> Python Code</span>
+            <span class="pill"><i class="fa-solid fa-chart-line"></i> Visualizations</span>
+            <span class="pill"><i class="fa-solid fa-repeat"></i> Bootstrapping</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <!-- MAIN CONTENT -->
+      <main id="main">
+        <!-- SECTION INTRODUCTION -->
+        <section id="introduction" class="section" data-number="7">
+          <h4><i class="fa-solid fa-code"></i> 7) Python Implementation: Sampling & A/B Testing</h4>
+
+          <div class="definition">
+            <p>
+              This section provides hands-on Python implementations of sampling techniques and A/B testing methodologies.
+              You'll learn to apply statistical concepts from previous sections using real Python code, including
+              sample size calculations, power analysis, and result visualization.
+            </p>
+          </div>
+
+          <div class="callout">
+            <p><strong>Learning Objectives for This Section:</strong></p>
+            <ul style="padding-left:20px; margin-top:12px;">
+              <li>Implement various sampling techniques in Python (random, stratified, SMOTE, bootstrap)</li>
+              <li>Calculate required sample sizes for A/B tests using power analysis</li>
+              <li>Simulate and analyze A/B tests with statistical significance testing</li>
+              <li>Create confidence intervals using bootstrapping methods</li>
+              <li>Visualize sampling distributions and test results</li>
+              <li>Apply these techniques to realistic ML scenarios</li>
+            </ul>
+          </div>
+
+          <!-- COMPLETE PYTHON IMPLEMENTATION -->
+          <div class="interactive">
+            <h5 style="margin-bottom:8px; display:flex; gap:12px; align-items:center;">
+              <i class="fa-solid fa-filter" style="color:var(--primary)"></i> Complete Python Implementation: Sampling & A/B Testing
+            </h5>
+            <p class="muted">
+              This comprehensive example shows how to implement various sampling techniques and conduct A/B testing
+              with power analysis in Python. Click to expand the code.
+            </p>
+
+            <div class="code-container">
+              <div class="code-header" onclick="toggleCode('pythonCode1')">
+                <div class="title">
+                  <i class="fa-solid fa-code"></i>
+                  <span>Sampling & A/B Testing Implementation (Click to Expand)</span>
+                </div>
+                <button class="toggle-btn" aria-label="Toggle code visibility">
+                  <i class="fa-solid fa-chevron-down"></i>
+                </button>
+              </div>
+              <div class="code-content" id="pythonCode1">
+                <pre><code># ============================================================================
+# SAMPLING TECHNIQUES & A/B TESTING IMPLEMENTATION
+# Module 3A - Section 7: Python Implementation
+# ============================================================================
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+from scipy.stats import norm, ttest_ind, chi2_contingency
+from sklearn.model_selection import train_test_split, StratifiedKFold
+from imblearn.over_sampling import SMOTE
+from imblearn.under_sampling import RandomUnderSampler
+from statsmodels.stats.power import TTestIndPower
+from statsmodels.stats.proportion import proportion_effectsize
+import warnings
+warnings.filterwarnings('ignore')
+
+# Set random seed for reproducibility
+np.random.seed(42)
+
+# ============================================================================
+# 1) SAMPLING TECHNIQUES IMPLEMENTATION
+# ============================================================================
+print("="*60)
+print("SAMPLING TECHNIQUES IMPLEMENTATION")
+print("="*60)
+
+def demonstrate_sampling_techniques():
+    """Demonstrate various sampling techniques on imbalanced data"""
+    
+    # Create an imbalanced dataset (90% class 0, 10% class 1)
+    n_samples = 1000
+    n_features = 5
+    
+    # Generate features
+    X = np.random.randn(n_samples, n_features)
+    
+    # Create imbalanced labels
+    y = np.zeros(n_samples)
+    y[:100] = 1  # Only 10% are class 1
+    
+    print(f"\nOriginal class distribution:")
+    print(f"Class 0: {(y == 0).sum()} samples ({(y == 0).sum()/len(y)*100:.1f}%)")
+    print(f"Class 1: {(y == 1).sum()} samples ({(y == 1).sum()/len(y)*100:.1f}%)")
+    
+    # 1.1 SIMPLE RANDOM SAMPLING
+    print("\n" + "-"*40)
+    print("1.1 SIMPLE RANDOM SAMPLING")
+    print("-"*40)
+    
+    sample_size = 200
+    random_indices = np.random.choice(len(X), size=sample_size, replace=False)
+    X_random_sample = X[random_indices]
+    y_random_sample = y[random_indices]
+    
+    print(f"Random sample size: {sample_size}")
+    print(f"Sampled class distribution:")
+    print(f"  Class 0: {(y_random_sample == 0).sum()} samples ({(y_random_sample == 0).sum()/len(y_random_sample)*100:.1f}%)")
+    print(f"  Class 1: {(y_random_sample == 1).sum()} samples ({(y_random_sample == 1).sum()/len(y_random_sample)*100:.1f}%)")
+    
+    # 1.2 STRATIFIED SAMPLING (preserves class proportions)
+    print("\n" + "-"*40)
+    print("1.2 STRATIFIED SAMPLING")
+    print("-"*40)
+    
+    X_strat, _, y_strat, _ = train_test_split(
+        X, y, 
+        train_size=0.2,  # 20% sample
+        stratify=y,
+        random_state=42
+    )
+    
+    print(f"Stratified sample size: {len(X_strat)}")
+    print(f"Sampled class distribution:")
+    print(f"  Class 0: {(y_strat == 0).sum()} samples ({(y_strat == 0).sum()/len(y_strat)*100:.1f}%)")
+    print(f"  Class 1: {(y_strat == 1).sum()} samples ({(y_strat == 1).sum()/len(y_strat)*100:.1f}%)")
+    
+    # 1.3 OVERSAMPLING MINORITY CLASS (SMOTE)
+    print("\n" + "-"*40)
+    print("1.3 SMOTE OVERSAMPLING")
+    print("-"*40)
+    
+    smote = SMOTE(random_state=42)
+    X_resampled, y_resampled = smote.fit_resample(X, y)
+    
+    print(f"After SMOTE oversampling:")
+    print(f"  Class 0: {(y_resampled == 0).sum()} samples ({(y_resampled == 0).sum()/len(y_resampled)*100:.1f}%)")
+    print(f"  Class 1: {(y_resampled == 1).sum()} samples ({(y_resampled == 1).sum()/len(y_resampled)*100:.1f}%)")
+    
+    # 1.4 UNDERSAMPLING MAJORITY CLASS
+    print("\n" + "-"*40)
+    print("1.4 RANDOM UNDERSAMPLING")
+    print("-"*40)
+    
+    undersampler = RandomUnderSampler(random_state=42, sampling_strategy=0.5)  # 2:1 ratio
+    X_under, y_under = undersampler.fit_resample(X, y)
+    
+    print(f"After random undersampling:")
+    print(f"  Class 0: {(y_under == 0).sum()} samples ({(y_under == 0).sum()/len(y_under)*100:.1f}%)")
+    print(f"  Class 1: {(y_under == 1).sum()} samples ({(y_under == 1).sum()/len(y_under)*100:.1f}%)")
+    
+    return {
+        'original': (X, y),
+        'random': (X_random_sample, y_random_sample),
+        'stratified': (X_strat, y_strat),
+        'smote': (X_resampled, y_resampled),
+        'undersampled': (X_under, y_under)
+    }
+
+# Run sampling demonstration
+sampling_results = demonstrate_sampling_techniques()
+
+# ============================================================================
+# 2) A/B TESTING WITH POWER ANALYSIS
+# ============================================================================
+print("\n" + "="*60)
+print("A/B TESTING POWER ANALYSIS")
+print("="*60)
+
+def calculate_sample_size(effect_size, alpha=0.05, power=0.8, ratio=1.0):
+    """
+    Calculate required sample size per group for A/B test
+    
+    Parameters:
+    -----------
+    effect_size : float
+        Cohen's d effect size (standardized difference between groups)
+    alpha : float
+        Significance level (Type I error rate)
+    power : float
+        Statistical power (1 - Type II error rate)
+    ratio : float
+        Ratio of sample sizes between groups (n2/n1)
+    
+    Returns:
+    --------
+    n_per_group : int
+        Required sample size for the first group
+    """
+    # Standard normal percentiles
+    z_alpha = norm.ppf(1 - alpha/2)
+    z_beta = norm.ppf(power)
+    
+    # Sample size formula for two independent samples
+    n_per_group = ((z_alpha + z_beta)**2 * (1 + 1/ratio)) / (effect_size**2)
+    return int(np.ceil(n_per_group))
+
+def demonstrate_power_analysis():
+    """Demonstrate power analysis for different scenarios"""
+    
+    print("\nPower Analysis for Different Effect Sizes (α=0.05, power=0.8):")
+    print("-"*60)
+    print(f"{'Effect Size (Cohen\'s d)':<25} {'Sample per Group':<20} {'Total Sample':<15}")
+    print("-"*60)
+    
+    effect_sizes = [0.2, 0.3, 0.5, 0.8, 1.0]  # Small, medium, large effects
+    
+    for es in effect_sizes:
+        n_per_group = calculate_sample_size(es)
+        print(f"{es:<25.2f} {n_per_group:<20} {2*n_per_group:<15}")
+    
+    # Real-world example: Click-through rate A/B test
+    print("\n" + "-"*60)
+    print("EXAMPLE: Click-through Rate A/B Test")
+    print("-"*60)
+    
+    # Current conversion rate: 5%
+    p_control = 0.05
+    # Expected improvement: 10% relative (to 5.5%)
+    p_treatment = 0.055
+    
+    # Calculate effect size for proportions (Cohen's h)
+    effect_size_prop = proportion_effectsize(p_control, p_treatment)
+    n_needed = calculate_sample_size(effect_size_prop)
+    
+    print(f"Control conversion rate: {p_control:.1%}")
+    print(f"Treatment conversion rate: {p_treatment:.1%}")
+    print(f"Relative improvement: {(p_treatment/p_control - 1)*100:.1f}%")
+    print(f"Effect size (Cohen's h): {effect_size_prop:.3f}")
+    print(f"Required sample per group: {n_needed}")
+    print(f"Total required sample: {2*n_needed}")
+    
+    # What if we have limited sample?
+    print(f"\nWith fixed sample of 1000 per group:")
+    power_analyzer = TTestIndPower()
+    achieved_power = power_analyzer.solve_power(
+        effect_size=effect_size_prop,
+        nobs1=1000,
+        alpha=0.05,
+        ratio=1.0
+    )
+    print(f"Achieved power: {achieved_power:.1%}")
+    print(f"Risk of Type II error (false negative): {(1-achieved_power):.1%}")
+    
+    # Minimum detectable effect (MDE) calculation
+    print(f"\nMinimum Detectable Effect with 1000 per group:")
+    mde = power_analyzer.solve_effect_size(
+        nobs1=1000,
+        alpha=0.05,
+        power=0.8,
+        ratio=1.0
+    )
+    print(f"MDE (Cohen's d): {mde:.3f}")
+    
+    return effect_size_prop, n_needed
+
+# Run power analysis demonstration
+effect_size, required_n = demonstrate_power_analysis()
+
+# ============================================================================
+# 3) A/B TEST SIMULATION AND ANALYSIS
+# ============================================================================
+print("\n" + "="*60)
+print("A/B TEST SIMULATION AND ANALYSIS")
+print("="*60)
+
+def simulate_ab_test(control_rate, treatment_rate, n_per_group, test_type='proportion'):
+    """
+    Simulate an A/B test and return results
+    
+    Parameters:
+    -----------
+    control_rate : float
+        Success rate for control group
+    treatment_rate : float
+        Success rate for treatment group
+    n_per_group : int
+        Sample size per group
+    test_type : str
+        Type of test: 'proportion' or 'continuous'
+    
+    Returns:
+    --------
+    results : dict
+        Dictionary containing test results
+    """
+    np.random.seed(42)
+    
+    if test_type == 'proportion':
+        # Simulate binary outcomes
+        control_data = np.random.binomial(1, control_rate, n_per_group)
+        treatment_data = np.random.binomial(1, treatment_rate, n_per_group)
+        
+        # Calculate conversion rates
+        control_conversion = control_data.mean()
+        treatment_conversion = treatment_data.mean()
+        
+        # Chi-square test for proportions
+        contingency_table = np.array([
+            [control_data.sum(), len(control_data) - control_data.sum()],
+            [treatment_data.sum(), len(treatment_data) - treatment_data.sum()]
+        ])
+        chi2, p_value, dof, expected = chi2_contingency(contingency_table)
+        
+        # Calculate confidence intervals
+        control_se = np.sqrt(control_conversion * (1 - control_conversion) / n_per_group)
+        treatment_se = np.sqrt(treatment_conversion * (1 - treatment_conversion) / n_per_group)
+        
+        z_critical = norm.ppf(0.975)  # 95% CI
+        
+        control_ci = (
+            control_conversion - z_critical * control_se,
+            control_conversion + z_critical * control_se
+        )
+        
+        treatment_ci = (
+            treatment_conversion - z_critical * treatment_se,
+            treatment_conversion + z_critical * treatment_se
+        )
+        
+        # Calculate relative improvement
+        difference = treatment_conversion - control_conversion
+        relative_improvement = (difference / control_conversion) * 100
+        
+        results = {
+            'test_type': 'proportion',
+            'control_rate': control_conversion,
+            'treatment_rate': treatment_conversion,
+            'difference': difference,
+            'relative_improvement': relative_improvement,
+            'p_value': p_value,
+            'significant': p_value < 0.05,
+            'control_ci': control_ci,
+            'treatment_ci': treatment_ci,
+            'chi2_statistic': chi2,
+            'sample_size': n_per_group
+        }
+        
+    else:  # continuous test
+        # Simulate continuous outcomes (e.g., revenue, time on site)
+        control_data = np.random.normal(control_rate, control_rate * 0.3, n_per_group)
+        treatment_data = np.random.normal(treatment_rate, treatment_rate * 0.3, n_per_group)
+        
+        # Two-sample t-test
+        t_stat, p_value = ttest_ind(control_data, treatment_data, equal_var=False)
+        
+        # Calculate means and confidence intervals
+        control_mean = control_data.mean()
+        treatment_mean = treatment_data.mean()
+        difference = treatment_mean - control_mean
+        
+        # Confidence intervals using t-distribution
+        control_se = stats.sem(control_data)
+        treatment_se = stats.sem(treatment_data)
+        
+        t_critical = stats.t.ppf(0.975, n_per_group * 2 - 2)
+        
+        control_ci = (
+            control_mean - t_critical * control_se,
+            control_mean + t_critical * control_se
+        )
+        
+        treatment_ci = (
+            treatment_mean - t_critical * treatment_se,
+            treatment_mean + t_critical * treatment_se
+        )
+        
+        # Effect size (Cohen's d)
+        pooled_std = np.sqrt((control_data.std()**2 + treatment_data.std()**2) / 2)
+        cohens_d = difference / pooled_std if pooled_std != 0 else 0
+        
+        results = {
+            'test_type': 'continuous',
+            'control_mean': control_mean,
+            'treatment_mean': treatment_mean,
+            'difference': difference,
+            'p_value': p_value,
+            'significant': p_value < 0.05,
+            'control_ci': control_ci,
+            'treatment_ci': treatment_ci,
+            't_statistic': t_stat,
+            'cohens_d': cohens_d,
+            'sample_size': n_per_group
+        }
+    
+    return results
+
+def print_ab_results(results):
+    """Pretty print A/B test results"""
+    
+    print(f"\nA/B Test Results:")
+    print("-"*40)
+    
+    if results['test_type'] == 'proportion':
+        print(f"Test Type: Proportion (Conversion Rate)")
+        print(f"Control Rate: {results['control_rate']:.3%}")
+        print(f"Treatment Rate: {results['treatment_rate']:.3%}")
+        print(f"Absolute Difference: {results['difference']:.3%}")
+        print(f"Relative Improvement: {results['relative_improvement']:.1f}%")
+        print(f"Chi-square Statistic: {results['chi2_statistic']:.4f}")
+    else:
+        print(f"Test Type: Continuous (Means)")
+        print(f"Control Mean: {results['control_mean']:.2f}")
+        print(f"Treatment Mean: {results['treatment_mean']:.2f}")
+        print(f"Absolute Difference: {results['difference']:.2f}")
+        print(f"T-statistic: {results['t_statistic']:.4f}")
+        print(f"Cohen's d (effect size): {results['cohens_d']:.3f}")
+    
+    print(f"p-value: {results['p_value']:.6f}")
+    print(f"Statistically Significant (α=0.05): {results['significant']}")
+    print(f"Sample Size per Group: {results['sample_size']}")
+    
+    if results['test_type'] == 'proportion':
+        print(f"95% CI for Control: [{results['control_ci'][0]:.3%}, {results['control_ci'][1]:.3%}]")
+        print(f"95% CI for Treatment: [{results['treatment_ci'][0]:.3%}, {results['treatment_ci'][1]:.3%}]")
+    else:
+        print(f"95% CI for Control: [{results['control_ci'][0]:.2f}, {results['control_ci'][1]:.2f}]")
+        print(f"95% CI for Treatment: [{results['treatment_ci'][0]:.2f}, {results['treatment_ci'][1]:.2f}]")
+    
+    # Interpretation
+    if results['significant']:
+        if results['difference'] > 0:
+            print(f"CONCLUSION: Treatment is significantly better than control.")
+        else:
+            print(f"CONCLUSION: Control is significantly better than treatment.")
+    else:
+        print(f"CONCLUSION: No significant difference detected.")
+
+# Run A/B test simulations
+print("\nExample 1: Conversion Rate A/B Test")
+ab_results1 = simulate_ab_test(
+    control_rate=0.05,      # 5% baseline
+    treatment_rate=0.055,   # 5.5% with treatment
+    n_per_group=2000,
+    test_type='proportion'
+)
+print_ab_results(ab_results1)
+
+print("\n" + "="*60)
+print("\nExample 2: Average Revenue A/B Test")
+ab_results2 = simulate_ab_test(
+    control_rate=50.0,      # $50 average revenue
+    treatment_rate=52.5,    # $52.50 with treatment
+    n_per_group=500,
+    test_type='continuous'
+)
+print_ab_results(ab_results2)
+
+# ============================================================================
+# 4) BOOTSTRAPPING FOR CONFIDENCE INTERVALS
+# ============================================================================
+print("\n" + "="*60)
+print("BOOTSTRAPPING FOR CONFIDENCE INTERVALS")
+print("="*60)
+
+def bootstrap_ci(data, statistic_func, n_bootstrap=1000, ci=95, random_state=42):
+    """
+    Calculate bootstrap confidence interval for any statistic
+    
+    Parameters:
+    -----------
+    data : array-like
+        Sample data
+    statistic_func : function
+        Function to calculate statistic (e.g., np.mean, np.median)
+    n_bootstrap : int
+        Number of bootstrap samples
+    ci : float
+        Confidence level (e.g., 95 for 95% CI)
+    random_state : int
+        Random seed for reproducibility
+    
+    Returns:
+    --------
+    result : dict
+        Dictionary containing bootstrap results
+    """
+    np.random.seed(random_state)
+    n = len(data)
+    bootstrap_stats = []
+    
+    for _ in range(n_bootstrap):
+        # Sample with replacement
+        sample = np.random.choice(data, size=n, replace=True)
+        stat = statistic_func(sample)
+        bootstrap_stats.append(stat)
+    
+    # Calculate confidence interval
+    lower = np.percentile(bootstrap_stats, (100-ci)/2)
+    upper = np.percentile(bootstrap_stats, 100 - (100-ci)/2)
+    
+    return {
+        'original': statistic_func(data),
+        'bootstrap_mean': np.mean(bootstrap_stats),
+        'bootstrap_std': np.std(bootstrap_stats),
+        'ci_lower': lower,
+        'ci_upper': upper,
+        'ci_level': ci,
+        'bootstrap_dist': bootstrap_stats
+    }
+
+def demonstrate_bootstrapping():
+    """Demonstrate bootstrapping on skewed data"""
+    
+    print("\nBootstrapping Example: Median Revenue")
+    
+    # Create skewed revenue data (common in e-commerce)
+    np.random.seed(42)
+    n_samples = 500
+    
+    # Generate data with a few high-value outliers
+    base_revenue = np.random.exponential(scale=50, size=n_samples-10)
+    outliers = np.random.uniform(500, 2000, size=10)
+    revenue_data = np.concatenate([base_revenue, outliers])
+    
+    # Bootstrap confidence interval for median (robust to outliers)
+    median_results = bootstrap_ci(revenue_data, np.median, n_bootstrap=2000, ci=95)
+    
+    # Compare with mean (sensitive to outliers)
+    mean_results = bootstrap_ci(revenue_data, np.mean, n_bootstrap=2000, ci=95)
+    
+    # Parametric CI for mean (assumes normality)
+    mean_val = np.mean(revenue_data)
+    sem_val = stats.sem(revenue_data)
+    n = len(revenue_data)
+    t_crit = stats.t.ppf(0.975, n-1)
+    parametric_ci = (mean_val - t_crit*sem_val, mean_val + t_crit*sem_val)
+    
+    print(f"\nData Statistics:")
+    print(f"Sample size: {n}")
+    print(f"Mean revenue: ${mean_val:.2f}")
+    print(f"Median revenue: ${np.median(revenue_data):.2f}")
+    print(f"Standard deviation: ${np.std(revenue_data):.2f}")
+    print(f"Skewness: {stats.skew(revenue_data):.3f}")
+    
+    print(f"\nBootstrap Results for MEDIAN:")
+    print(f"Original median: ${median_results['original']:.2f}")
+    print(f"Bootstrap median: ${median_results['bootstrap_mean']:.2f}")
+    print(f"95% Bootstrap CI: [${median_results['ci_lower']:.2f}, ${median_results['ci_upper']:.2f}]")
+    
+    print(f"\nBootstrap Results for MEAN:")
+    print(f"Original mean: ${mean_results['original']:.2f}")
+    print(f"Bootstrap mean: ${mean_results['bootstrap_mean']:.2f}")
+    print(f"95% Bootstrap CI: [${mean_results['ci_lower']:.2f}, ${mean_results['ci_upper']:.2f}]")
+    
+    print(f"\nParametric (t-distribution) CI for MEAN:")
+    print(f"95% Parametric CI: [${parametric_ci[0]:.2f}, ${parametric_ci[1]:.2f}]")
+    
+    print(f"\nKey Insight:")
+    print("The median provides a more robust estimate for skewed data.")
+    print("Bootstrap CIs don't assume normality and work well for any distribution.")
+    
+    return revenue_data, median_results, mean_results
+
+# Run bootstrapping demonstration
+revenue_data, median_results, mean_results = demonstrate_bootstrapping()
+
+# ============================================================================
+# 5) VISUALIZATION OF RESULTS
+# ============================================================================
+print("\n" + "="*60)
+print("GENERATING VISUALIZATIONS...")
+print("="*60)
+
+def create_visualizations():
+    """Create comprehensive visualizations for sampling and A/B testing"""
+    
+    # Set up the figure
+    fig, axes = plt.subplots(3, 2, figsize=(15, 12))
+    fig.suptitle('Sampling & A/B Testing Analysis', fontsize=16, fontweight='bold')
+    
+    # Plot 1: Class distribution comparison
+    class_counts = {
+        'Original': [900, 100],  # [class0, class1]
+        'Random Sample': [180, 20],
+        'Stratified': [180, 20],
+        'SMOTE': [900, 900],
+        'Undersampled': [200, 100]
+    }
+    
+    x = np.arange(len(class_counts))
+    width = 0.35
+    axes[0, 0].bar(x - width/2, [counts[0] for counts in class_counts.values()], 
+                    width, label='Class 0', color='blue', alpha=0.7)
+    axes[0, 0].bar(x + width/2, [counts[1] for counts in class_counts.values()], 
+                    width, label='Class 1', color='red', alpha=0.7)
+    axes[0, 0].set_title('Class Distribution - Sampling Methods')
+    axes[0, 0].set_xticks(x)
+    axes[0, 0].set_xticklabels(list(class_counts.keys()), rotation=45, ha='right')
+    axes[0, 0].set_ylabel('Count')
+    axes[0, 0].legend()
+    axes[0, 0].grid(True, alpha=0.3)
+    
+    # Plot 2: Effect size vs sample size
+    axes[0, 1].clear()
+    effect_sizes = np.linspace(0.1, 1.0, 20)
+    sample_sizes = [calculate_sample_size(es) for es in effect_sizes]
+    axes[0, 1].plot(effect_sizes, sample_sizes, 'b-', linewidth=2)
+    axes[0, 1].fill_between(effect_sizes, 0, sample_sizes, alpha=0.2, color='blue')
+    axes[0, 1].axhline(384, color='red', linestyle='--', alpha=0.7, label='Typical A/B test (n=384)')
+    axes[0, 1].set_title('Effect Size vs Required Sample Size')
+    axes[0, 1].set_xlabel("Effect Size (Cohen's d)")
+    axes[0, 1].set_ylabel('Sample per Group')
+    axes[0, 1].grid(True, alpha=0.3)
+    axes[0, 1].legend()
+    
+    # Plot 3: Bootstrap distribution
+    np.random.seed(42)
+    test_data = np.random.exponential(scale=10, size=200) + 20
+    bootstrap_means = []
+    for _ in range(1000):
+        sample = np.random.choice(test_data, size=len(test_data), replace=True)
+        bootstrap_means.append(np.mean(sample))
+    
+    axes[1, 0].hist(bootstrap_means, bins=30, alpha=0.7, color='purple', density=True)
+    axes[1, 0].axvline(np.mean(test_data), color='red', linestyle='--', linewidth=2, 
+                       label=f'Original Mean: {np.mean(test_data):.2f}')
+    
+    # Calculate bootstrap CI
+    ci_lower = np.percentile(bootstrap_means, 2.5)
+    ci_upper = np.percentile(bootstrap_means, 97.5)
+    
+    axes[1, 0].axvline(ci_lower, color='gray', linestyle=':', linewidth=1.5)
+    axes[1, 0].axvline(ci_upper, color='gray', linestyle=':', linewidth=1.5)
+    axes[1, 0].axvspan(ci_lower, ci_upper, alpha=0.1, color='gray', label='95% CI')
+    axes[1, 0].set_title('Bootstrap Distribution of Means')
+    axes[1, 0].set_xlabel('Mean Value')
+    axes[1, 0].set_ylabel('Density')
+    axes[1, 0].legend()
+    axes[1, 0].grid(True, alpha=0.3)
+    
+    # Plot 4: Power analysis visualization
+    axes[1, 1].clear()
+    sample_range = np.arange(100, 5001, 100)
+    powers_small = []
+    powers_medium = []
+    powers_large = []
+    
+    for n in sample_range:
+        power_analyzer = TTestIndPower()
+        power_small = power_analyzer.solve_power(effect_size=0.2, nobs1=n, alpha=0.05, ratio=1.0)
+        power_medium = power_analyzer.solve_power(effect_size=0.5, nobs1=n, alpha=0.05, ratio=1.0)
+        power_large = power_analyzer.solve_power(effect_size=0.8, nobs1=n, alpha=0.05, ratio=1.0)
+        
+        powers_small.append(power_small)
+        powers_medium.append(power_medium)
+        powers_large.append(power_large)
+    
+    axes[1, 1].plot(sample_range, powers_small, 'g-', linewidth=2, label='Small effect (d=0.2)')
+    axes[1, 1].plot(sample_range, powers_medium, 'b-', linewidth=2, label='Medium effect (d=0.5)')
+    axes[1, 1].plot(sample_range, powers_large, 'r-', linewidth=2, label='Large effect (d=0.8)')
+    axes[1, 1].axhline(0.8, color='black', linestyle='--', alpha=0.5, label='Target Power (0.8)')
+    axes[1, 1].set_title('Statistical Power vs Sample Size')
+    axes[1, 1].set_xlabel('Sample Size per Group')
+    axes[1, 1].set_ylabel('Statistical Power')
+    axes[1, 1].grid(True, alpha=0.3)
+    axes[1, 1].legend()
+    
+    # Plot 5: A/B test results visualization
+    # Simulate A/B test data
+    np.random.seed(42)
+    control_data = np.random.normal(50, 10, 1000)
+    treatment_data = np.random.normal(52.5, 10, 1000)
+    
+    positions = [1, 2]
+    axes[2, 0].boxplot([control_data, treatment_data], positions=positions, 
+                        labels=['Control', 'Treatment'], widths=0.6)
+    
+    # Add mean markers
+    axes[2, 0].scatter([1], [np.mean(control_data)], color='red', zorder=3, s=100, marker='D', label='Mean')
+    axes[2, 0].scatter([2], [np.mean(treatment_data)], color='red', zorder=3, s=100, marker='D')
+    
+    axes[2, 0].set_title('A/B Test: Control vs Treatment')
+    axes[2, 0].set_ylabel('Metric Value')
+    axes[2, 0].grid(True, alpha=0.3, axis='y')
+    axes[2, 0].legend()
+    
+    # Plot 6: Confidence intervals comparison
+    axes[2, 1].clear()
+    
+    # Different methods for calculating CI
+    methods = ['Bootstrap', 'Parametric (t)', 'Percentile']
+    ci_lower_values = [48.2, 48.5, 48.0]
+    ci_upper_values = [52.8, 52.5, 53.0]
+    point_estimates = [50.5, 50.5, 50.5]
+    
+    y_pos = np.arange(len(methods))
+    
+    # Plot CIs
+    for i, (lower, upper, point) in enumerate(zip(ci_lower_values, ci_upper_values, point_estimates)):
+        axes[2, 1].hlines(y=i, xmin=lower, xmax=upper, color='blue', linewidth=3)
+        axes[2, 1].plot(point, i, 'ro', markersize=8)
+    
+    axes[2, 1].set_yticks(y_pos)
+    axes[2, 1].set_yticklabels(methods)
+    axes[2, 1].set_xlabel('Estimate')
+    axes[2, 1].set_title('Confidence Intervals by Method')
+    axes[2, 1].grid(True, alpha=0.3, axis='x')
+    
+    plt.tight_layout()
+    plt.show()
+
+# Generate visualizations
+create_visualizations()
+
+# ============================================================================
+# 6) PRACTICAL APPLICATION: E-COMMERCE EXAMPLE
+# ============================================================================
+print("\n" + "="*60)
+print("PRACTICAL APPLICATION: E-COMMERCE A/B TEST")
+print("="*60)
+
+def ecommerce_ab_test_case_study():
+    """Complete case study: E-commerce website A/B test"""
+    
+    print("\nCase Study: E-commerce Website Redesign")
+    print("-"*50)
+    
+    print("SITUATION:")
+    print("An e-commerce company wants to test a new website design.")
+    print("The hypothesis is that the new design will increase conversion rate.")
+    print("\nCURRENT METRICS:")
+    print("- Baseline conversion rate: 3.2%")
+    print("- Average order value: $85")
+    print("- Monthly visitors: 100,000")
+    
+    print("\nEXPERIMENT DESIGN:")
+    print("1. Test Type: A/B test (control vs new design)")
+    print("2. Primary Metric: Conversion rate")
+    print("3. Secondary Metrics: Average order value, bounce rate")
+    print("4. Duration: 4 weeks (to capture weekly patterns)")
+    print("5. Randomization: Visitor-level, 50/50 split")
+    
+    print("\nSAMPLE SIZE CALCULATION:")
+    print("We want to detect a 10% relative improvement (3.2% to 3.52%)")
+    print("With α=0.05 and power=0.8")
+    
+    # Calculate required sample size
+    effect_size = proportion_effectsize(0.032, 0.0352)
+    n_needed = calculate_sample_size(effect_size)
+    
+    print(f"Required sample per group: {n_needed:,}")
+    print(f"Total required: {2*n_needed:,}")
+    print(f"At 100,000 monthly visitors, test will take: {(2*n_needed/100000)*30:.1f} days")
+    
+    print("\nSIMULATED RESULTS:")
+    print("After running the test for 30 days with 50,000 visitors per group...")
+    
+    # Simulate results
+    np.random.seed(42)
+    control_conversions = np.random.binomial(1, 0.032, 50000)
+    treatment_conversions = np.random.binomial(1, 0.0352, 50000)
+    
+    control_rate = control_conversions.mean()
+    treatment_rate = treatment_conversions.mean()
+    
+    print(f"Control conversion rate: {control_rate:.3%}")
+    print(f"Treatment conversion rate: {treatment_rate:.3%}")
+    print(f"Absolute difference: {treatment_rate - control_rate:.3%}")
+    print(f"Relative improvement: {(treatment_rate/control_rate - 1)*100:.1f}%")
+    
+    # Statistical test
+    contingency = np.array([
+        [control_conversions.sum(), len(control_conversions) - control_conversions.sum()],
+        [treatment_conversions.sum(), len(treatment_conversions) - treatment_conversions.sum()]
+    ])
+    chi2, p_value, dof, expected = chi2_contingency(contingency)
+    
+    print(f"\nSTATISTICAL ANALYSIS:")
+    print(f"Chi-square statistic: {chi2:.4f}")
+    print(f"p-value: {p_value:.6f}")
+    print(f"Statistically significant (α=0.05): {p_value < 0.05}")
+    
+    # Business impact calculation
+    monthly_visitors = 100000
+    current_conversions = monthly_visitors * 0.032
+    new_conversions = monthly_visitors * treatment_rate
+    additional_conversions = new_conversions - current_conversions
+    
+    avg_order_value = 85
+    additional_revenue = additional_conversions * avg_order_value
+    
+    print(f"\nBUSINESS IMPACT:")
+    print(f"Additional monthly conversions: {additional_conversions:.0f}")
+    print(f"Additional monthly revenue: ${additional_revenue:,.0f}")
+    print(f"Annual revenue impact: ${additional_revenue * 12:,.0f}")
+    
+    print(f"\nRECOMMENDATION:")
+    if p_value < 0.05 and treatment_rate > control_rate:
+        print("DEPLOY NEW DESIGN - Statistically significant improvement detected.")
+    else:
+        print("KEEP CURRENT DESIGN - No significant improvement detected.")
+    
+    return {
+        'control_rate': control_rate,
+        'treatment_rate': treatment_rate,
+        'p_value': p_value,
+        'significant': p_value < 0.05,
+        'additional_revenue': additional_revenue
+    }
+
+# Run case study
+case_study_results = ecommerce_ab_test_case_study()
+
+print("\n" + "="*60)
+print("KEY TAKEAWAYS")
+print("="*60)
+print("1. Always calculate required sample size BEFORE running A/B tests")
+print("2. Use appropriate sampling methods for your data characteristics")
+print("3. Bootstrap provides robust confidence intervals for non-normal data")
+print("4. Consider both statistical AND practical significance")
+print("5. Document your analysis methodology for reproducibility")
+print("6. Power analysis helps avoid Type II errors (false negatives)")
+print("7. Stratified sampling preserves population structure in samples")
+print("8. SMOTE helps with imbalanced classification problems")</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- INTERACTIVE SIMULATION -->
+          <div class="interactive">
+            <h5 style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+              <i class="fa-solid fa-sliders" style="color:var(--primary)"></i> Interactive: A/B Test Power Calculator
+            </h5>
+            <p class="muted">
+              Adjust the parameters to see how they affect required sample size and statistical power.
+            </p>
+
+            <div class="grid2">
+              <div>
+                <div class="range-wrap">
+                  <label for="baselineRate">Baseline Conversion Rate</label>
+                  <input id="baselineRate" type="range" min="1" max="20" value="5" step="0.5" />
+                  <output id="baselineRateOut">5%</output>
+                </div>
+                
+                <div class="range-wrap">
+                  <label for="improvement">Expected Improvement</label>
+                  <input id="improvement" type="range" min="1" max="50" value="10" step="1" />
+                  <output id="improvementOut">10%</output>
+                </div>
+              </div>
+              
+              <div>
+                <div class="range-wrap">
+                  <label for="alphaLevel">Significance Level (α)</label>
+                  <input id="alphaLevel" type="range" min="1" max="10" value="5" />
+                  <output id="alphaLevelOut">5%</output>
+                </div>
+                
+                <div class="range-wrap">
+                  <label for="targetPower">Target Power (1-β)</label>
+                  <input id="targetPower" type="range" min="70" max="95" value="80" />
+                  <output id="targetPowerOut">80%</output>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart" style="margin-top:20px;">
+              <div class="chart-title">
+                <span>Sample Size Requirements</span>
+                <span class="muted" id="sampleSizeResult">Calculating...</span>
+              </div>
+              <canvas id="sampleSizeChart"></canvas>
+            </div>
+
+            <div class="formula-box">
+              <strong>Sample Size Formula for Proportions:</strong><br>
+              \(n = \frac{(Z_{1-\alpha/2} + Z_{1-\beta})^2 \cdot (p_1(1-p_1) + p_2(1-p_2))}{(p_1 - p_2)^2}\)<br>
+              Where \(p_1\) is baseline rate, \(p_2\) is expected rate, \(Z\) are standard normal percentiles.
+            </div>
+          </div>
+
+          <!-- PRACTICAL EXERCISE -->
+          <div class="note">
+            <h5 style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
+              <i class="fa-solid fa-pencil" style="color:var(--warning)"></i> Practice Exercise: Design Your Own A/B Test
+            </h5>
+            <p class="muted">Apply what you've learned by designing an A/B test for this scenario:</p>
+            <p><strong>Scenario:</strong> You're testing a new recommendation algorithm for an e-commerce site. The current algorithm has a 2.8% click-through rate (CTR). You believe the new algorithm could improve CTR by 15%.</p>
+            <p><strong>Your Tasks:</strong></p>
+            <ol style="padding-left:20px; margin-top:8px;">
+              <li>Calculate the required sample size per group (α=0.05, power=0.8)</li>
+              <li>Design the randomization procedure</li>
+              <li>Specify how long the test should run (assuming 10,000 daily visitors)</li>
+              <li>Outline what statistical test you would use and why</li>
+              <li>Describe how you would handle potential issues (novelty effect, seasonality)</li>
+            </ol>
+            
+            <textarea id="practiceExercise" placeholder="Write your A/B test design here..." style="margin-top:16px;"></textarea>
+            <div class="formrow">
+              <button class="btn" id="saveExercise" type="button"><i class="fa-solid fa-floppy-disk"></i> Save Your Design</button>
+              <button class="btn btn-ghost" id="clearExercise" type="button"><i class="fa-solid fa-eraser"></i> Clear</button>
+            </div>
+            <div id="exerciseStatus" class="muted" style="margin-top:12px;"></div>
+          </div>
+
+          <!-- KEY CONCEPTS SUMMARY -->
+          <div class="callout">
+            <p><strong>Key Concepts Covered:</strong></p>
+            <div class="grid2" style="margin-top:16px;">
+              <div>
+                <h6><i class="fa-solid fa-filter"></i> Sampling Techniques</h6>
+                <ul class="small">
+                  <li><strong>Simple Random:</strong> Every observation has equal chance</li>
+                  <li><strong>Stratified:</strong> Preserves class proportions</li>
+                  <li><strong>SMOTE:</strong> Synthetic oversampling for imbalanced data</li>
+                  <li><strong>Bootstrap:</strong> Resampling with replacement for CI estimation</li>
+                </ul>
+              </div>
+              <div>
+                <h6><i class="fa-solid fa-flask-vial"></i> A/B Testing</h6>
+                <ul class="small">
+                  <li><strong>Power Analysis:</strong> Calculating required sample size</li>
+                  <li><strong>Statistical Tests:</strong> Chi-square for proportions, t-test for means</li>
+                  <li><strong>Confidence Intervals:</strong> Bootstrap vs parametric methods</li>
+                  <li><strong>Effect Sizes:</strong> Cohen's d for continuous, Cohen's h for proportions</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION FOOTER -->
+          <div class="section-footer">
+            <div class="section-info">
+              <i class="fa-solid fa-clock"></i> Estimated time: 45-60 minutes
+              <i class="fa-solid fa-file-lines"></i> Code examples: 200+ lines
+            </div>
+            <div>
+              <a href="Module3_section8.html" class="read-more-btn">
+                <i class="fa-solid fa-arrow-right"></i> Next: Practical Application
+              </a>
+              <a href="Module3_section6.html" class="btn btn-ghost" style="margin-left:12px;">
+                <i class="fa-solid fa-arrow-left"></i> Previous
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- ADDITIONAL RESOURCES -->
+        <section class="section">
+          <h4><i class="fa-solid fa-book-open"></i> Additional Resources</h4>
+          
+          <div class="cards3">
+            <div class="mini-card cyan">
+              <h5><i class="fa-solid fa-vial"></i> A/B Testing Frameworks</h5>
+              <ul>
+                <li><a href="https://www.statsmodels.org/stable/stats.html" target="_blank">Statsmodels</a> - Statistical tests in Python</li>
+                <li><a href="https://github.com/facebook/planout" target="_blank">PlanOut</a> - A/B testing framework from Facebook</li>
+                <li><a href="https://github.com/uber/neuropod" target="_blank">Neuropod</a> - ML model A/B testing</li>
+                <li><a href="https://developers.google.com/optimize" target="_blank">Google Optimize</a> - Enterprise A/B testing</li>
+              </ul>
+            </div>
+            
+            <div class="mini-card green">
+              <h5><i class="fa-solid fa-chart-bar"></i> Sampling Libraries</h5>
+              <ul>
+                <li><a href="https://imbalanced-learn.org/" target="_blank">Imbalanced-learn</a> - SMOTE & advanced sampling</li>
+                <li><a href="https://scikit-learn.org/stable/modules/classes.html#module-sklearn.utils" target="_blank">Scikit-learn utils</a> - Built-in sampling methods</li>
+                <li><a href="https://pypi.org/project/resample/" target="_blank">Resample</a> - Bootstrap resampling</li>
+                <li><a href="https://github.com/koaning/scikit-lego" target="_blank">Scikit-lego</a> - Additional sampling tools</li>
+              </ul>
+            </div>
+            
+            <div class="mini-card violet">
+              <h5><i class="fa-solid fa-graduation-cap"></i> Further Reading</h5>
+              <ul>
+                <li><a href="https://www.evanmiller.org/ab-testing/" target="_blank">A/B Test Calculator</a> - Sample size & significance</li>
+                <li><a href="https://cran.r-project.org/web/packages/pwr/vignettes/pwr-vignette.html" target="_blank">Power Analysis Guide</a></li>
+                <li><a href="https://www.optimizely.com/optimization-glossary/" target="_blank">A/B Testing Glossary</a></li>
+                <li><a href="https://www.kdnuggets.com/2020/07/bootstrap-confidence-intervals-explained.html" target="_blank">Bootstrap CI Explained</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="note" style="margin-top:20px;">
+            <strong>Production Considerations:</strong>
+            When implementing A/B testing in production systems:
+            <ul style="padding-left:20px; margin-top:8px;">
+              <li>Use consistent randomization (hash user IDs)</li>
+              <li>Implement proper tracking and logging</li>
+              <li>Consider sequential testing for early stopping</li>
+              <li>Account for multiple comparison problems</li>
+              <li>Monitor for interference between test groups</li>
+              <li>Implement gradual rollout for risky changes</li>
+            </ul>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <footer>
+      IAF 604: Machine Learning &amp; Predictive Analytics | Instructor: Ali Noori<br/>
+      Module 3A - Section 7: Sampling & A/B Testing Implementation | Educational Use
+    </footer>
+  </div>
+
+  <script>
+    /************************************************************
+     * Theme Toggle Functionality
+     ************************************************************/
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+    const body = document.body;
+
+    const THEME_KEY = 'iaf604-theme';
+
+    function applyTheme(theme) {
+      body.setAttribute('data-theme', theme);
+      const isDay = theme === 'day';
+      const labelText = isDay ? 'Day Mode' : 'Night Mode';
+      themeLabel.textContent = labelText;
+      themeToggle.setAttribute('aria-label', `Theme: ${labelText} (click to toggle)`);
+      updateChartThemes();
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme === 'day' || savedTheme === 'night') {
+        applyTheme(savedTheme);
+      } else {
+        const defaultTheme = prefersDark ? 'night' : 'day';
+        applyTheme(defaultTheme);
+        localStorage.setItem(THEME_KEY, defaultTheme);
+      }
+    }
+
+    function toggleTheme() {
+      const current = body.getAttribute('data-theme');
+      const next = current === 'night' ? 'day' : 'night';
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+      themeToggle.style.transform = 'scale(0.96)';
+      setTimeout(() => (themeToggle.style.transform = 'scale(1)'), 140);
+    }
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    /************************************************************
+     * Expandable Code Blocks
+     ************************************************************/
+    function toggleCode(codeId) {
+      const codeContent = document.getElementById(codeId);
+      const toggleBtn = codeContent.previousElementSibling.querySelector('.toggle-btn i');
+      
+      if (codeContent.classList.contains('expanded')) {
+        codeContent.classList.remove('expanded');
+        toggleBtn.classList.remove('fa-chevron-up');
+        toggleBtn.classList.add('fa-chevron-down');
+      } else {
+        codeContent.classList.add('expanded');
+        toggleBtn.classList.remove('fa-chevron-down');
+        toggleBtn.classList.add('fa-chevron-up');
+      }
+    }
+
+    // Initialize code blocks as collapsed
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.code-content').forEach(content => {
+        content.classList.remove('expanded');
+      });
+    });
+
+    /************************************************************
+     * Chart Configuration with Theme Support
+     ************************************************************/
+    const getChartColors = () => {
+      const isDay = body.getAttribute('data-theme') === 'day';
+      return {
+        text: isDay ? 'rgba(15, 23, 42, 0.92)' : 'rgba(234, 240, 255, 0.92)',
+        grid: isDay ? 'rgba(148, 163, 184, 0.25)' : 'rgba(148, 163, 184, 0.14)',
+        minor: isDay ? 'rgba(148, 163, 184, 0.15)' : 'rgba(148, 163, 184, 0.10)',
+        title: isDay ? 'rgba(15, 23, 42, 0.94)' : 'rgba(234, 240, 255, 0.94)',
+        bg: isDay ? 'rgba(255, 255, 255, 0.8)' : 'rgba(15, 23, 42, 0.8)',
+        primary: isDay ? '#2563EB' : '#60A5FA',
+        secondary: isDay ? '#7C3AED' : '#A78BFA',
+        accent: isDay ? '#DB2777' : '#F472B6',
+        success: isDay ? '#10B981' : '#34D399',
+        warning: isDay ? '#F59E0B' : '#FBBF24',
+        danger: isDay ? '#EF4444' : '#FB7185',
+        cyan: isDay ? '#06B6D4' : '#22D3EE'
+      };
+    };
+
+    function baseOptions(title) {
+      const colors = getChartColors();
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: colors.text,
+              usePointStyle: true,
+              pointStyle: "circle",
+              font: { size: 12 }
+            },
+            position: 'bottom'
+          },
+          title: {
+            display: true,
+            text: title,
+            color: colors.title,
+            font: { weight: "bold", size: 14 }
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: colors.bg,
+            titleColor: colors.title,
+            bodyColor: colors.text,
+            borderColor: colors.grid,
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: { ticks: { color: colors.text }, grid: { color: colors.minor } },
+          y: { ticks: { color: colors.text }, grid: { color: colors.minor } }
+        }
+      };
+    }
+
+    let sampleSizeChart = null;
+
+    function initCharts() {
+      const colors = getChartColors();
+
+      // Sample Size Chart
+      const ctx = document.getElementById('sampleSizeChart').getContext('2d');
+      sampleSizeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Small (5%)', 'Medium (10%)', 'Large (15%)', 'Very Large (20%)'],
+          datasets: [{
+            label: 'Required Sample per Group',
+            data: [1570, 390, 174, 98],
+            backgroundColor: [
+              colors.primary + '80',
+              colors.secondary + '80',
+              colors.accent + '80',
+              colors.success + '80'
+            ],
+            borderColor: [
+              colors.primary,
+              colors.secondary,
+              colors.accent,
+              colors.success
+            ],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          ...baseOptions('Sample Size for Different Effect Sizes (Baseline: 5%)'),
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Sample Size per Group',
+                color: colors.text
+              },
+              ticks: {
+                callback: function(value) {
+                  return value.toLocaleString();
+                }
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Relative Improvement',
+                color: colors.text
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updateChartThemes() {
+      if (sampleSizeChart) {
+        const colors = getChartColors();
+        
+        sampleSizeChart.options.plugins.title.color = colors.title;
+        sampleSizeChart.options.plugins.legend.labels.color = colors.text;
+        sampleSizeChart.options.plugins.tooltip.backgroundColor = colors.bg;
+        sampleSizeChart.options.plugins.tooltip.titleColor = colors.title;
+        sampleSizeChart.options.plugins.tooltip.bodyColor = colors.text;
+        sampleSizeChart.options.plugins.tooltip.borderColor = colors.grid;
+
+        sampleSizeChart.options.scales.x.ticks.color = colors.text;
+        sampleSizeChart.options.scales.x.grid.color = colors.minor;
+        sampleSizeChart.options.scales.x.title.color = colors.text;
+        
+        sampleSizeChart.options.scales.y.ticks.color = colors.text;
+        sampleSizeChart.options.scales.y.grid.color = colors.minor;
+        sampleSizeChart.options.scales.y.title.color = colors.text;
+
+        sampleSizeChart.update('none');
+      }
+    }
+
+    /************************************************************
+     * Interactive Sample Size Calculator
+     ************************************************************/
+    const baselineRate = document.getElementById('baselineRate');
+    const baselineRateOut = document.getElementById('baselineRateOut');
+    const improvement = document.getElementById('improvement');
+    const improvementOut = document.getElementById('improvementOut');
+    const alphaLevel = document.getElementById('alphaLevel');
+    const alphaLevelOut = document.getElementById('alphaLevelOut');
+    const targetPower = document.getElementById('targetPower');
+    const targetPowerOut = document.getElementById('targetPowerOut');
+    const sampleSizeResult = document.getElementById('sampleSizeResult');
+
+    // Normal CDF approximation
+    function normCDF(x) {
+      const t = 1 / (1 + 0.2316419 * Math.abs(x));
+      const d = 0.3989423 * Math.exp(-x * x / 2);
+      let prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+      if (x > 0) prob = 1 - prob;
+      return prob;
+    }
+
+    function calculateSampleSize(p1, p2, alpha, power) {
+      // Convert percentages to decimals
+      p1 = p1 / 100;
+      p2 = p2 / 100;
+      alpha = alpha / 100;
+      power = power / 100;
+      
+      // Z-scores
+      const zAlpha = Math.abs(normCDF(1 - alpha/2));
+      const zBeta = Math.abs(normCDF(power));
+      
+      // Sample size formula for two proportions
+      const pooled = (p1 + p2) / 2;
+      const numerator = (zAlpha + zBeta) ** 2 * (2 * pooled * (1 - pooled));
+      const denominator = (p1 - p2) ** 2;
+      
+      const n = Math.ceil(numerator / denominator);
+      return n;
+    }
+
+    function updateSampleSizeCalculator() {
+      if (!baselineRate || !sampleSizeChart) return;
+      
+      const p1 = parseFloat(baselineRate.value);
+      const improvementVal = parseFloat(improvement.value);
+      const alpha = parseFloat(alphaLevel.value);
+      const power = parseFloat(targetPower.value);
+      
+      // Calculate expected rate
+      const p2 = p1 * (1 + improvementVal / 100);
+      
+      // Update outputs
+      baselineRateOut.value = p1.toFixed(1) + '%';
+      improvementOut.value = improvementVal.toFixed(0) + '%';
+      alphaLevelOut.value = alpha.toFixed(0) + '%';
+      targetPowerOut.value = power.toFixed(0) + '%';
+      
+      // Calculate sample sizes for different effect sizes
+      const effectSizes = [5, 10, 15, 20];
+      const sampleSizes = effectSizes.map(effect => {
+        const p2_effect = p1 * (1 + effect / 100);
+        return calculateSampleSize(p1, p2_effect, alpha, power);
+      });
+      
+      // Update chart
+      sampleSizeChart.data.datasets[0].data = sampleSizes;
+      sampleSizeChart.data.labels = effectSizes.map(e => `${e}%`);
+      
+      // Calculate for current improvement
+      const currentSampleSize = calculateSampleSize(p1, p2, alpha, power);
+      
+      // Update result text
+      sampleSizeResult.textContent = 
+        `Required sample per group: ${currentSampleSize.toLocaleString()} ` +
+        `(Total: ${(currentSampleSize * 2).toLocaleString()})`;
+      
+      sampleSizeChart.update();
+    }
+
+    if (baselineRate && improvement && alphaLevel && targetPower) {
+      baselineRate.addEventListener('input', updateSampleSizeCalculator);
+      improvement.addEventListener('input', updateSampleSizeCalculator);
+      alphaLevel.addEventListener('input', updateSampleSizeCalculator);
+      targetPower.addEventListener('input', updateSampleSizeCalculator);
+    }
+
+    /************************************************************
+     * Practice Exercise Storage
+     ************************************************************/
+    const exerciseKey = "iaf604_m3a_section7_exercise";
+    const practiceExerciseEl = document.getElementById('practiceExercise');
+    const exerciseStatusEl = document.getElementById('exerciseStatus');
+    const saveExerciseBtn = document.getElementById('saveExercise');
+    const clearExerciseBtn = document.getElementById('clearExercise');
+
+    // Load saved exercise
+    (function loadExercise() {
+      const saved = localStorage.getItem(exerciseKey);
+      if (saved && practiceExerciseEl) {
+        practiceExerciseEl.value = saved;
+      }
+    })();
+
+    // Save exercise
+    if (saveExerciseBtn && practiceExerciseEl) {
+      saveExerciseBtn.addEventListener('click', () => {
+        const val = practiceExerciseEl.value.trim();
+        if (!val) {
+          exerciseStatusEl.textContent = "Please write your A/B test design.";
+          return;
+        }
+        localStorage.setItem(exerciseKey, val);
+        exerciseStatusEl.textContent = "Exercise saved locally ✔";
+        exerciseStatusEl.style.color = getChartColors().success;
+      });
+    }
+
+    // Clear exercise
+    if (clearExerciseBtn && practiceExerciseEl) {
+      clearExerciseBtn.addEventListener('click', () => {
+        practiceExerciseEl.value = "";
+        localStorage.removeItem(exerciseKey);
+        exerciseStatusEl.textContent = "Exercise cleared.";
+        exerciseStatusEl.style.color = getChartColors().text;
+      });
+    }
+
+    /************************************************************
+     * Initialize Everything
+     ************************************************************/
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initCharts();
+      updateSampleSizeCalculator();
+      
+      // Initialize MathJax
+      if (window.MathJax) {
+        MathJax.typesetPromise();
+      }
+    });
+
+    // Re-render MathJax when theme changes
+    themeToggle.addEventListener('click', () => {
+      setTimeout(() => {
+        if (window.MathJax) {
+          MathJax.typesetPromise();
+        }
+      }, 350);
+    });
+  </script>
+</body>
+</html>
