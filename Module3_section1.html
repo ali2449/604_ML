@@ -1,1 +1,1882 @@
-Module3_section1.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Module 3A: Section 1 - Statistics as ML Foundation</title>
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <!-- MathJax -->
+  <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    /************************************************************
+     * THEME: Aurora with Day/Night Mode
+     ************************************************************/
+    :root {
+      /* Night Mode (Default) */
+      --bg0: #070A12;
+      --bg1: #0B1020;
+      --panel: #0F172A;
+      --panel2: #0B1226;
+      --card: #101B34;
+      --text: #EAF0FF;
+      --muted: rgba(234, 240, 255, 0.75);
+      --muted2: rgba(234, 240, 255, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+
+      --primary: #60A5FA;
+      --secondary: #A78BFA;
+      --accent: #F472B6;
+      --success: #34D399;
+      --warning: #FBBF24;
+      --danger: #FB7185;
+      --cyan: #22D3EE;
+
+      --radius: 16px;
+      --radius2: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --ring: 0 0 0 4px rgba(96, 165, 250, 0.22);
+      --ring2: 0 0 0 4px rgba(167, 139, 250, 0.20);
+
+      /* Theme toggle variables */
+      --mode-icon: '\f186'; /* moon */
+      --mode-label: 'Night Mode';
+    }
+
+    /* Day Mode Theme */
+    [data-theme="day"] {
+      --bg0: #F8FAFC;
+      --bg1: #F1F5F9;
+      --panel: #FFFFFF;
+      --panel2: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --muted: rgba(15, 23, 42, 0.75);
+      --muted2: rgba(15, 23, 42, 0.62);
+      --border: rgba(148, 163, 184, 0.25);
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+
+      --primary: #2563EB;
+      --secondary: #7C3AED;
+      --accent: #DB2777;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --cyan: #06B6D4;
+
+      --ring: 0 0 0 4px rgba(37, 99, 235, 0.15);
+      --ring2: 0 0 0 4px rgba(124, 58, 237, 0.15);
+
+      /* SHOW CURRENT THEME */
+      --mode-icon: '\f185'; /* sun */
+      --mode-label: 'Day Mode';
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg0);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      transition: background-color 0.35s ease, color 0.35s ease;
+      overflow-x: hidden;
+    }
+
+    /* Dynamic background gradients based on theme */
+    body:not([data-theme="day"]) {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(96, 165, 250, 0.18), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(244, 114, 182, 0.16), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(34, 211, 238, 0.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    body[data-theme="day"] {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(37, 99, 235, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(219, 39, 119, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(6, 182, 212, 0.06), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1240px; margin: 0 auto; padding: 22px; }
+
+    .skip {
+      position: absolute;
+      left: -999px;
+      top: 0;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 9999;
+      color: var(--text);
+    }
+
+    .skip:focus {
+      left: 16px;
+      top: 16px;
+      outline: none;
+      box-shadow: var(--shadow), var(--ring);
+    }
+
+    /************************************************************
+     * THEME TOGGLE
+     ************************************************************/
+    .theme-toggle-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 50px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-toggle::before {
+      content: var(--mode-icon);
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 1.1em;
+    }
+
+    .theme-toggle .label {
+      font-size: 0.9em;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /************************************************************
+     * HEADER
+     ************************************************************/
+    header {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.90), rgba(16, 27, 52, 0.92));
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      color: var(--text);
+      padding: 28px;
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] header {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      right: -180px;
+      top: -180px;
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle at 30% 30%, rgba(96, 165, 250, 0.15), transparent 62%);
+      filter: blur(40px);
+      opacity: 0.6;
+    }
+
+    body[data-theme="day"] header::after {
+      background: radial-gradient(circle at 30% 30%, rgba(37, 99, 235, 0.1), transparent 62%);
+      opacity: 0.4;
+    }
+
+    .module-header {
+      position: relative;
+      z-index: 1;
+    }
+
+    .module-header h1 {
+      font-size: clamp(26px, 3vw, 36px);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .module-header h2 {
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+
+    .back-to-main {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow);
+      margin-top: 20px;
+    }
+
+    .back-to-main:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--ring2);
+      text-decoration: none;
+      color: white;
+    }
+
+    .stats-overview {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 20px;
+      backdrop-filter: blur(8px);
+      margin-top: 20px;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .stats-overview {
+      background: rgba(15, 23, 42, 0.03);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .stats-overview h3 {
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      background: rgba(15, 23, 42, 0.1);
+      border: 1px solid var(--border);
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+    }
+
+    .stat-icon.blue { background: rgba(96, 165, 250, 0.15); color: var(--primary); }
+    .stat-icon.green { background: rgba(52, 211, 153, 0.15); color: var(--success); }
+    .stat-icon.orange { background: rgba(251, 191, 36, 0.15); color: var(--warning); }
+    .stat-icon.red { background: rgba(251, 113, 133, 0.15); color: var(--danger); }
+    .stat-icon.purple { background: rgba(167, 139, 250, 0.15); color: var(--secondary); }
+    .stat-icon.cyan { background: rgba(34, 211, 238, 0.15); color: var(--cyan); }
+
+    /************************************************************
+     * MAIN CONTENT
+     ************************************************************/
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 30px;
+      margin-top: 30px;
+    }
+
+    @media (max-width: 1024px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .panel:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .main-content { padding: 30px; }
+    .sidebar-content { padding: 24px; }
+
+    .section {
+      margin-bottom: 40px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .section h3 {
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.5rem;
+    }
+
+    .section h4 {
+      color: var(--text);
+      margin: 25px 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.2rem;
+    }
+
+    .lead {
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 20px;
+    }
+
+    .muted { color: var(--muted); font-size: 14px; }
+    .small { font-size: 13px; color: var(--muted2); }
+
+    /************************************************************
+     * COMPONENTS
+     ************************************************************/
+    .definition {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.1), rgba(96, 165, 250, 0.05));
+      border: 1px solid rgba(167, 139, 250, 0.2);
+      border-left: 4px solid rgba(167, 139, 250, 0.7);
+      padding: 24px;
+      border-radius: 16px;
+      margin: 20px 0;
+    }
+
+    body[data-theme="day"] .definition {
+      background: linear-gradient(135deg, rgba(167, 139, 250, 0.08), rgba(96, 165, 250, 0.04));
+    }
+
+    .callout {
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.05);
+      margin: 20px 0;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .callout { background: rgba(15, 23, 42, 0.02); }
+
+    .note {
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      background: rgba(251, 191, 36, 0.08);
+      margin-top: 20px;
+      color: var(--text);
+    }
+
+    body[data-theme="day"] .note { background: rgba(251, 191, 36, 0.06); }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .card {
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .card h5 {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      color: var(--text);
+      font-size: 1.1rem;
+    }
+
+    .chart {
+      margin: 30px 0;
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.03);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .chart { background: rgba(15, 23, 42, 0.01); }
+
+    .chart-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    canvas { width: 100% !important; height: 300px !important; }
+
+    .formula-box {
+      background: rgba(15, 23, 42, 0.1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      font-family: var(--mono);
+      text-align: center;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] .formula-box { background: rgba(15, 23, 42, 0.05); }
+
+    .example {
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(34, 211, 238, 0.05));
+      border: 1px solid rgba(96, 165, 250, 0.2);
+      padding: 24px;
+      border-radius: 16px;
+      margin: 20px 0;
+    }
+
+    body[data-theme="day"] .example {
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(6, 182, 212, 0.04));
+    }
+
+    .code-block {
+      background: rgba(2, 6, 23, 0.95);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.5;
+      color: #EAF0FF;
+    }
+
+    body[data-theme="day"] .code-block {
+      background: rgba(15, 23, 42, 0.05);
+      color: var(--text);
+    }
+
+    code {
+      font-family: var(--mono);
+      background: rgba(96, 165, 250, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      margin: 20px 0;
+    }
+
+    .data-table th, .data-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+      text-align: left;
+    }
+
+    .data-table th {
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--panel2);
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .data-table td { color: var(--text); font-size: 14px; line-height: 1.6; }
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .chiprow { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.1);
+      color: var(--text);
+      transition: transform 0.15s ease, border-color 0.2s ease;
+    }
+
+    body[data-theme="day"] .chip { background: rgba(15, 23, 42, 0.05); }
+    .chip:hover { transform: translateY(-1px); border-color: var(--primary); }
+
+    /************************************************************
+     * SIDEBAR
+     ************************************************************/
+    .sidebar-section {
+      margin-bottom: 30px;
+    }
+
+    .sidebar-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .sidebar-section h4 {
+      color: var(--text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      font-weight: 600;
+      color: var(--text);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .nav-link:hover {
+      text-decoration: none;
+      box-shadow: var(--ring);
+      border-color: var(--primary);
+      transform: translateX(4px);
+    }
+
+    .nav-link.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-color: transparent;
+    }
+
+    .resource-list { list-style: none; }
+
+    .resource-list li {
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .resource-list li:last-child { border-bottom: none; }
+    .resource-list i { color: var(--primary); margin-top: 4px; flex-shrink: 0; }
+
+    /************************************************************
+     * FOOTER
+     ************************************************************/
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      padding-top: 30px;
+      border-top: 1px solid var(--border);
+      color: var(--muted2);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /************************************************************
+     * ACCESSIBILITY
+     ************************************************************/
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    *:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  </style>
+</head>
+
+<body data-theme="night">
+  <!-- Theme Toggle -->
+  <div class="theme-toggle-container">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Theme: Night Mode (click to toggle)">
+      <span class="label" id="themeLabel">Night Mode</span>
+    </button>
+  </div>
+
+  <a class="skip" href="#main">Skip to content</a>
+
+  <div class="container">
+    <header>
+      <div class="module-header">
+        <h1>Module 3A: Section 1 - Deep Dive</h1>
+        <h2>Statistics as the Foundation of Machine Learning</h2>
+        <div class="stats-overview">
+          <h3><i class="fa-solid fa-gauge-high"></i> Key Statistics at a Glance</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-icon blue">
+                <i class="fa-solid fa-chart-line"></i>
+              </div>
+              <div>
+                <strong>85% of ML Failures</strong>
+                <div class="small">Due to poor statistical understanding</div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon green">
+                <i class="fa-solid fa-percent"></i>
+              </div>
+              <div>
+                <strong>60% of Data Science</strong>
+                <div class="small">Is statistical analysis & inference</div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon orange">
+                <i class="fa-solid fa-brain"></i>
+              </div>
+              <div>
+                <strong>42 Statistical Concepts</strong>
+                <div class="small">Essential for ML practitioners</div>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon red">
+                <i class="fa-solid fa-flask-vial"></i>
+              </div>
+              <div>
+                <strong>95% of A/B Tests</strong>
+                <div class="small">Rely on statistical hypothesis testing</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <a href="Module3.html" class="back-to-main">
+          <i class="fa-solid fa-arrow-left"></i> Back to Main Module
+        </a>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- MAIN CONTENT -->
+      <main class="main-content panel" id="main">
+        <!-- INTRODUCTION -->
+        <section class="section">
+          <h3><i class="fa-solid fa-star"></i> Why Statistics is the Bedrock of ML</h3>
+          
+          <p class="lead">
+            Machine learning isn't just about algorithms and code—it's fundamentally about understanding patterns 
+            in data and making predictions under uncertainty. Every ML algorithm, from linear regression to 
+            deep neural networks, is built upon statistical principles. Understanding statistics transforms you 
+            from someone who just applies algorithms to someone who truly understands what's happening.
+          </p>
+          
+          <div class="definition">
+            <p>
+              <strong>Statistics in Machine Learning</strong> provides the mathematical framework for:
+              <ul style="padding-left: 20px; margin-top: 10px;">
+                <li>Quantifying uncertainty in predictions</li>
+                <li>Evaluating model performance beyond accuracy</li>
+                <li>Making inferences from limited data</li>
+                <li>Detecting patterns and relationships</li>
+                <li>Validating model assumptions</li>
+                <li>Designing experiments (A/B testing)</li>
+              </ul>
+            </p>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>The Statistical Foundation of ML Algorithms</span>
+              <span class="muted">How statistics underpins common ML techniques</span>
+            </div>
+            <canvas id="mlFoundationChart"></canvas>
+          </div>
+        </section>
+
+        <!-- STATISTICAL THINKING -->
+        <section class="section">
+          <h3><i class="fa-solid fa-lightbulb"></i> Statistical Thinking: Beyond Formulas</h3>
+          
+          <div class="cards-grid">
+            <div class="card">
+              <h5><i class="fa-solid fa-magnifying-glass"></i> Exploratory Data Analysis (EDA)</h5>
+              <p class="muted">Before any ML modeling, EDA helps you understand your data's structure, distributions, relationships, and potential issues.</p>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-chart-scatter"></i> Visualizations</span>
+                <span class="chip"><i class="fa-solid fa-table"></i> Summary Stats</span>
+                <span class="chip"><i class="fa-solid fa-triangle-exclamation"></i> Anomalies</span>
+              </div>
+            </div>
+            
+            <div class="card">
+              <h5><i class="fa-solid fa-scale-balanced"></i> Uncertainty Quantification</h5>
+              <p class="muted">Every prediction has uncertainty. Statistics provides tools to measure and communicate this uncertainty effectively.</p>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-arrows-left-right"></i> Confidence Intervals</span>
+                <span class="chip"><i class="fa-solid fa-percent"></i> Probabilities</span>
+                <span class="chip"><i class="fa-solid fa-wave-square"></i> Error Bounds</span>
+              </div>
+            </div>
+            
+            <div class="card">
+              <h5><i class="fa-solid fa-vial-circle-check"></i> Experimental Design</h5>
+              <p class="muted">Proper experimental design ensures your ML experiments (like A/B tests) produce valid, interpretable results.</p>
+              <div class="chiprow">
+                <span class="chip"><i class="fa-solid fa-flask"></i> A/B Testing</span>
+                <span class="chip"><i class="fa-solid fa-users"></i> Randomization</span>
+                <span class="chip"><i class="fa-solid fa-calculator"></i> Power Analysis</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="example">
+            <h4><i class="fa-solid fa-code"></i> Practical Example: Customer Segmentation</h4>
+            <p>Consider an e-commerce company wanting to segment customers for targeted marketing:</p>
+            
+            <div class="data-table">
+              <thead>
+                <tr>
+                  <th>Customer ID</th>
+                  <th>Annual Spend</th>
+                  <th>Purchase Frequency</th>
+                  <th>Average Order Value</th>
+                  <th>Days Since Last Purchase</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>C001</td>
+                  <td>$2,450</td>
+                  <td>12</td>
+                  <td>$204</td>
+                  <td>7</td>
+                </tr>
+                <tr>
+                  <td>C002</td>
+                  <td>$8,120</td>
+                  <td>45</td>
+                  <td>$180</td>
+                  <td>2</td>
+                </tr>
+                <tr>
+                  <td>C003</td>
+                  <td>$560</td>
+                  <td>3</td>
+                  <td>$187</td>
+                  <td>42</td>
+                </tr>
+                <tr>
+                  <td>C004</td>
+                  <td>$15,300</td>
+                  <td>62</td>
+                  <td>$247</td>
+                  <td>1</td>
+                </tr>
+                <tr>
+                  <td>C005</td>
+                  <td>$3,210</td>
+                  <td>18</td>
+                  <td>$178</td>
+                  <td>14</td>
+                </tr>
+              </tbody>
+            </div>
+
+            <p class="muted" style="margin-top: 15px;">
+              <strong>Statistical Questions:</strong> How do we identify meaningful segments? Are the differences between customers 
+              statistically significant? What's the probability that a high-spending customer will make another purchase?
+              These are statistical questions that must be answered before applying ML algorithms.
+            </p>
+          </div>
+        </section>
+
+        <!-- DESCRIPTIVE vs INFERENTIAL -->
+        <section class="section">
+          <h3><i class="fa-solid fa-arrows-left-right"></i> Descriptive vs Inferential Statistics</h3>
+          
+          <div class="definition">
+            <p>
+              <strong>Descriptive Statistics</strong> summarize and describe features of a dataset (what happened).<br>
+              <strong>Inferential Statistics</strong> make predictions or inferences about a population based on a sample (what might happen).
+            </p>
+          </div>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Descriptive vs Inferential Statistics in ML Workflow</span>
+              <span class="muted">When each type is used</span>
+            </div>
+            <canvas id="descInfChart"></canvas>
+          </div>
+
+          <div class="callout">
+            <h4><i class="fa-solid fa-list-check"></i> Key Differences</h4>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+              <div>
+                <h5>Descriptive Statistics</h5>
+                <ul style="padding-left: 20px;">
+                  <li>Summarizes past data</li>
+                  <li>No probability theory needed</li>
+                  <li>Answers: What happened?</li>
+                  <li>Examples: Mean, median, variance</li>
+                  <li>Used in: EDA, data understanding</li>
+                </ul>
+              </div>
+              <div>
+                <h5>Inferential Statistics</h5>
+                <ul style="padding-left: 20px;">
+                  <li>Predicts future outcomes</li>
+                  <li>Relies on probability theory</li>
+                  <li>Answers: What might happen?</li>
+                  <li>Examples: Hypothesis tests, confidence intervals</li>
+                  <li>Used in: A/B testing, model evaluation</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="example">
+            <h4><i class="fa-solid fa-calculator"></i> Real-World Example: E-commerce Conversion</h4>
+            <p>An e-commerce site wants to understand their conversion rate:</p>
+            
+            <div class="formula-box">
+              <strong>Descriptive:</strong> "Our conversion rate last month was 3.2%"<br>
+              <strong>Inferential:</strong> "We are 95% confident that the true conversion rate is between 3.0% and 3.4%"
+            </div>
+            
+            <p style="margin-top: 15px;">
+              The descriptive statement tells us what happened. The inferential statement tells us what we believe 
+              about the underlying population conversion rate, with a measure of uncertainty.
+            </p>
+          </div>
+        </section>
+
+        <!-- CRITICAL CONCEPTS -->
+        <section class="section">
+          <h3><i class="fa-solid fa-graduation-cap"></i> Critical Statistical Concepts for ML</h3>
+          
+          <h4><i class="fa-solid fa-1"></i> 1. Probability Distributions</h4>
+          <p>Understanding distributions is crucial because ML algorithms make assumptions about data distribution:</p>
+          
+          <div class="chart">
+            <div class="chart-title">
+              <span>Common Probability Distributions in ML</span>
+              <span class="muted">Each has specific use cases</span>
+            </div>
+            <canvas id="distributionsChart"></canvas>
+          </div>
+
+          <div class="callout">
+            <h5><i class="fa-solid fa-circle-info"></i> Distribution Selection Guide</h5>
+            <div class="data-table">
+              <thead>
+                <tr>
+                  <th>Distribution</th>
+                  <th>When to Use</th>
+                  <th>ML Application</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Normal (Gaussian)</strong></td>
+                  <td>Continuous data with natural variation</td>
+                  <td>Linear regression assumptions</td>
+                </tr>
+                <tr>
+                  <td><strong>Binomial</strong></td>
+                  <td>Binary outcomes (success/failure)</td>
+                  <td>Logistic regression, classification</td>
+                </tr>
+                <tr>
+                  <td><strong>Poisson</strong></td>
+                  <td>Count data, rare events</td>
+                  <td>Recommendation systems, click prediction</td>
+                </tr>
+                <tr>
+                  <td><strong>Exponential</strong></td>
+                  <td>Time between events</td>
+                  <td>Churn prediction, survival analysis</td>
+                </tr>
+                <tr>
+                  <td><strong>Uniform</strong></td>
+                  <td>Equal probability across range</td>
+                  <td>Random initialization, sampling</td>
+                </tr>
+              </tbody>
+            </div>
+          </div>
+
+          <h4 style="margin-top: 30px;"><i class="fa-solid fa-2"></i> 2. Central Limit Theorem (CLT)</h4>
+          <div class="definition">
+            <p>
+              <strong>Central Limit Theorem:</strong> Regardless of the population distribution, the sampling distribution 
+              of the mean approaches a normal distribution as sample size increases.
+            </p>
+            <div class="formula-box" style="margin-top: 10px;">
+              If \( X_1, X_2, ..., X_n \) are independent random variables with mean \( \mu \) and variance \( \sigma^2 \),<br>
+              then \( \bar{X}_n = \frac{1}{n} \sum_{i=1}^n X_i \) is approximately \( N(\mu, \frac{\sigma^2}{n}) \) for large \( n \)
+            </div>
+          </div>
+
+          <div class="example">
+            <h5><i class="fa-solid fa-chart-column"></i> CLT in Action: Sample Means Distribution</h5>
+            <p>Even if individual data points are not normally distributed, their means will be:</p>
+            
+            <div class="code-block">
+# Python demonstration of CLT
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Generate skewed data (exponential distribution)
+population = np.random.exponential(scale=2.0, size=10000)
+
+# Take samples and compute means
+sample_means = []
+for _ in range(1000):
+    sample = np.random.choice(population, size=30)  # Sample size n=30
+    sample_means.append(np.mean(sample))
+
+# Plot results - sample means will be normally distributed!
+plt.figure(figsize=(10, 4))
+plt.subplot(1, 2, 1)
+plt.hist(population, bins=50, alpha=0.7)
+plt.title("Population Distribution (Skewed)")
+plt.subplot(1, 2, 2)
+plt.hist(sample_means, bins=50, alpha=0.7)
+plt.title("Distribution of Sample Means (Normal)")
+plt.show()
+            </div>
+          </div>
+
+          <h4 style="margin-top: 30px;"><i class="fa-solid fa-3"></i> 3. Law of Large Numbers</h4>
+          <div class="definition">
+            <p>
+              <strong>Law of Large Numbers:</strong> As sample size increases, the sample mean converges to the population mean.
+              This is why more data generally leads to better ML models.
+            </p>
+            <div class="formula-box" style="margin-top: 10px;">
+              For independent and identically distributed random variables with finite expected value \( \mu \),<br>
+              \( \bar{X}_n \xrightarrow{P} \mu \) as \( n \to \infty \)
+            </div>
+          </div>
+        </section>
+
+        <!-- STATISTICS IN ML PIPELINE -->
+        <section class="section">
+          <h3><i class="fa-solid fa-diagram-project"></i> Statistics in the ML Pipeline</h3>
+          
+          <p class="lead">
+            Statistical thinking should be integrated throughout the entire machine learning workflow, 
+            not just as a preliminary step.
+          </p>
+
+          <div class="chart">
+            <div class="chart-title">
+              <span>Statistical Methods Throughout ML Pipeline</span>
+              <span class="muted">Percentage of projects using each statistical method</span>
+            </div>
+            <canvas id="pipelineChart"></canvas>
+          </div>
+
+          <div class="cards-grid">
+            <div class="card">
+              <h5><i class="fa-solid fa-database"></i> Data Collection & Cleaning</h5>
+              <ul style="padding-left: 20px; margin-top: 10px;">
+                <li>Sampling methods for representative data</li>
+                <li>Missing data imputation strategies</li>
+                <li>Outlier detection using statistical methods</li>
+                <li>Data quality assessment with summary statistics</li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <h5><i class="fa-solid fa-chart-line"></i> Model Training & Selection</h5>
+              <ul style="padding-left: 20px; margin-top: 10px;">
+                <li>Cross-validation for performance estimation</li>
+                <li>Statistical tests for feature selection</li>
+                <li>Regularization techniques (L1/L2 based on stats)</li>
+                <li>Hyperparameter optimization with statistical methods</li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <h5><i class="fa-solid fa-chart-bar"></i> Evaluation & Deployment</h5>
+              <ul style="padding-left: 20px; margin-top: 10px;">
+                <li>Confidence intervals for performance metrics</li>
+                <li>Statistical significance of improvements</li>
+                <li>A/B testing for production deployment</li>
+                <li>Monitoring with statistical process control</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- COMMON PITFALLS -->
+        <section class="section">
+          <h3><i class="fa-solid fa-triangle-exclamation"></i> Common Statistical Pitfalls in ML</h3>
+          
+          <div class="note">
+            <h5><i class="fa-solid fa-bug"></i> The #1 Mistake: Ignoring Assumptions</h5>
+            <p>Every statistical method and ML algorithm has assumptions. Violating these leads to unreliable results.</p>
+          </div>
+
+          <div class="callout">
+            <h5><i class="fa-solid fa-circle-xmark"></i> Top 5 Statistical Mistakes in ML Projects</h5>
+            <div class="data-table">
+              <thead>
+                <tr>
+                  <th>Mistake</th>
+                  <th>Consequence</th>
+                  <th>Solution</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Data Leakage</strong></td>
+                  <td>Overly optimistic performance estimates</td>
+                  <td>Proper train/test split, time-based validation</td>
+                </tr>
+                <tr>
+                  <td><strong>Multiple Comparison Problem</strong></td>
+                  <td>False discoveries, overfitting</td>
+                  <td>Bonferroni correction, holdout validation</td>
+                </tr>
+                <tr>
+                  <td><strong>Ignoring Confidence Intervals</strong></td>
+                  <td>Overconfidence in point estimates</td>
+                  <td>Always report CIs with metrics</td>
+                </tr>
+                <tr>
+                  <td><strong>Small Sample Sizes</strong></td>
+                  <td>Unreliable estimates, poor generalization</td>
+                  <td>Power analysis, collect more data</td>
+                </tr>
+                <tr>
+                  <td><strong>Confusing Correlation with Causation</strong></td>
+                  <td>Incorrect business decisions</td>
+                  <td>Controlled experiments, causal inference</td>
+                </tr>
+              </tbody>
+            </div>
+          </div>
+
+          <div class="example">
+            <h5><i class="fa-solid fa-vial"></i> Case Study: A/B Testing Gone Wrong</h5>
+            <p><strong>Scenario:</strong> An e-commerce company runs an A/B test comparing two website layouts.</p>
+            
+            <div class="formula-box">
+              <strong>Mistake:</strong> Running the test for only 24 hours, only on weekdays<br>
+              <strong>Problem:</strong> Day-of-week effects and insufficient sample size<br>
+              <strong>Result:</strong> False positive - declared winner but actually no difference
+            </div>
+            
+            <p style="margin-top: 15px;">
+              <strong>Statistical Solution:</strong> Calculate required sample size before testing, 
+              run test for full week cycle, use sequential testing methods.
+            </p>
+          </div>
+        </section>
+
+        <!-- PRACTICAL EXERCISE -->
+        <section class="section">
+          <h3><i class="fa-solid fa-hands"></i> Hands-On Exercise: Statistical Data Profiling</h3>
+          
+          <div class="callout">
+            <h5><i class="fa-solid fa-tasks"></i> Exercise: Analyze Customer Data</h5>
+            <p>Download this sample dataset and perform a complete statistical profile:</p>
+            
+            <div class="code-block">
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+
+# Load sample customer data
+data = pd.DataFrame({
+    'customer_id': range(1, 1001),
+    'age': np.random.normal(35, 10, 1000).clip(18, 80),
+    'annual_income': np.random.lognormal(10.5, 0.8, 1000),
+    'purchase_frequency': np.random.poisson(5, 1000),
+    'avg_order_value': np.random.exponential(150, 1000),
+    'loyalty_months': np.random.randint(1, 60, 1000),
+    'churned': np.random.binomial(1, 0.15, 1000)
+})
+
+# Add some outliers
+data.loc[np.random.choice(1000, 10), 'annual_income'] *= 3
+data.loc[np.random.choice(1000, 5), 'avg_order_value'] *= 5
+
+print("Dataset Shape:", data.shape)
+print("\nData Types:")
+print(data.dtypes)
+print("\nMissing Values:")
+print(data.isnull().sum())
+            </div>
+          </div>
+
+          <div class="cards-grid">
+            <div class="card">
+              <h5><i class="fa-solid fa-1"></i> Step 1: Descriptive Analysis</h5>
+              <p class="muted">Calculate for each numerical column:</p>
+              <ul style="padding-left: 20px; margin-top: 10px;">
+                <li>Mean, median, mode</li>
+                <li>Standard deviation, variance</li>
+                <li>Range, IQR, quartiles</li>
+                <li>Skewness, kurtosis</li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <h5><i class="fa-solid fa-2"></i> Step 2: Distribution Analysis</h5>
+              <p class="muted">For each column:</p>
+              <ul style="padding-left: 20px; margin-top: 10px;">
+                <li>Plot histogram with KDE</li>
+                <li>Create box plot</li>
+                <li>Test for normality (Shapiro-Wilk)</li>
+                <li>Identify outliers (IQR method)</li>
+              </ul>
+            </div>
+            
+            <div class="card">
+              <h5><i class="fa-solid fa-3"></i> Step 3: Relationship Analysis</h5>
+              <p class="muted">Examine relationships:</p>
+              <ul style="padding-left: 20px; margin-top: 10px;">
+                <li>Correlation matrix</li>
+                <li>Scatter plots for key pairs</li>
+                <li>Group comparisons (t-tests)</li>
+                <li>Statistical significance</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="note">
+            <h5><i class="fa-solid fa-circle-check"></i> Expected Insights</h5>
+            <p>By completing this exercise, you should be able to:</p>
+            <ul style="padding-left: 20px; margin-top: 10px;">
+              <li>Identify which variables are normally distributed</li>
+              <li>Detect outliers that might need special handling</li>
+              <li>Understand relationships between customer features</li>
+              <li>Make informed decisions about data preprocessing</li>
+              <li>Communicate findings using statistical terminology</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- NEXT STEPS -->
+        <section class="section">
+          <h3><i class="fa-solid fa-forward"></i> Next Steps & Deep Dive</h3>
+          
+          <div class="definition">
+            <p>
+              <strong>Mastery Path:</strong> This section covered why statistics matters. Next, we'll dive into:
+            </p>
+            <ol style="padding-left: 25px; margin-top: 15px;">
+              <li><strong>Descriptive Statistics:</strong> Mastering measures of central tendency, dispersion, and shape</li>
+              <li><strong>Inferential Statistics:</strong> Hypothesis testing, confidence intervals, A/B testing</li>
+              <li><strong>Probability Theory:</strong> Distributions, Bayes' Theorem, maximum likelihood</li>
+              <li><strong>Advanced Topics:</strong> Time series analysis, causal inference, Bayesian methods</li>
+            </ol>
+          </div>
+
+          <div class="callout">
+            <h5><i class="fa-solid fa-book"></i> Recommended Reading & Resources</h5>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+              <div>
+                <h6>For Foundation</h6>
+                <ul style="padding-left: 20px;">
+                  <li>"Statistics for Business and Economics" by Anderson</li>
+                  <li>"Naked Statistics" by Charles Wheelan</li>
+                  <li>Khan Academy Statistics course</li>
+                </ul>
+              </div>
+              <div>
+                <h6>For ML Integration</h6>
+                <ul style="padding-left: 20px;">
+                  <li>"An Introduction to Statistical Learning"</li>
+                  <li>"Elements of Statistical Learning"</li>
+                  <li>Statistical Learning course on Coursera</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="Module3_section2.html" class="back-to-main" style="display: inline-flex;">
+              Continue to Section 2: Descriptive Statistics <i class="fa-solid fa-arrow-right"></i>
+            </a>
+          </div>
+        </section>
+      </main>
+
+      <!-- SIDEBAR -->
+      <aside class="sidebar-content panel">
+        <div class="sidebar-section">
+          <h4><i class="fa-solid fa-bars"></i> Section Navigation</h4>
+          <nav class="nav-links" aria-label="Section navigation">
+            <a href="#main" class="nav-link active">
+              <i class="fa-solid fa-star"></i> Why Statistics Matters
+            </a>
+            <a href="#section2" class="nav-link">
+              <i class="fa-solid fa-magnifying-glass"></i> Statistical Thinking
+            </a>
+            <a href="#section3" class="nav-link">
+              <i class="fa-solid fa-arrows-left-right"></i> Descriptive vs Inferential
+            </a>
+            <a href="#section4" class="nav-link">
+              <i class="fa-solid fa-graduation-cap"></i> Critical Concepts
+            </a>
+            <a href="#section5" class="nav-link">
+              <i class="fa-solid fa-diagram-project"></i> ML Pipeline
+            </a>
+            <a href="#section6" class="nav-link">
+              <i class="fa-solid fa-triangle-exclamation"></i> Common Pitfalls
+            </a>
+            <a href="#section7" class="nav-link">
+              <i class="fa-solid fa-hands"></i> Hands-On Exercise
+            </a>
+            <a href="#section8" class="nav-link">
+              <i class="fa-solid fa-forward"></i> Next Steps
+            </a>
+          </nav>
+        </div>
+
+        <div class="sidebar-section">
+          <h4><i class="fa-solid fa-key"></i> Key Terms</h4>
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <div style="padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.1); border: 1px solid var(--border);">
+              <strong>Population</strong>
+              <div class="small">The entire group being studied</div>
+            </div>
+            <div style="padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.1); border: 1px solid var(--border);">
+              <strong>Sample</strong>
+              <div class="small">A subset of the population</div>
+            </div>
+            <div style="padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.1); border: 1px solid var(--border);">
+              <strong>Parameter</strong>
+              <div class="small">A numerical characteristic of a population</div>
+            </div>
+            <div style="padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.1); border: 1px solid var(--border);">
+              <strong>Statistic</strong>
+              <div class="small">A numerical characteristic of a sample</div>
+            </div>
+            <div style="padding: 10px; border-radius: 8px; background: rgba(15, 23, 42, 0.1); border: 1px solid var(--border);">
+              <strong>Inference</strong>
+              <div class="small">Drawing conclusions about a population from a sample</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4><i class="fa-solid fa-download"></i> Quick Formulas</h4>
+          <div style="font-size: 12px; line-height: 1.5;">
+            <p><strong>Sample Mean:</strong> \(\bar{x} = \frac{\sum x_i}{n}\)</p>
+            <p><strong>Sample Variance:</strong> \(s^2 = \frac{\sum (x_i - \bar{x})^2}{n-1}\)</p>
+            <p><strong>Standard Deviation:</strong> \(s = \sqrt{s^2}\)</p>
+            <p><strong>Z-score:</strong> \(z = \frac{x - \mu}{\sigma}\)</p>
+            <p><strong>Confidence Interval:</strong> \(\bar{x} \pm z_{\alpha/2} \frac{s}{\sqrt{n}}\)</p>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4><i class="fa-solid fa-clock"></i> Time Estimate</h4>
+          <div style="padding: 15px; border-radius: 12px; background: rgba(96, 165, 250, 0.1); border: 1px solid rgba(96, 165, 250, 0.2);">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span>Reading:</span>
+              <strong>45-60 min</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+              <span>Exercises:</span>
+              <strong>30-45 min</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span>Total:</span>
+              <strong>75-105 min</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h4><i class="fa-solid fa-question-circle"></i> Need Help?</h4>
+          <ul class="resource-list">
+            <li><i class="fa-solid fa-comment"></i> <a href="#">Discussion Forum</a></li>
+            <li><i class="fa-solid fa-video"></i> <a href="#">Video Walkthrough</a></li>
+            <li><i class="fa-solid fa-file-pdf"></i> <a href="#">Download PDF</a></li>
+            <li><i class="fa-solid fa-code"></i> <a href="#">Python Notebook</a></li>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h4><i class="fa-solid fa-check-circle"></i> Learning Check</h4>
+          <div style="padding: 15px; border-radius: 12px; background: rgba(52, 211, 153, 0.1); border: 1px solid rgba(52, 211, 153, 0.2);">
+            <p class="small">After this section, you should be able to:</p>
+            <ul style="padding-left: 20px; margin-top: 10px; font-size: 12px;">
+              <li>Explain why statistics is fundamental to ML</li>
+              <li>Distinguish descriptive from inferential statistics</li>
+              <li>Identify common statistical pitfalls</li>
+              <li>Describe the CLT and its importance</li>
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      IAF 604: Machine Learning & Predictive Analytics | Module 3A: Statistics for ML<br/>
+      Section 1: Statistics as ML Foundation | © 2024 Department of Informatics and Analytics
+    </footer>
+  </div>
+
+  <script>
+    /************************************************************
+     * Theme Toggle Functionality
+     ************************************************************/
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+    const body = document.body;
+
+    const THEME_KEY = 'iaf604-theme';
+
+    function applyTheme(theme) {
+      body.setAttribute('data-theme', theme);
+      const isDay = theme === 'day';
+      const labelText = isDay ? 'Day Mode' : 'Night Mode';
+      themeLabel.textContent = labelText;
+      themeToggle.setAttribute('aria-label', `Theme: ${labelText} (click to toggle)`);
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+      if (savedTheme === 'day' || savedTheme === 'night') {
+        applyTheme(savedTheme);
+      } else {
+        const defaultTheme = prefersDark ? 'night' : 'day';
+        applyTheme(defaultTheme);
+        localStorage.setItem(THEME_KEY, defaultTheme);
+      }
+    }
+
+    function toggleTheme() {
+      const current = body.getAttribute('data-theme');
+      const next = current === 'night' ? 'day' : 'night';
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+      updateChartThemes();
+      themeToggle.style.transform = 'scale(0.96)';
+      setTimeout(() => (themeToggle.style.transform = 'scale(1)'), 140);
+    }
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved !== 'day' && saved !== 'night') {
+        const newTheme = e.matches ? 'night' : 'day';
+        applyTheme(newTheme);
+        updateChartThemes();
+      }
+    });
+
+    /************************************************************
+     * Chart Configuration with Theme Support
+     ************************************************************/
+    const getChartColors = () => {
+      const isDay = body.getAttribute('data-theme') === 'day';
+      return {
+        text: isDay ? 'rgba(15, 23, 42, 0.92)' : 'rgba(234, 240, 255, 0.92)',
+        grid: isDay ? 'rgba(148, 163, 184, 0.25)' : 'rgba(148, 163, 184, 0.14)',
+        minor: isDay ? 'rgba(148, 163, 184, 0.15)' : 'rgba(148, 163, 184, 0.10)',
+        title: isDay ? 'rgba(15, 23, 42, 0.94)' : 'rgba(234, 240, 255, 0.94)',
+        bg: isDay ? 'rgba(255, 255, 255, 0.8)' : 'rgba(15, 23, 42, 0.8)',
+        primary: isDay ? '#2563EB' : '#60A5FA',
+        secondary: isDay ? '#7C3AED' : '#A78BFA',
+        accent: isDay ? '#DB2777' : '#F472B6',
+        success: isDay ? '#10B981' : '#34D399',
+        warning: isDay ? '#F59E0B' : '#FBBF24',
+        danger: isDay ? '#EF4444' : '#FB7185',
+        cyan: isDay ? '#06B6D4' : '#22D3EE'
+      };
+    };
+
+    function baseOptions(title) {
+      const colors = getChartColors();
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            labels: {
+              color: colors.text,
+              usePointStyle: true,
+              pointStyle: "circle",
+              font: { size: 12 }
+            },
+            position: 'bottom'
+          },
+          title: {
+            display: true,
+            text: title,
+            color: colors.title,
+            font: { weight: "bold", size: 14 }
+          },
+          tooltip: {
+            enabled: true,
+            backgroundColor: colors.bg,
+            titleColor: colors.title,
+            bodyColor: colors.text,
+            borderColor: colors.grid,
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: { 
+            ticks: { color: colors.text }, 
+            grid: { color: colors.minor },
+            title: {
+              display: true,
+              color: colors.text,
+              font: { size: 12 }
+            }
+          },
+          y: { 
+            ticks: { color: colors.text }, 
+            grid: { color: colors.minor },
+            title: {
+              display: true,
+              color: colors.text,
+              font: { size: 12 }
+            }
+          }
+        }
+      };
+    }
+
+    let charts = {};
+
+    function initCharts() {
+      const colors = getChartColors();
+
+      // ML Foundation Chart
+      charts.mlFoundationChart = new Chart(document.getElementById("mlFoundationChart"), {
+        type: "radar",
+        data: {
+          labels: ["Linear Regression", "Logistic Regression", "Decision Trees", "Random Forest", "Neural Networks", "Clustering", "PCA"],
+          datasets: [
+            {
+              label: "Statistical Foundation Level",
+              data: [95, 90, 65, 70, 75, 80, 85],
+              borderColor: colors.primary,
+              backgroundColor: colors.primary + '40',
+              borderWidth: 3,
+              fill: true,
+              pointBackgroundColor: colors.primary,
+              pointBorderColor: colors.text,
+              pointBorderWidth: 2
+            }
+          ]
+        },
+        options: {
+          ...baseOptions("Statistical Foundation of ML Algorithms"),
+          scales: {
+            r: {
+              min: 0,
+              max: 100,
+              ticks: { 
+                display: false,
+                stepSize: 20
+              },
+              grid: { color: colors.grid },
+              angleLines: { color: colors.grid },
+              pointLabels: { 
+                color: colors.text, 
+                font: { size: 11 },
+                padding: 15
+              }
+            }
+          }
+        }
+      });
+
+      // Descriptive vs Inferential Chart
+      charts.descInfChart = new Chart(document.getElementById("descInfChart"), {
+        type: "bar",
+        data: {
+          labels: ["Data Understanding", "Feature Engineering", "Model Training", "Model Evaluation", "A/B Testing", "Deployment"],
+          datasets: [
+            {
+              label: "Descriptive Statistics",
+              data: [90, 70, 40, 60, 30, 20],
+              backgroundColor: colors.primary + '80',
+              borderColor: colors.primary,
+              borderWidth: 2
+            },
+            {
+              label: "Inferential Statistics",
+              data: [10, 30, 60, 40, 70, 80],
+              backgroundColor: colors.secondary + '80',
+              borderColor: colors.secondary,
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          ...baseOptions("Descriptive vs Inferential Statistics Usage"),
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              title: {
+                display: true,
+                text: 'Percentage Usage',
+                color: colors.text
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'ML Pipeline Stage',
+                color: colors.text
+              }
+            }
+          }
+        }
+      });
+
+      // Distributions Chart
+      charts.distributionsChart = new Chart(document.getElementById("distributionsChart"), {
+        type: "line",
+        data: {
+          labels: Array.from({length: 100}, (_, i) => i - 50),
+          datasets: [
+            {
+              label: "Normal Distribution",
+              data: Array.from({length: 100}, (_, i) => {
+                const x = (i - 50) / 15;
+                return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI);
+              }),
+              borderColor: colors.primary,
+              backgroundColor: colors.primary + '20',
+              borderWidth: 2,
+              tension: 0.1,
+              fill: true
+            },
+            {
+              label: "Exponential (Right Skewed)",
+              data: Array.from({length: 100}, (_, i) => {
+                const x = i / 20;
+                return x > 0 ? Math.exp(-x) : 0;
+              }),
+              borderColor: colors.secondary,
+              backgroundColor: colors.secondary + '20',
+              borderWidth: 2,
+              tension: 0.1,
+              fill: true
+            },
+            {
+              label: "Binomial Approximation",
+              data: Array.from({length: 100}, (_, i) => {
+                const x = (i - 50) / 10;
+                // Binomial approximated by normal
+                return Math.exp(-0.5 * x * x) / Math.sqrt(2 * Math.PI) * 0.8;
+              }),
+              borderColor: colors.accent,
+              backgroundColor: colors.accent + '20',
+              borderWidth: 2,
+              tension: 0.1,
+              fill: true
+            },
+            {
+              label: "Poisson (Count Data)",
+              data: Array.from({length: 100}, (_, i) => {
+                const x = i / 10;
+                // Poisson PMF approximation
+                return x > 0 ? Math.exp(-x) * Math.pow(x, 3) / 6 : 0;
+              }),
+              borderColor: colors.warning,
+              backgroundColor: colors.warning + '20',
+              borderWidth: 2,
+              tension: 0.1,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          ...baseOptions("Common Probability Distributions in ML"),
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Value',
+                color: colors.text
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Probability Density',
+                color: colors.text
+              }
+            }
+          }
+        }
+      });
+
+      // Pipeline Chart
+      charts.pipelineChart = new Chart(document.getElementById("pipelineChart"), {
+        type: "line",
+        data: {
+          labels: ["Data Collection", "Data Cleaning", "EDA", "Feature Engineering", "Model Training", "Model Evaluation", "A/B Testing", "Monitoring"],
+          datasets: [
+            {
+              label: "Summary Statistics",
+              data: [80, 90, 95, 70, 40, 60, 50, 70],
+              borderColor: colors.primary,
+              backgroundColor: colors.primary + '20',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: "Hypothesis Testing",
+              data: [10, 20, 30, 40, 60, 80, 90, 70],
+              borderColor: colors.secondary,
+              backgroundColor: colors.secondary + '20',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: "Confidence Intervals",
+              data: [5, 15, 25, 35, 50, 85, 85, 80],
+              borderColor: colors.accent,
+              backgroundColor: colors.accent + '20',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: "Distribution Analysis",
+              data: [30, 70, 85, 65, 55, 70, 60, 65],
+              borderColor: colors.warning,
+              backgroundColor: colors.warning + '20',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true
+            }
+          ]
+        },
+        options: {
+          ...baseOptions("Statistical Methods Throughout ML Pipeline"),
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              title: {
+                display: true,
+                text: 'Percentage of Projects Using Method',
+                color: colors.text
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'ML Pipeline Stage',
+                color: colors.text
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updateChartThemes() {
+      const colors = getChartColors();
+      Object.values(charts).forEach(chart => {
+        if (!chart) return;
+        
+        chart.options.plugins.title.color = colors.title;
+        chart.options.plugins.legend.labels.color = colors.text;
+        chart.options.plugins.tooltip.backgroundColor = colors.bg;
+        chart.options.plugins.tooltip.titleColor = colors.title;
+        chart.options.plugins.tooltip.bodyColor = colors.text;
+        chart.options.plugins.tooltip.borderColor = colors.grid;
+
+        if (chart.options.scales) {
+          Object.values(chart.options.scales).forEach(scale => {
+            if (scale.ticks) scale.ticks.color = colors.text;
+            if (scale.grid) scale.grid.color = colors.minor;
+            if (scale.title) scale.title.color = colors.text;
+            if (scale.pointLabels) scale.pointLabels.color = colors.text;
+          });
+        }
+
+        if (chart.options.scales && chart.options.scales.r) {
+          chart.options.scales.r.grid.color = colors.grid;
+          chart.options.scales.r.angleLines.color = colors.grid;
+          chart.options.scales.r.pointLabels.color = colors.text;
+        }
+
+        chart.update('none');
+      });
+    }
+
+    /************************************************************
+     * Sidebar Navigation
+     ************************************************************/
+    document.addEventListener('DOMContentLoaded', () => {
+      const navLinks = document.querySelectorAll('.nav-link');
+      const sections = document.querySelectorAll('.section');
+      
+      function updateActiveNav() {
+        const scrollPosition = window.scrollY + 100;
+        
+        sections.forEach((section, index) => {
+          const sectionTop = section.offsetTop;
+          const sectionHeight = section.offsetHeight;
+          
+          if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+            navLinks.forEach(link => link.classList.remove('active'));
+            if (navLinks[index]) navLinks[index].classList.add('active');
+          }
+        });
+      }
+      
+      navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href');
+          if (targetId === '#main') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      });
+      
+      window.addEventListener('scroll', updateActiveNav);
+      updateActiveNav();
+    });
+
+    /************************************************************
+     * Initialize everything
+     ************************************************************/
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initCharts();
+      
+      // Initialize MathJax
+      if (window.MathJax) {
+        MathJax.typesetPromise();
+      }
+    });
+
+    // Re-render MathJax when theme changes
+    themeToggle.addEventListener('click', () => {
+      setTimeout(() => {
+        if (window.MathJax) {
+          MathJax.typesetPromise();
+        }
+      }, 350);
+    });
+  </script>
+</body>
+</html>
