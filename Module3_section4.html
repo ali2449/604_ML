@@ -1,1 +1,2341 @@
-Module3_section4.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Section 4: Outlier Detection | IAF 604</title>
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- MathJax -->
+  <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.7;
+      color: #1a1a1a;
+      background: #f8fafc;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    
+    header {
+      background: linear-gradient(135deg, #059669, #0d9488);
+      color: white;
+      padding: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .course-info h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    
+    .course-info h2 {
+      font-size: 18px;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 12px;
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+    
+    main {
+      padding: 40px;
+    }
+    
+    .section {
+      margin-bottom: 40px;
+    }
+    
+    h3 {
+      font-size: 24px;
+      color: #1e293b;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    h3 i {
+      color: #059669;
+    }
+    
+    h4 {
+      font-size: 20px;
+      color: #334155;
+      margin: 25px 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    h4 i {
+      color: #0d9488;
+    }
+    
+    p {
+      margin-bottom: 16px;
+      color: #475569;
+    }
+    
+    .muted {
+      color: #64748b;
+      font-size: 14px;
+    }
+    
+    .lead {
+      font-size: 18px;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 20px;
+      border-radius: 12px;
+      border-left: 4px solid #059669;
+      margin-bottom: 25px;
+    }
+    
+    .definition {
+      background: linear-gradient(135deg, #d1fae5, #ccfbf1);
+      border: 2px solid #a7f3d0;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 20px 0;
+    }
+    
+    .definition h4 {
+      color: #065f46;
+      margin-top: 0;
+    }
+    
+    .example-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .example-box h5 {
+      color: #0369a1;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    th {
+      background: #065f46;
+      color: white;
+      font-weight: 600;
+      padding: 16px;
+      text-align: left;
+    }
+    
+    td {
+      padding: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    
+    tr:hover {
+      background: #f1f5f9;
+    }
+    
+    .comparison-table td:first-child {
+      font-weight: 600;
+      background: #f8fafc;
+    }
+    
+    .formula-box {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .formula-box .formula {
+      color: #dc2626;
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    
+    .visual-guide {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .guide-item {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      border: 1px solid #e2e8f0;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .guide-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+    
+    .guide-item h5 {
+      color: #065f46;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .guide-item .icon-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: #059669;
+      color: white;
+      border-radius: 10px;
+      font-size: 18px;
+      margin-right: 12px;
+    }
+    
+    .code-container {
+      margin: 30px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .code-header {
+      background: #1e293b;
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .code-header:hover {
+      background: #334155;
+    }
+    
+    .code-header .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+    }
+    
+    .code-header .toggle-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 20px;
+      transition: transform 0.2s ease;
+    }
+    
+    .code-header .toggle-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .code-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+    
+    .code-content.expanded {
+      max-height: 3000px;
+    }
+    
+    .code-content pre {
+      margin: 0;
+      padding: 24px;
+      background: #0f172a;
+      color: #e2e8f0;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .method-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 25px;
+      margin: 30px 0;
+    }
+    
+    .method-card {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    
+    .method-card:hover {
+      border-color: #059669;
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(5, 150, 105, 0.1);
+    }
+    
+    .method-card.univariate {
+      border-top: 4px solid #3b82f6;
+    }
+    
+    .method-card.multivariate {
+      border-top: 4px solid #8b5cf6;
+    }
+    
+    .method-card.ml {
+      border-top: 4px solid #10b981;
+    }
+    
+    .method-card h5 {
+      color: #1e40af;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .method-card.ml h5 {
+      color: #065f46;
+    }
+    
+    .method-card.multivariate h5 {
+      color: #5b21b6;
+    }
+    
+    .method-card ul {
+      padding-left: 20px;
+      margin: 12px 0;
+    }
+    
+    .method-card li {
+      margin-bottom: 8px;
+      color: #475569;
+    }
+    
+    .use-case-box {
+      background: linear-gradient(135deg, #fef3c7, #fef9c3);
+      border: 2px solid #fbbf24;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 25px 0;
+    }
+    
+    .use-case-box h5 {
+      color: #92400e;
+      margin-bottom: 15px;
+    }
+    
+    .scenario-box {
+      background: #f0f9ff;
+      border-left: 4px solid #3b82f6;
+      padding: 20px;
+      border-radius: 0 8px 8px 0;
+      margin: 20px 0;
+    }
+    
+    .impact-table {
+      width: 100%;
+      margin: 20px 0;
+    }
+    
+    .impact-table th {
+      background: #475569;
+    }
+    
+    .impact-table td:first-child {
+      font-weight: 600;
+      color: #1e293b;
+    }
+    
+    .decision-flow {
+      background: #f8fafc;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 30px;
+      margin: 30px 0;
+      position: relative;
+    }
+    
+    .decision-flow::before {
+      content: "Decision Flow";
+      position: absolute;
+      top: -12px;
+      left: 20px;
+      background: white;
+      padding: 0 15px;
+      color: #065f46;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    .decision-step {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+    
+    .decision-step:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    
+    .step-number {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      background: #059669;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-right: 15px;
+      margin-top: 2px;
+    }
+    
+    .visualization-area {
+      height: 300px;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      margin: 25px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .data-point {
+      position: absolute;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    
+    .data-point.normal {
+      background: #3b82f6;
+      width: 12px;
+      height: 12px;
+    }
+    
+    .data-point.outlier {
+      background: #ef4444;
+      width: 16px;
+      height: 16px;
+    }
+    
+    .data-point.detected {
+      border: 3px solid #f59e0b;
+      width: 12px;
+      height: 12px;
+      background: #3b82f6;
+    }
+    
+    .interactive-controls {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .slider-container {
+      margin: 15px 0;
+    }
+    
+    .slider-container label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #cbd5e1;
+      outline: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #059669;
+      cursor: pointer;
+    }
+    
+    .slider-value {
+      min-width: 60px;
+      text-align: right;
+      font-weight: 600;
+      color: #059669;
+    }
+    
+    select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      font-family: inherit;
+    }
+    
+    button {
+      background: #059669;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+    
+    button:hover {
+      background: #047857;
+      transform: translateY(-2px);
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .stat-card h6 {
+      color: #334155;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .stat-card .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #059669;
+      margin: 8px 0;
+    }
+    
+    .stat-card .explanation {
+      font-size: 12px;
+      color: #64748b;
+    }
+    
+    .warning {
+      background: #fef3c7;
+      border: 1px solid #fbbf24;
+      color: #92400e;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .warning i {
+      color: #d97706;
+      font-size: 20px;
+      margin-top: 2px;
+    }
+    
+    .success {
+      background: #d1fae5;
+      border: 1px solid #34d399;
+      color: #065f46;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .success i {
+      color: #10b981;
+      font-size: 20px;
+      margin-top: 2px;
+    }
+    
+    .info {
+      background: #dbeafe;
+      border: 1px solid #60a5fa;
+      color: #1e40af;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .info i {
+      color: #3b82f6;
+      font-size: 20px;
+      margin-top: 2px;
+    }
+    
+    .practice-exercise {
+      background: linear-gradient(135deg, #f0f9ff, #ecfeff);
+      border: 2px solid #22d3ee;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 30px 0;
+    }
+    
+    .practice-exercise h4 {
+      color: #0891b2;
+      margin-top: 0;
+    }
+    
+    .example-dataset {
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      overflow-x: auto;
+    }
+    
+    footer {
+      background: #1e293b;
+      color: white;
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #334155;
+    }
+    
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      header, main {
+        padding: 25px;
+      }
+      
+      .course-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .visual-guide, .method-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      h3 {
+        font-size: 22px;
+      }
+      
+      h4 {
+        font-size: 18px;
+      }
+    }
+    
+    /* Syntax highlighting */
+    .keyword { color: #ff79c6; font-weight: bold; }
+    .string { color: #f1fa8c; }
+    .comment { color: #6272a4; font-style: italic; }
+    .number { color: #bd93f9; }
+    .function { color: #50fa7b; }
+    .class { color: #8be9fd; }
+    
+    .distribution-visual {
+      width: 100%;
+      height: 200px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin: 15px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .box-plot {
+      position: absolute;
+      width: 80%;
+      height: 40px;
+      background: rgba(59, 130, 246, 0.1);
+      border: 2px solid #3b82f6;
+      border-radius: 4px;
+      top: 50%;
+      left: 10%;
+      transform: translateY(-50%);
+    }
+    
+    .box-plot .median {
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: #ef4444;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+    
+    .box-plot .whisker {
+      position: absolute;
+      width: 2px;
+      height: 60px;
+      background: #3b82f6;
+      top: -10px;
+    }
+    
+    .outlier-dot {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #ef4444;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+    
+    .legend {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      border: 1px solid #cbd5e1;
+      z-index: 10;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 3px;
+    }
+    
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="course-header">
+        <div class="course-info">
+          <h1>Module 3A: Statistics for Machine Learning</h1>
+          <h2>Section 4 — Outlier Detection Methods & Strategies</h2>
+          <div class="badge">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            Finding the Unusual: Statistical & ML Approaches
+          </div>
+        </div>
+        <div class="nav-buttons">
+          <a href="Module3_section3.html" class="nav-btn">
+            <i class="fa-solid fa-arrow-left"></i> Previous: A/B Testing
+          </a>
+          <a href="Module3_section5.html" class="nav-btn">
+            Next: Sampling <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </header>
+    
+    <main>
+      <section class="section">
+        <h3><i class="fa-solid fa-triangle-exclamation"></i> What Are Outliers?</h3>
+        
+        <div class="definition">
+          <h4><i class="fa-solid fa-circle-info"></i> Formal Definition</h4>
+          <p><strong>Outliers</strong> are data points that differ significantly from other observations. They can be:</p>
+          <ul>
+            <li><strong>Univariate:</strong> Extreme values in a single variable</li>
+            <li><strong>Multivariate:</strong> Unusual combinations of multiple variables</li>
+            <li><strong>Point outliers:</strong> Individual unusual points</li>
+            <li><strong>Contextual outliers:</strong> Unusual in specific context (e.g., high temperature in winter)</li>
+            <li><strong>Collective outliers:</strong> Group of points that are unusual together</li>
+          </ul>
+        </div>
+        
+        <div class="lead">
+          <strong>Key Insight:</strong> Outliers can be either <strong>errors</strong> (to remove) or <strong>valuable signals</strong> (to investigate). 
+          The difference is often domain knowledge, not statistics!
+        </div>
+        
+        <div class="example-box">
+          <h5><i class="fa-solid fa-chart-column"></i> Real-World Outlier Examples</h5>
+          <div class="visual-guide">
+            <div class="guide-item">
+              <div class="icon-badge"><i class="fa-solid fa-heart-pulse"></i></div>
+              <h5>Healthcare</h5>
+              <p>Patient with body temperature of 110°F (should be ~98.6°F) → Likely measurement error</p>
+            </div>
+            <div class="guide-item">
+              <div class="icon-badge"><i class="fa-solid fa-credit-card"></i></div>
+              <h5>Finance</h5>
+              <p>$1,000,000 transaction from account that normally has $100 transactions → Possible fraud</p>
+            </div>
+            <div class="guide-item">
+              <div class="icon-badge"><i class="fa-solid fa-industry"></i></div>
+              <h5>Manufacturing</h5>
+              <p>Sensor reading 10x higher than others on same machine → Could indicate equipment failure</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-magnifying-glass"></i> Why Detect Outliers in ML?</h3>
+        
+        <div class="method-grid">
+          <div class="method-card">
+            <h5><i class="fa-solid fa-chart-line"></i> Model Performance</h5>
+            <ul>
+              <li><strong>Linear Regression:</strong> Outliers can "pull" the regression line</li>
+              <li><strong>k-NN & Clustering:</strong> Distance-based algorithms are sensitive to outliers</li>
+              <li><strong>Variance Calculations:</strong> Outliers inflate variance estimates</li>
+              <li><strong>Gradient Descent:</strong> Can cause unstable optimization</li>
+            </ul>
+          </div>
+          
+          <div class="method-card">
+            <h5><i class="fa-solid fa-chart-bar"></i> Data Quality</h5>
+            <ul>
+              <li><strong>Missing Values:</strong> Sometimes coded as extreme values</li>
+              <li><strong>Measurement Errors:</strong> Sensors malfunction, data entry mistakes</li>
+              <li><strong>Data Integration:</strong> Different scales or units merged</li>
+              <li><strong>Sampling Issues:</strong> Rare events over-represented</li>
+            </ul>
+          </div>
+          
+          <div class="method-card">
+            <h5><i class="fa-solid fa-lightbulb"></i> Business Value</h5>
+            <ul>
+              <li><strong>Fraud Detection:</strong> Outliers ARE the signal</li>
+              <li><strong>Anomaly Detection:</strong> Equipment failure, network intrusion</li>
+              <li><strong>Customer Segmentation:</strong> VIP customers behave differently</li>
+              <li><strong>Quality Control:</strong> Defective products stand out</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="scenario-box">
+          <h4><i class="fa-solid fa-flask"></i> ML Scenario: Housing Price Prediction</h4>
+          <p><strong>Dataset:</strong> 1,000 houses with features: bedrooms, bathrooms, sqft, location</p>
+          <p><strong>Outlier:</strong> One mansion with 20 bedrooms, 15 bathrooms, 50,000 sqft, price $50M</p>
+          <p><strong>Problem:</strong> If not handled, this outlier will dominate the model, making predictions for normal houses inaccurate.</p>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-ruler"></i> Method 1: Univariate Detection</h3>
+        
+        <h4><i class="fa-solid fa-1"></i> Interquartile Range (IQR) Method</h4>
+        
+        <div class="formula-box">
+          <div class="formula">
+            \[ \text{IQR} = Q_3 - Q_1 \]
+            \[ \text{Lower Bound} = Q_1 - 1.5 \times \text{IQR} \]
+            \[ \text{Upper Bound} = Q_3 + 1.5 \times \text{IQR} \]
+          </div>
+          <p>Any data point below Lower Bound or above Upper Bound is considered an outlier.</p>
+        </div>
+        
+        <div class="example-box">
+          <h5><i class="fa-solid fa-calculator"></i> IQR Example: Exam Scores</h5>
+          <p><strong>Data:</strong> 85, 90, 78, 92, 88, 76, 95, 89, 91, 87, <strong style="color:red">150</strong>, 86, 93, 84</p>
+          <p><strong>Step 1:</strong> Sort data: 76, 78, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 95, <strong>150</strong></p>
+          <p><strong>Step 2:</strong> Find Q1 (25th percentile): Between 85 and 86 → Q1 = 85.5</p>
+          <p><strong>Step 3:</strong> Find Q3 (75th percentile): Between 91 and 92 → Q3 = 91.5</p>
+          <p><strong>Step 4:</strong> Calculate IQR = 91.5 - 85.5 = 6.0</p>
+          <p><strong>Step 5:</strong> Lower Bound = 85.5 - 1.5×6.0 = 76.5</p>
+          <p><strong>Step 6:</strong> Upper Bound = 91.5 + 1.5×6.0 = 100.5</p>
+          <p><strong>Result:</strong> Score 150 > 100.5 → <strong>OUTLIER</strong> (likely data entry error)</p>
+        </div>
+        
+        <h4><i class="fa-solid fa-2"></i> Z-Score Method</h4>
+        
+        <div class="formula-box">
+          <div class="formula">
+            \[ Z = \frac{x - \mu}{\sigma} \]
+          </div>
+          <p>Where:<br>
+          • \(x\) = data point<br>
+          • \(\mu\) = mean of data<br>
+          • \(\sigma\) = standard deviation<br>
+          • Typical threshold: \(|Z| > 3\) (99.7% of data within ±3σ)</p>
+        </div>
+        
+        <div class="example-box">
+          <h5><i class="fa-solid fa-calculator"></i> Z-Score Example: Customer Ages</h5>
+          <p><strong>Data:</strong> Ages: 25, 28, 30, 32, 35, 27, 29, 31, 33, <strong style="color:red">120</strong></p>
+          <p><strong>Step 1:</strong> Calculate mean: \(\mu = (25+28+...+33+120)/10 = 38.9\)</p>
+          <p><strong>Step 2:</strong> Calculate std dev: \(\sigma = 28.7\)</p>
+          <p><strong>Step 3:</strong> Calculate Z for 120: \(Z = \frac{120 - 38.9}{28.7} = 2.82\)</p>
+          <p><strong>Step 4:</strong> Calculate Z for 25: \(Z = \frac{25 - 38.9}{28.7} = -0.48\)</p>
+          <p><strong>Result:</strong> Age 120 has \(|Z| = 2.82\) (close to 3) → <strong>POTENTIAL OUTLIER</strong></p>
+          <p><em>Note:</em> With threshold |Z| > 3, 120 wouldn't be flagged. Shows importance of choosing right threshold!</p>
+        </div>
+        
+        <div class="info">
+          <i class="fa-solid fa-lightbulb"></i>
+          <div>
+            <strong>Modified Z-Score:</strong> Uses median and MAD (Median Absolute Deviation) instead of mean and std dev. 
+            More robust because median isn't affected by outliers like mean is.
+            \[ \text{MAD} = \text{median}(|x_i - \text{median}(x)|) \]
+            \[ \text{Modified Z} = \frac{0.6745 \times (x_i - \text{median}(x))}{\text{MAD}} \]
+          </div>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-cubes"></i> Method 2: Multivariate Detection</h3>
+        
+        <h4><i class="fa-solid fa-chart-scatter"></i> Mahalanobis Distance</h4>
+        
+        <div class="formula-box">
+          <div class="formula">
+            \[ D_M(x) = \sqrt{(x - \mu)^T S^{-1} (x - \mu)} \]
+          </div>
+          <p>Where:<br>
+          • \(x\) = data point (vector)<br>
+          • \(\mu\) = mean vector of dataset<br>
+          • \(S\) = covariance matrix<br>
+          • \(S^{-1}\) = inverse of covariance matrix<br>
+          • Measures distance from center, accounting for variable correlations</p>
+        </div>
+        
+        <div class="example-box">
+          <h5><i class="fa-solid fa-chart-line"></i> Mahalanobis Example: Height vs Weight</h5>
+          <p><strong>Dataset:</strong> 100 people with height (inches) and weight (lbs)</p>
+          <p><strong>Normal point:</strong> Height=68", Weight=160lbs → Near the cluster center</p>
+          <p><strong>Unusual point 1:</strong> Height=68", Weight=400lbs → Heavy for height</p>
+          <p><strong>Unusual point 2:</strong> Height=50", Weight=160lbs → Short but heavy</p>
+          <p><strong>Mahalanobis insight:</strong> Euclidean distance might miss point 2, but Mahalanobis catches it because it considers the correlation between height and weight.</p>
+        </div>
+        
+        <h4><i class="fa-solid fa-sitemap"></i> DBSCAN (Density-Based Clustering)</h4>
+        
+        <div class="definition">
+          <p><strong>DBSCAN</strong> (Density-Based Spatial Clustering of Applications with Noise) identifies:</p>
+          <ul>
+            <li><strong>Core points:</strong> Have enough neighbors within radius ε</li>
+            <li><strong>Border points:</strong> Near core points but not core themselves</li>
+            <li><strong>Noise points:</strong> Neither core nor border → <strong>OUTLIERS</strong></li>
+          </ul>
+          <p><strong>Parameters:</strong><br>
+          • ε (eps): Radius to search for neighbors<br>
+          • min_samples: Minimum points needed to form dense region</p>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-robot"></i> Method 3: ML-Based Detection</h3>
+        
+        <div class="method-grid">
+          <div class="method-card ml">
+            <h5><i class="fa-solid fa-tree"></i> Isolation Forest</h5>
+            <ul>
+              <li><strong>Idea:</strong> Outliers are "few and different" → easy to isolate</li>
+              <li><strong>Method:</strong> Randomly select feature, split randomly, repeat</li>
+              <li><strong>Output:</strong> Short path length = outlier (easy to isolate)</li>
+              <li><strong>Pros:</strong> Fast, works with high-dimensional data</li>
+              <li><strong>Cons:</strong> Can miss contextual outliers</li>
+            </ul>
+            <div class="example-dataset">
+              # Isolation Forest in Python<br>
+              from sklearn.ensemble import IsolationForest<br>
+              model = IsolationForest(contamination=0.1)<br>
+              outliers = model.fit_predict(X)
+            </div>
+          </div>
+          
+          <div class="method-card ml">
+            <h5><i class="fa-solid fa-mountain"></i> Local Outlier Factor (LOF)</h5>
+            <ul>
+              <li><strong>Idea:</strong> Compares local density of point with neighbors</li>
+              <li><strong>Method:</strong> Points with lower density than neighbors are outliers</li>
+              <li><strong>Output:</strong> LOF score > 1 → outlier (less dense than neighbors)</li>
+              <li><strong>Pros:</strong> Detects local outliers, works with clusters of varying density</li>
+              <li><strong>Cons:</strong> Computationally expensive</li>
+            </ul>
+          </div>
+          
+          <div class="method-card ml">
+            <h5><i class="fa-solid fa-shield-alt"></i> One-Class SVM</h5>
+            <ul>
+              <li><strong>Idea:</strong> Learn boundary around "normal" data</li>
+              <li><strong>Method:</strong> Points outside boundary are outliers</li>
+              <li><strong>Output:</strong> Decision function: positive = normal, negative = outlier</li>
+              <li><strong>Pros:</strong> Good for novelty detection, works with non-linear boundaries</li>
+              <li><strong>Cons:</strong> Sensitive to parameters, needs mostly normal data</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="comparison-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Best For</th>
+                <th>Pros</th>
+                <th>Cons</th>
+                <th>Complexity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>IQR</td>
+                <td>Univariate, symmetric data</td>
+                <td>Simple, robust to outliers</td>
+                <td>Univariate only, assumes ~symmetric</td>
+                <td>O(n log n)</td>
+              </tr>
+              <tr>
+                <td>Z-Score</td>
+                <td>Univariate, normal data</td>
+                <td>Simple, statistical basis</td>
+                <td>Sensitive to outliers itself, assumes normality</td>
+                <td>O(n)</td>
+              </tr>
+              <tr>
+                <td>Mahalanobis</td>
+                <td>Multivariate, correlated features</td>
+                <td>Accounts for correlations</td>
+                <td>Sensitive to outliers in mean/covariance</td>
+                <td>O(n×p²)</td>
+              </tr>
+              <tr>
+                <td>Isolation Forest</td>
+                <td>High-dim data, fast detection</td>
+                <td>Fast, handles high dimensions</td>
+                <td>Randomness in results</td>
+                <td>O(n log n)</td>
+              </tr>
+              <tr>
+                <td>LOF</td>
+                <td>Clustered data, local outliers</td>
+                <td>Detects local outliers</td>
+                <td>Slow, sensitive to parameters</td>
+                <td>O(n²)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-code"></i> Python Implementation</h3>
+        
+        <div class="code-container">
+          <div class="code-header" onclick="toggleCode('outlierDetectionCode')">
+            <div class="title">
+              <i class="fa-brands fa-python"></i>
+              <span>Complete Outlier Detection Pipeline in Python</span>
+            </div>
+            <button class="toggle-btn" aria-label="Toggle code visibility">
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+          </div>
+          <div class="code-content" id="outlierDetectionCode">
+            <pre><code># COMPREHENSIVE OUTLIER DETECTION PIPELINE
+# Author: IAF 604 - Module 3A
+# Purpose: Demonstrate multiple outlier detection methods
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+from scipy.spatial.distance import mahalanobis
+from sklearn.ensemble import IsolationForest
+from sklearn.neighbors import LocalOutlierFactor
+from sklearn.svm import OneClassSVM
+from sklearn.covariance import EllipticEnvelope
+from sklearn.preprocessing import StandardScaler
+import warnings
+warnings.filterwarnings('ignore')
+
+# Set random seed for reproducibility
+np.random.seed(42)
+
+print("="*70)
+print("OUTLIER DETECTION PIPELINE FOR MACHINE LEARNING")
+print("="*70)
+
+# ============================================================================
+# 1. CREATE DATASET WITH OUTLIERS
+# ============================================================================
+print("\n1. GENERATING SYNTHETIC DATASET WITH OUTLIERS")
+print("-"*50)
+
+def create_dataset_with_outliers(n_normal=500, n_outliers=50):
+    """Create dataset with normal data and injected outliers"""
+    
+    # Normal data (multivariate normal)
+    mean = [0, 0]
+    cov = [[1, 0.7], [0.7, 1]]  # Correlated features
+    normal_data = np.random.multivariate_normal(mean, cov, n_normal)
+    
+    # Outliers (far from normal cluster)
+    outliers = np.random.uniform(low=-6, high=6, size=(n_outliers, 2))
+    # Make some outliers extreme in one dimension only
+    outliers[:n_outliers//2, 0] *= 3
+    outliers[n_outliers//2:, 1] *= 3
+    
+    # Combine data
+    X = np.vstack([normal_data, outliers])
+    y = np.array([0]*n_normal + [1]*n_outliers)  # 0=normal, 1=outlier
+    
+    # Add some extreme univariate outliers
+    extreme_indices = np.random.choice(len(X), size=10, replace=False)
+    X[extreme_indices, 0] = np.random.choice([-10, 10], size=10)
+    
+    return X, y
+
+X, true_labels = create_dataset_with_outliers(n_normal=500, n_outliers=50)
+df = pd.DataFrame(X, columns=['Feature1', 'Feature2'])
+df['is_outlier'] = true_labels
+
+print(f"Dataset shape: {X.shape}")
+print(f"Normal points: {(true_labels == 0).sum()}")
+print(f"Outlier points: {(true_labels == 1).sum()}")
+print(f"Outlier percentage: {(true_labels == 1).sum()/len(true_labels)*100:.1f}%")
+print("\nFirst 10 rows:")
+print(df.head(10))
+
+# ============================================================================
+# 2. UNIVARIATE METHODS
+# ============================================================================
+print("\n\n2. UNIVARIATE OUTLIER DETECTION")
+print("-"*50)
+
+def detect_outliers_iqr(data, feature, threshold=1.5):
+    """Detect outliers using IQR method"""
+    Q1 = data[feature].quantile(0.25)
+    Q3 = data[feature].quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - threshold * IQR
+    upper_bound = Q3 + threshold * IQR
+    
+    outliers = data[(data[feature] < lower_bound) | (data[feature] > upper_bound)]
+    return outliers, lower_bound, upper_bound
+
+def detect_outliers_zscore(data, feature, threshold=3):
+    """Detect outliers using Z-score method"""
+    mean = data[feature].mean()
+    std = data[feature].std()
+    z_scores = np.abs((data[feature] - mean) / std)
+    outliers = data[z_scores > threshold]
+    return outliers, z_scores
+
+def detect_outliers_modified_zscore(data, feature, threshold=3.5):
+    """Detect outliers using modified Z-score (more robust)"""
+    median = data[feature].median()
+    mad = np.median(np.abs(data[feature] - median))
+    modified_z_scores = 0.6745 * (data[feature] - median) / mad if mad != 0 else 0
+    outliers = data[np.abs(modified_z_scores) > threshold]
+    return outliers, modified_z_scores
+
+print("\n2.1 IQR Method Results:")
+print("-"*30)
+for feature in ['Feature1', 'Feature2']:
+    outliers_iqr, lower, upper = detect_outliers_iqr(df, feature, threshold=1.5)
+    print(f"{feature}:")
+    print(f"  Bounds: [{lower:.2f}, {upper:.2f}]")
+    print(f"  Outliers detected: {len(outliers_iqr)} ({len(outliers_iqr)/len(df)*100:.1f}%)")
+    
+    # Check accuracy against true labels
+    true_positives = outliers_iqr[outliers_iqr['is_outlier'] == 1]
+    if len(outliers_iqr) > 0:
+        precision = len(true_positives) / len(outliers_iqr)
+        recall = len(true_positives) / df['is_outlier'].sum()
+        print(f"  Precision: {precision:.3f}, Recall: {recall:.3f}")
+
+print("\n2.2 Z-score Method Results (threshold=3):")
+print("-"*30)
+for feature in ['Feature1', 'Feature2']:
+    outliers_z, z_scores = detect_outliers_zscore(df, feature, threshold=3)
+    print(f"{feature}: {len(outliers_z)} outliers detected")
+
+print("\n2.3 Modified Z-score Results (threshold=3.5):")
+print("-"*30)
+for feature in ['Feature1', 'Feature2']:
+    outliers_mz, mz_scores = detect_outliers_modified_zscore(df, feature, threshold=3.5)
+    print(f"{feature}: {len(outliers_mz)} outliers detected")
+
+# ============================================================================
+# 3. MULTIVARIATE METHODS
+# ============================================================================
+print("\n\n3. MULTIVARIATE OUTLIER DETECTION")
+print("-"*50)
+
+def detect_outliers_mahalanobis(X, threshold=3):
+    """Detect outliers using Mahalanobis distance"""
+    # Calculate mean and covariance
+    mean = np.mean(X, axis=0)
+    cov = np.cov(X, rowvar=False)
+    
+    # Calculate inverse covariance matrix
+    try:
+        inv_cov = np.linalg.inv(cov)
+    except np.linalg.LinAlgError:
+        # Handle singular matrix
+        inv_cov = np.linalg.pinv(cov)
+    
+    # Calculate Mahalanobis distance for each point
+    mahalanobis_dist = []
+    for i in range(len(X)):
+        diff = X[i] - mean
+        dist = np.sqrt(diff.T @ inv_cov @ diff)
+        mahalanobis_dist.append(dist)
+    
+    mahalanobis_dist = np.array(mahalanobis_dist)
+    
+    # Convert to modified Z-score for thresholding
+    median_dist = np.median(mahalanobis_dist)
+    mad_dist = np.median(np.abs(mahalanobis_dist - median_dist))
+    modified_z = 0.6745 * (mahalanobis_dist - median_dist) / mad_dist if mad_dist != 0 else 0
+    
+    outliers_mask = np.abs(modified_z) > threshold
+    return outliers_mask, mahalanobis_dist
+
+print("\n3.1 Mahalanobis Distance Results:")
+print("-"*30)
+mahalanobis_mask, mahalanobis_dist = detect_outliers_mahalanobis(X, threshold=3.5)
+print(f"Outliers detected: {mahalanobis_mask.sum()} ({mahalanobis_mask.sum()/len(X)*100:.1f}%)")
+
+# Check accuracy
+true_outliers = df['is_outlier'] == 1
+true_positives = (mahalanobis_mask & true_outliers).sum()
+false_positives = (mahalanobis_mask & ~true_outliers).sum()
+false_negatives = (~mahalanobis_mask & true_outliers).sum()
+
+precision = true_positives / (true_positives + false_positives) if (true_positives + false_positives) > 0 else 0
+recall = true_positives / (true_positives + false_negatives) if (true_positives + false_negatives) > 0 else 0
+f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
+
+print(f"Precision: {precision:.3f}, Recall: {recall:.3f}, F1-score: {f1:.3f}")
+
+# ============================================================================
+# 4. MACHINE LEARNING METHODS
+# ============================================================================
+print("\n\n4. MACHINE LEARNING BASED DETECTION")
+print("-"*50)
+
+# Standardize data for ML methods
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# 4.1 Isolation Forest
+print("\n4.1 Isolation Forest:")
+print("-"*20)
+iso_forest = IsolationForest(
+    contamination=0.1,  # Expected proportion of outliers
+    random_state=42,
+    n_estimators=100
+)
+iso_labels = iso_forest.fit_predict(X_scaled)
+# Convert to binary: -1=outlier, 1=normal
+iso_outliers = iso_labels == -1
+print(f"Outliers detected: {iso_outliers.sum()} ({iso_outliers.sum()/len(X)*100:.1f}%)")
+
+# 4.2 Local Outlier Factor (LOF)
+print("\n4.2 Local Outlier Factor (LOF):")
+print("-"*20)
+lof = LocalOutlierFactor(
+    contamination=0.1,
+    n_neighbors=20,
+    metric='euclidean'
+)
+lof_labels = lof.fit_predict(X_scaled)
+lof_outliers = lof_labels == -1
+print(f"Outliers detected: {lof_outliers.sum()} ({lof_outliers.sum()/len(X)*100:.1f}%)")
+
+# 4.3 One-Class SVM
+print("\n4.3 One-Class SVM:")
+print("-"*20)
+oc_svm = OneClassSVM(
+    nu=0.1,  # Upper bound on fraction of outliers
+    kernel='rbf',
+    gamma='auto'
+)
+oc_svm_labels = oc_svm.fit_predict(X_scaled)
+oc_svm_outliers = oc_svm_labels == -1
+print(f"Outliers detected: {oc_svm_outliers.sum()} ({oc_svm_outliers.sum()/len(X)*100:.1f}%)")
+
+# ============================================================================
+# 5. EVALUATION AND COMPARISON
+# ============================================================================
+print("\n\n5. METHOD COMPARISON")
+print("-"*50)
+
+methods = {
+    'IQR (Feature1)': detect_outliers_iqr(df, 'Feature1')[0].index,
+    'IQR (Feature2)': detect_outliers_iqr(df, 'Feature2')[0].index,
+    'Z-score (Feature1)': detect_outliers_zscore(df, 'Feature1')[0].index,
+    'Mahalanobis': np.where(mahalanobis_mask)[0],
+    'Isolation Forest': np.where(iso_outliers)[0],
+    'LOF': np.where(lof_outliers)[0],
+    'One-Class SVM': np.where(oc_svm_outliers)[0]
+}
+
+comparison_results = []
+for method_name, outlier_indices in methods.items():
+    detected_outliers = np.zeros(len(X), dtype=bool)
+    detected_outliers[list(outlier_indices)] = True
+    
+    # Calculate metrics
+    tp = (detected_outliers & true_outliers).sum()
+    fp = (detected_outliers & ~true_outliers).sum()
+    fn = (~detected_outliers & true_outliers).sum()
+    tn = (~detected_outliers & ~true_outliers).sum()
+    
+    precision = tp / (tp + fp) if (tp + fp) > 0 else 0
+    recall = tp / (tp + fn) if (tp + fn) > 0 else 0
+    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
+    accuracy = (tp + tn) / len(X)
+    
+    comparison_results.append({
+        'Method': method_name,
+        'Detected': detected_outliers.sum(),
+        'TP': tp,
+        'FP': fp,
+        'FN': fn,
+        'Precision': f"{precision:.3f}",
+        'Recall': f"{recall:.3f}",
+        'F1': f"{f1:.3f}",
+        'Accuracy': f"{accuracy:.3f}"
+    })
+
+comparison_df = pd.DataFrame(comparison_results)
+print("\nPerformance Comparison:")
+print(comparison_df.to_string(index=False))
+
+# ============================================================================
+# 6. VISUALIZATION
+# ============================================================================
+print("\n\n6. GENERATING VISUALIZATIONS...")
+print("-"*50)
+
+fig, axes = plt.subplots(2, 3, figsize=(16, 10))
+fig.suptitle('Outlier Detection Methods Comparison', fontsize=16, fontweight='bold')
+
+# Plot 1: Original data with true outliers
+normal_points = X[true_outliers == 0]
+outlier_points = X[true_outliers == 1]
+axes[0, 0].scatter(normal_points[:, 0], normal_points[:, 1], 
+                    c='blue', alpha=0.5, s=20, label='Normal')
+axes[0, 0].scatter(outlier_points[:, 0], outlier_points[:, 1], 
+                    c='red', alpha=0.8, s=50, label='True Outliers')
+axes[0, 0].set_title('Original Data with True Outliers', fontweight='bold')
+axes[0, 0].set_xlabel('Feature 1')
+axes[0, 0].set_ylabel('Feature 2')
+axes[0, 0].legend()
+axes[0, 0].grid(True, alpha=0.3)
+
+# Plot 2: IQR detection
+iqr_outliers = np.zeros(len(X), dtype=bool)
+for idx in methods['IQR (Feature1)']:
+    iqr_outliers[idx] = True
+for idx in methods['IQR (Feature2)']:
+    iqr_outliers[idx] = True
+
+axes[0, 1].scatter(X[~iqr_outliers, 0], X[~iqr_outliers, 1], 
+                    c='blue', alpha=0.5, s=20, label='Normal')
+axes[0, 1].scatter(X[iqr_outliers, 0], X[iqr_outliers, 1], 
+                    c='orange', alpha=0.8, s=50, label='Detected Outliers')
+axes[0, 1].set_title('IQR Method Detection', fontweight='bold')
+axes[0, 1].set_xlabel('Feature 1')
+axes[0, 1].set_ylabel('Feature 2')
+axes[0, 1].legend()
+axes[0, 1].grid(True, alpha=0.3)
+
+# Plot 3: Mahalanobis detection
+axes[0, 2].scatter(X[~mahalanobis_mask, 0], X[~mahalanobis_mask, 1], 
+                    c='blue', alpha=0.5, s=20, label='Normal')
+axes[0, 2].scatter(X[mahalanobis_mask, 0], X[mahalanobis_mask, 1], 
+                    c='green', alpha=0.8, s=50, label='Detected Outliers')
+axes[0, 2].set_title('Mahalanobis Distance Detection', fontweight='bold')
+axes[0, 2].set_xlabel('Feature 1')
+axes[0, 2].set_ylabel('Feature 2')
+axes[0, 2].legend()
+axes[0, 2].grid(True, alpha=0.3)
+
+# Plot 4: Isolation Forest
+axes[1, 0].scatter(X[~iso_outliers, 0], X[~iso_outliers, 1], 
+                    c='blue', alpha=0.5, s=20, label='Normal')
+axes[1, 0].scatter(X[iso_outliers, 0], X[iso_outliers, 1], 
+                    c='purple', alpha=0.8, s=50, label='Detected Outliers')
+axes[1, 0].set_title('Isolation Forest Detection', fontweight='bold')
+axes[1, 0].set_xlabel('Feature 1')
+axes[1, 0].set_ylabel('Feature 2')
+axes[1, 0].legend()
+axes[1, 0].grid(True, alpha=0.3)
+
+# Plot 5: LOF
+axes[1, 1].scatter(X[~lof_outliers, 0], X[~lof_outliers, 1], 
+                    c='blue', alpha=0.5, s=20, label='Normal')
+axes[1, 1].scatter(X[lof_outliers, 0], X[lof_outliers, 1], 
+                    c='brown', alpha=0.8, s=50, label='Detected Outliers')
+axes[1, 1].set_title('Local Outlier Factor (LOF) Detection', fontweight='bold')
+axes[1, 1].set_xlabel('Feature 1')
+axes[1, 1].set_ylabel('Feature 2')
+axes[1, 1].legend()
+axes[1, 1].grid(True, alpha=0.3)
+
+# Plot 6: Comparison of detection counts
+methods_for_plot = ['IQR', 'Mahalanobis', 'Isolation\nForest', 'LOF', 'One-Class\nSVM']
+detection_counts = [
+    iqr_outliers.sum(),
+    mahalanobis_mask.sum(),
+    iso_outliers.sum(),
+    lof_outliers.sum(),
+    oc_svm_outliers.sum()
+]
+colors = ['orange', 'green', 'purple', 'brown', 'gray']
+
+axes[1, 2].bar(methods_for_plot, detection_counts, color=colors, alpha=0.7)
+axes[1, 2].axhline(y=true_outliers.sum(), color='red', linestyle='--', 
+                    label=f'True Outliers ({true_outliers.sum()})')
+axes[1, 2].set_title('Outlier Detection Counts by Method', fontweight='bold')
+axes[1, 2].set_ylabel('Number of Outliers Detected')
+axes[1, 2].legend()
+axes[1, 2].grid(True, alpha=0.3)
+axes[1, 2].tick_params(axis='x', rotation=45)
+
+plt.tight_layout()
+plt.show()
+
+# ============================================================================
+# 7. DECISION MAKING: TO REMOVE OR NOT TO REMOVE?
+# ============================================================================
+print("\n\n7. PRACTICAL GUIDANCE: HANDLING OUTLIERS")
+print("-"*50)
+
+print("\n" + "="*60)
+print("WHEN TO REMOVE OUTLIERS:")
+print("="*60)
+print("✓ Measurement errors or data entry mistakes")
+print("✓ Impossible values (age = 200, negative price)")
+print("✓ Values outside possible range (temperature > 200°C)")
+print("✓ When using algorithms sensitive to outliers:")
+print("  - Linear regression")
+print("  - k-means clustering")
+print("  - Principal Component Analysis (PCA)")
+print("  - Any distance-based algorithm")
+
+print("\n" + "="*60)
+print("WHEN TO KEEP OUTLIERS:")
+print("="*60)
+print("✓ They represent rare but valid events")
+print("✓ For fraud/anomaly detection (outliers ARE the signal)")
+print("✓ When they contain important information")
+print("✓ For robust algorithms (tree-based models)")
+print("✓ When they represent different subpopulations")
+
+print("\n" + "="*60)
+print("RECOMMENDED WORKFLOW:")
+print("="*60)
+print("1. Detect outliers using multiple methods")
+print("2. Investigate each outlier (domain knowledge!)")
+print("3. Consider the ML algorithm you'll use")
+print("4. Run analysis both with and without outliers")
+print("5. Document your decision and reasoning")
+print("6. Consider transformations instead of removal:")
+print("   - Winsorizing (cap extreme values)")
+print("   - Log transformation")
+print("   - Robust scaling")
+
+print("\n" + "="*60)
+print("PYTHON CODE FOR COMMON TRANSFORMATIONS:")
+print("="*60)
+
+print("""
+# 1. Winsorizing (capping outliers)
+from scipy.stats.mstats import winsorize
+winsorized_data = winsorize(data, limits=[0.05, 0.05])  # Cap top/bottom 5%
+
+# 2. Log transformation (for right-skewed data)
+data_log = np.log1p(data)  # log(1 + x) to handle zeros
+
+# 3. Robust scaling
+from sklearn.preprocessing import RobustScaler
+scaler = RobustScaler()
+data_scaled = scaler.fit_transform(data)
+
+# 4. Using median instead of mean
+median_value = np.median(data)
+mad = np.median(np.abs(data - median_value))  # Median Absolute Deviation
+""")
+
+print("\n" + "="*70)
+print("SUMMARY: Outlier detection is both art and science.")
+print("Always combine statistical methods with domain knowledge.")
+print("When in doubt, analyze both ways and compare results!")
+print("="*70)</code></pre>
+          </div>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-sliders"></i> Interactive Outlier Detection Demo</h3>
+        
+        <p>This interactive demo lets you see how different outlier detection methods work on simulated data. Adjust the parameters and see the results in real-time.</p>
+        
+        <div class="interactive-controls">
+          <div class="slider-container">
+            <label for="outlierPercent"><i class="fa-solid fa-chart-pie"></i> Outlier Percentage:</label>
+            <div class="slider-row">
+              <input type="range" id="outlierPercent" min="1" max="30" value="10">
+              <span class="slider-value" id="outlierPercentValue">10%</span>
+            </div>
+            <small class="muted">Percentage of data points that are outliers</small>
+          </div>
+          
+          <div class="slider-container">
+            <label for="dataPoints"><i class="fa-solid fa-circle-dot"></i> Total Data Points:</label>
+            <div class="slider-row">
+              <input type="range" id="dataPoints" min="50" max="500" value="200" step="50">
+              <span class="slider-value" id="dataPointsValue">200</span>
+            </div>
+          </div>
+          
+          <div class="slider-container">
+            <label for="detectionThreshold"><i class="fa-solid fa-filter"></i> Detection Threshold:</label>
+            <div class="slider-row">
+              <input type="range" id="detectionThreshold" min="1" max="5" value="3" step="0.5">
+              <span class="slider-value" id="detectionThresholdValue">3.0</span>
+            </div>
+            <small class="muted">For Z-score: |Z| > threshold = outlier</small>
+          </div>
+          
+          <div class="slider-container">
+            <label for="detectionMethod"><i class="fa-solid fa-gear"></i> Detection Method:</label>
+            <select id="detectionMethod">
+              <option value="iqr">IQR Method (Q1 - 1.5×IQR to Q3 + 1.5×IQR)</option>
+              <option value="zscore">Z-Score Method (|Z| > threshold)</option>
+              <option value="modified_zscore">Modified Z-Score (robust to outliers)</option>
+            </select>
+          </div>
+          
+          <button id="generateData">
+            <i class="fa-solid fa-play"></i> Generate New Data & Detect Outliers
+          </button>
+        </div>
+        
+        <div class="visualization-area" id="interactiveVisualization" style="height:400px; margin-top:20px;">
+          <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); color:#64748b;">
+            <i class="fa-solid fa-chart-scatter" style="font-size:48px; display:block; text-align:center; margin-bottom:10px;"></i>
+            <p>Click "Generate New Data" to start visualization</p>
+          </div>
+        </div>
+        
+        <div id="resultsPanel" style="display:none; background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:20px; margin-top:20px;">
+          <h4 style="margin-top:0; color:#065f46;"><i class="fa-solid fa-chart-line"></i> Detection Results</h4>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:15px;">
+            <div class="stat-card">
+              <h6>Total Points</h6>
+              <div class="value" id="totalPoints">0</div>
+            </div>
+            <div class="stat-card">
+              <h6>True Outliers</h6>
+              <div class="value" id="trueOutliers">0</div>
+              <div class="explanation" id="trueOutliersPercent">0%</div>
+            </div>
+            <div class="stat-card">
+              <h6>Detected Outliers</h6>
+              <div class="value" id="detectedOutliers">0</div>
+              <div class="explanation" id="detectedOutliersPercent">0%</div>
+            </div>
+            <div class="stat-card">
+              <h6>Accuracy</h6>
+              <div class="value" id="accuracy">0%</div>
+              <div class="explanation" id="accuracyDetails">-</div>
+            </div>
+          </div>
+          
+          <div style="margin-top:20px; padding-top:20px; border-top:1px dashed #cbd5e1;">
+            <h5><i class="fa-solid fa-info-circle"></i> How It Works:</h5>
+            <div id="methodExplanation">
+              <!-- Explanation will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+        
+        <div class="info" style="margin-top:20px;">
+          <i class="fa-solid fa-lightbulb"></i>
+          <div>
+            <strong>Learning Objective:</strong> Notice how different methods perform with different amounts of outliers. 
+            The Z-score method works best when data is normally distributed. The IQR method is more robust to non-normal data. 
+            The Modified Z-score is even more robust because it uses median instead of mean.
+          </div>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-list-check"></i> Practical Decision Framework</h3>
+        
+        <div class="decision-flow">
+          <div class="decision-step">
+            <div class="step-number">1</div>
+            <div>
+              <h5>Detect Outliers</h5>
+              <p>Use multiple methods (IQR, Z-score, Mahalanobis, ML methods) to identify potential outliers.</p>
+            </div>
+          </div>
+          
+          <div class="decision-step">
+            <div class="step-number">2</div>
+            <div>
+              <h5>Investigate Each Outlier</h5>
+              <p>Ask: Is this a data error or a valid but rare observation? Use domain knowledge.</p>
+            </div>
+          </div>
+          
+          <div class="decision-step">
+            <div class="step-number">3</div>
+            <div>
+              <h5>Consider Your ML Algorithm</h5>
+              <p>Sensitive algorithms (linear models) need careful handling. Robust algorithms (trees) are more forgiving.</p>
+            </div>
+          </div>
+          
+          <div class="decision-step">
+            <div class="step-number">4</div>
+            <div>
+              <h5>Choose Action</h5>
+              <ul>
+                <li><strong>Remove:</strong> If measurement error or impossible value</li>
+                <li><strong>Keep:</strong> If valid rare event or for anomaly detection</li>
+                <li><strong>Transform:</strong> Winsorize, log transform, or use robust statistics</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div class="decision-step">
+            <div class="step-number">5</div>
+            <div>
+              <h5>Validate Decision</h5>
+              <p>Run model both with and without outliers. Compare performance. Document your process.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="impact-table">
+          <table>
+            <thead>
+              <tr>
+                <th>ML Algorithm</th>
+                <th>Sensitivity to Outliers</th>
+                <th>Recommended Handling</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Linear Regression</td>
+                <td>High</td>
+                <td>Remove or winsorize outliers</td>
+              </tr>
+              <tr>
+                <td>Logistic Regression</td>
+                <td>Medium</td>
+                <td>Remove extreme outliers</td>
+              </tr>
+              <tr>
+                <td>k-Nearest Neighbors</td>
+                <td>High</td>
+                <td>Remove or use robust distance metrics</td>
+              </tr>
+              <tr>
+                <td>Decision Trees / Random Forest</td>
+                <td>Low</td>
+                <td>Usually safe to keep outliers</td>
+              </tr>
+              <tr>
+                <td>Support Vector Machines</td>
+                <td>Medium</td>
+                <td>Scale features, consider removing</td>
+              </tr>
+              <tr>
+                <td>Neural Networks</td>
+                <td>Medium</td>
+                <td>Normalize data, use robust loss functions</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-hands"></i> Practice Exercise</h3>
+        
+        <div class="practice-exercise">
+          <h4><i class="fa-solid fa-laptop-code"></i> Hands-On: Customer Spending Analysis</h4>
+          
+          <p><strong>Scenario:</strong> You work for an e-commerce company. You have customer data with:</p>
+          <ul>
+            <li>Monthly spending (in dollars)</li>
+            <li>Number of purchases per month</li>
+            <li>Average purchase value</li>
+            <li>Customer lifetime (months)</li>
+          </ul>
+          
+          <div class="example-dataset">
+            # Sample data (first 5 rows)<br>
+            Customer ID, Monthly_Spending, Purchases_Per_Month, Avg_Purchase_Value, Lifetime_Months<br>
+            1, 150.50, 3, 50.17, 12<br>
+            2, 89.99, 2, 44.99, 6<br>
+            3, 1200.00, 1, 1200.00, 24<br>
+            4, 75.25, 5, 15.05, 3<br>
+            5, 50000.00, 2, 25000.00, 1  # POTENTIAL OUTLIER!
+          </div>
+          
+          <h4>Your Tasks:</h4>
+          <ol>
+            <li>Use the Python code above to load and analyze this data</li>
+            <li>Apply IQR method to Monthly_Spending column</li>
+            <li>Apply Z-score method to Avg_Purchase_Value</li>
+            <li>Use Mahalanobis distance on all numerical features</li>
+            <li>Compare results from different methods</li>
+            <li>Make a recommendation: Remove, keep, or transform?</li>
+            <li>Justify your decision with statistical evidence</li>
+          </ol>
+          
+          <div class="success">
+            <i class="fa-solid fa-lightbulb"></i>
+            <div>
+              <strong>Hint:</strong> Customer with $50,000 monthly spending might be a business customer, not an error. 
+              Check if they have corresponding high Avg_Purchase_Value. Context matters!
+            </div>
+          </div>
+        </div>
+        
+        <div class="warning">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <div>
+            <strong>Common Mistake:</strong> Automatically removing all outliers without investigation. 
+            In fraud detection or anomaly detection tasks, outliers ARE what you're looking for!
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <footer>
+      <div class="footer-content">
+        <h4>IAF 604: Machine Learning & Predictive Analytics</h4>
+        <p>Module 3A: Statistics and Sampling for ML | Section 4: Outlier Detection</p>
+        
+        <div class="footer-links">
+          <a href="Module3_section3.html"><i class="fa-solid fa-arrow-left"></i> Previous: A/B Testing</a>
+          <a href="Module3_section5.html">Next: Sampling Techniques <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="index.html"><i class="fa-solid fa-house"></i> Back to Main Module</a>
+        </div>
+        
+        <p style="margin-top: 20px; color: #cbd5e1; font-size: 14px;">
+          © 2024 Department of Informatics and Analytics — Educational Material<br>
+          Instructor: Ali Noori | University of North Carolina at Greensboro
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Toggle code blocks
+    function toggleCode(codeId) {
+      const codeContent = document.getElementById(codeId);
+      const toggleBtn = codeContent.previousElementSibling.querySelector('.toggle-btn i');
+      
+      if (codeContent.classList.contains('expanded')) {
+        codeContent.classList.remove('expanded');
+        toggleBtn.classList.remove('fa-chevron-up');
+        toggleBtn.classList.add('fa-chevron-down');
+      } else {
+        codeContent.classList.add('expanded');
+        toggleBtn.classList.remove('fa-chevron-down');
+        toggleBtn.classList.add('fa-chevron-up');
+      }
+    }
+    
+    // Initialize MathJax
+    if (window.MathJax) {
+      MathJax.typesetPromise();
+    }
+    
+    // Interactive Outlier Detection Demo
+    let currentData = [];
+    let trueLabels = [];
+    
+    function generateRandomData(totalPoints, outlierPercent) {
+      const normalPoints = Math.floor(totalPoints * (1 - outlierPercent/100));
+      const outlierPoints = totalPoints - normalPoints;
+      
+      const data = [];
+      const labels = [];
+      
+      // Generate normal data (most points around 0 with std dev 1)
+      for (let i = 0; i < normalPoints; i++) {
+        const x = (Math.random() - 0.5) * 10; // -5 to 5
+        const y = (Math.random() - 0.5) * 10; // -5 to 5
+        // Create a correlated cluster
+        const value = x * 0.7 + y * 0.3 + Math.random() * 2;
+        data.push({x: x, y: y, value: value});
+        labels.push(0); // 0 = normal
+      }
+      
+      // Generate outliers (far from center)
+      for (let i = 0; i < outlierPoints; i++) {
+        // Different types of outliers
+        let x, y, value;
+        
+        if (i % 3 === 0) {
+          // Extreme in both dimensions
+          x = (Math.random() - 0.5) * 20 + 15; // Far right
+          y = (Math.random() - 0.5) * 20 + 15; // Far top
+          value = x * 0.7 + y * 0.3 + Math.random() * 10;
+        } else if (i % 3 === 1) {
+          // Extreme in x only
+          x = (Math.random() - 0.5) * 20 + 15;
+          y = (Math.random() - 0.5) * 10; // Normal y
+          value = x * 0.7 + y * 0.3 + Math.random() * 10;
+        } else {
+          // Extreme in y only
+          x = (Math.random() - 0.5) * 10; // Normal x
+          y = (Math.random() - 0.5) * 20 + 15;
+          value = x * 0.7 + y * 0.3 + Math.random() * 10;
+        }
+        
+        data.push({x: x, y: y, value: value});
+        labels.push(1); // 1 = outlier
+      }
+      
+      // Shuffle the data
+      const combined = data.map((d, i) => ({data: d, label: labels[i]}));
+      for (let i = combined.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [combined[i], combined[j]] = [combined[j], combined[i]];
+      }
+      
+      return {
+        data: combined.map(item => item.data),
+        labels: combined.map(item => item.label)
+      };
+    }
+    
+    function detectOutliersIQR(data, threshold = 1.5) {
+      // Using the 'value' field for univariate detection
+      const values = data.map(d => d.value);
+      
+      // Sort values
+      const sorted = [...values].sort((a, b) => a - b);
+      
+      // Find Q1 (25th percentile) and Q3 (75th percentile)
+      const q1Index = Math.floor(sorted.length * 0.25);
+      const q3Index = Math.floor(sorted.length * 0.75);
+      const q1 = sorted[q1Index];
+      const q3 = sorted[q3Index];
+      const iqr = q3 - q1;
+      
+      const lowerBound = q1 - threshold * iqr;
+      const upperBound = q3 + threshold * iqr;
+      
+      // Detect outliers
+      const outliers = data.map(d => d.value < lowerBound || d.value > upperBound);
+      
+      return {
+        outliers,
+        bounds: {lower: lowerBound, upper: upperBound},
+        stats: {q1, q3, iqr}
+      };
+    }
+    
+    function detectOutliersZScore(data, threshold = 3) {
+      const values = data.map(d => d.value);
+      
+      // Calculate mean and standard deviation
+      const mean = values.reduce((a, b) => a + b, 0) / values.length;
+      const std = Math.sqrt(values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length);
+      
+      // Calculate Z-scores
+      const zScores = values.map(v => Math.abs((v - mean) / std));
+      
+      // Detect outliers
+      const outliers = zScores.map(z => z > threshold);
+      
+      return {
+        outliers,
+        mean,
+        std,
+        zScores
+      };
+    }
+    
+    function detectOutliersModifiedZScore(data, threshold = 3.5) {
+      const values = data.map(d => d.value);
+      
+      // Calculate median
+      const sorted = [...values].sort((a, b) => a - b);
+      const median = sorted[Math.floor(sorted.length / 2)];
+      
+      // Calculate Median Absolute Deviation (MAD)
+      const absoluteDeviations = values.map(v => Math.abs(v - median));
+      const mad = absoluteDeviations.sort((a, b) => a - b)[Math.floor(absoluteDeviations.length / 2)];
+      
+      // Calculate modified Z-scores
+      const modifiedZScores = values.map(v => 0.6745 * (v - median) / (mad || 1)); // Avoid division by zero
+      
+      // Detect outliers
+      const outliers = modifiedZScores.map(z => Math.abs(z) > threshold);
+      
+      return {
+        outliers,
+        median,
+        mad,
+        modifiedZScores
+      };
+    }
+    
+    function visualizeData(data, labels, detectedOutliers, method, methodDetails) {
+      const container = document.getElementById('interactiveVisualization');
+      container.innerHTML = '';
+      
+      // Create a scatter plot
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      
+      // Normalize data to fit container
+      const allX = data.map(d => d.x);
+      const allY = data.map(d => d.y);
+      const minX = Math.min(...allX);
+      const maxX = Math.max(...allX);
+      const minY = Math.min(...allY);
+      const maxY = Math.max(...allY);
+      
+      // Add some padding
+      const padding = 20;
+      const scaleX = (width - 2 * padding) / (maxX - minX);
+      const scaleY = (height - 2 * padding) / (maxY - minY);
+      
+      // Create points
+      data.forEach((point, i) => {
+        const dot = document.createElement('div');
+        dot.className = 'data-point';
+        
+        // Position
+        const x = padding + (point.x - minX) * scaleX;
+        const y = padding + (point.y - minY) * scaleY;
+        
+        dot.style.left = `${x}px`;
+        dot.style.top = `${y}px`;
+        
+        // Determine color and size
+        const isTrueOutlier = labels[i] === 1;
+        const isDetectedOutlier = detectedOutliers[i];
+        
+        if (isTrueOutlier && isDetectedOutlier) {
+          // True Positive: correctly detected outlier
+          dot.className = 'data-point outlier';
+          dot.title = `True Outlier (Correctly Detected)\nValue: ${point.value.toFixed(2)}`;
+        } else if (isTrueOutlier && !isDetectedOutlier) {
+          // False Negative: missed outlier
+          dot.className = 'data-point normal';
+          dot.style.border = '2px solid #ef4444';
+          dot.title = `True Outlier (Missed)\nValue: ${point.value.toFixed(2)}`;
+        } else if (!isTrueOutlier && isDetectedOutlier) {
+          // False Positive: normal point flagged as outlier
+          dot.className = 'data-point detected';
+          dot.title = `Normal Point (False Alarm)\nValue: ${point.value.toFixed(2)}`;
+        } else {
+          // True Negative: correctly identified as normal
+          dot.className = 'data-point normal';
+          dot.title = `Normal Point\nValue: ${point.value.toFixed(2)}`;
+        }
+        
+        container.appendChild(dot);
+      });
+      
+      // Add legend
+      const legend = document.createElement('div');
+      legend.className = 'legend';
+      
+      legend.innerHTML = `
+        <div style="font-weight:bold; margin-bottom:5px; color:#065f46;">Legend:</div>
+        <div class="legend-item">
+          <div class="legend-color" style="background:#ef4444;"></div>
+          <span>True Outlier (Detected)</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background:#3b82f6;"></div>
+          <span>Normal Point</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="background:#3b82f6; border:2px solid #ef4444;"></div>
+          <span>Missed Outlier</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color" style="border:3px solid #f59e0b; background:#3b82f6;"></div>
+          <span>False Alarm</span>
+        </div>
+      `;
+      
+      container.appendChild(legend);
+      
+      // Update results panel
+      updateResultsPanel(data.length, labels, detectedOutliers, method, methodDetails);
+    }
+    
+    function updateResultsPanel(totalPoints, trueLabels, detectedOutliers, method, methodDetails) {
+      document.getElementById('resultsPanel').style.display = 'block';
+      document.getElementById('totalPoints').textContent = totalPoints;
+      
+      // Calculate metrics
+      const trueOutliersCount = trueLabels.filter(l => l === 1).length;
+      const detectedOutliersCount = detectedOutliers.filter(d => d).length;
+      
+      const truePositives = trueLabels.reduce((count, label, i) => 
+        count + (label === 1 && detectedOutliers[i] ? 1 : 0), 0);
+      const falsePositives = trueLabels.reduce((count, label, i) => 
+        count + (label === 0 && detectedOutliers[i] ? 1 : 0), 0);
+      const falseNegatives = trueLabels.reduce((count, label, i) => 
+        count + (label === 1 && !detectedOutliers[i] ? 1 : 0), 0);
+      const trueNegatives = trueLabels.reduce((count, label, i) => 
+        count + (label === 0 && !detectedOutliers[i] ? 1 : 0), 0);
+      
+      const accuracy = (truePositives + trueNegatives) / totalPoints * 100;
+      const precision = truePositives / (truePositives + falsePositives) || 0;
+      const recall = truePositives / (truePositives + falseNegatives) || 0;
+      const f1 = 2 * precision * recall / (precision + recall) || 0;
+      
+      // Update display
+      document.getElementById('trueOutliers').textContent = trueOutliersCount;
+      document.getElementById('trueOutliersPercent').textContent = 
+        `${(trueOutliersCount / totalPoints * 100).toFixed(1)}%`;
+      
+      document.getElementById('detectedOutliers').textContent = detectedOutliersCount;
+      document.getElementById('detectedOutliersPercent').textContent = 
+        `${(detectedOutliersCount / totalPoints * 100).toFixed(1)}%`;
+      
+      document.getElementById('accuracy').textContent = `${accuracy.toFixed(1)}%`;
+      document.getElementById('accuracyDetails').innerHTML = 
+        `Precision: ${(precision * 100).toFixed(1)}% | Recall: ${(recall * 100).toFixed(1)}% | F1: ${f1.toFixed(3)}`;
+      
+      // Update method explanation
+      let explanation = '';
+      switch(method) {
+        case 'iqr':
+          explanation = `
+            <p><strong>IQR Method:</strong></p>
+            <p>Q1 = ${methodDetails.stats.q1.toFixed(2)} (25th percentile)</p>
+            <p>Q3 = ${methodDetails.stats.q3.toFixed(2)} (75th percentile)</p>
+            <p>IQR = Q3 - Q1 = ${methodDetails.stats.iqr.toFixed(2)}</p>
+            <p>Lower Bound = Q1 - 1.5×IQR = ${methodDetails.bounds.lower.toFixed(2)}</p>
+            <p>Upper Bound = Q3 + 1.5×IQR = ${methodDetails.bounds.upper.toFixed(2)}</p>
+            <p><em>Any value outside [${methodDetails.bounds.lower.toFixed(2)}, ${methodDetails.bounds.upper.toFixed(2)}] is flagged as an outlier.</em></p>
+          `;
+          break;
+        case 'zscore':
+          explanation = `
+            <p><strong>Z-Score Method:</strong></p>
+            <p>Mean = ${methodDetails.mean.toFixed(2)}</p>
+            <p>Standard Deviation = ${methodDetails.std.toFixed(2)}</p>
+            <p>Z = (value - mean) / std</p>
+            <p>Threshold = |Z| > ${document.getElementById('detectionThreshold').value}</p>
+            <p><em>Any point with |Z| > ${document.getElementById('detectionThreshold').value} is flagged as an outlier.</em></p>
+            <p><strong>Note:</strong> Z-score assumes normal distribution and is sensitive to outliers in the mean calculation.</p>
+          `;
+          break;
+        case 'modified_zscore':
+          explanation = `
+            <p><strong>Modified Z-Score Method:</strong></p>
+            <p>Median = ${methodDetails.median.toFixed(2)} (more robust than mean)</p>
+            <p>MAD = ${methodDetails.mad.toFixed(2)} (Median Absolute Deviation)</p>
+            <p>Modified Z = 0.6745 × (value - median) / MAD</p>
+            <p>Threshold = |Modified Z| > ${document.getElementById('detectionThreshold').value}</p>
+            <p><em>Any point with |Modified Z| > ${document.getElementById('detectionThreshold').value} is flagged as an outlier.</em></p>
+            <p><strong>Advantage:</strong> More robust because median and MAD are less affected by outliers than mean and std dev.</p>
+          `;
+          break;
+      }
+      
+      document.getElementById('methodExplanation').innerHTML = explanation;
+    }
+    
+    // Add syntax highlighting
+    function highlightPythonCode() {
+      const codeBlocks = document.querySelectorAll('pre code');
+      const pythonKeywords = [
+        'import', 'from', 'as', 'def', 'return', 'class', 'if', 'elif', 'else',
+        'for', 'in', 'while', 'break', 'continue', 'try', 'except', 'finally',
+        'with', 'as', 'lambda', 'yield', 'assert', 'raise', 'global', 'nonlocal',
+        'True', 'False', 'None', 'and', 'or', 'not', 'is', 'del', 'pass'
+      ];
+      
+      const pythonFunctions = [
+        'print', 'len', 'range', 'abs', 'sum', 'min', 'max', 'sorted', 'enumerate',
+        'zip', 'map', 'filter', 'isinstance', 'type', 'str', 'int', 'float', 'list',
+        'dict', 'set', 'tuple', 'np\\.', 'pd\\.', 'plt\\.', 'sns\\.'
+      ];
+      
+      codeBlocks.forEach(block => {
+        let code = block.textContent;
+        
+        // Highlight keywords
+        pythonKeywords.forEach(keyword => {
+          const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+          code = code.replace(regex, `<span class="keyword">${keyword}</span>`);
+        });
+        
+        // Highlight functions
+        pythonFunctions.forEach(func => {
+          const regex = new RegExp(`\\b${func}\\b`, 'g');
+          code = code.replace(regex, `<span class="function">${func}</span>`);
+        });
+        
+        // Highlight class names
+        const classRegex = /class (\w+)/g;
+        code = code.replace(classRegex, 'class <span class="class">$1</span>');
+        
+        // Highlight strings
+        code = code.replace(/(['"])(.*?)\1/g, '<span class="string">$1$2$1</span>');
+        
+        // Highlight comments
+        code = code.replace(/(#.*$)/gm, '<span class="comment">$1</span>');
+        
+        // Highlight numbers
+        code = code.replace(/\b(\d+\.?\d*)\b/g, '<span class="number">$1</span>');
+        
+        block.innerHTML = code;
+      });
+    }
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize MathJax
+      if (window.MathJax) {
+        MathJax.typesetPromise();
+      }
+      
+      // Add syntax highlighting
+      highlightPythonCode();
+      
+      // Expand first code block by default
+      const firstCodeBlock = document.querySelector('.code-content');
+      if (firstCodeBlock) {
+        firstCodeBlock.classList.add('expanded');
+        const toggleBtn = firstCodeBlock.previousElementSibling.querySelector('.toggle-btn i');
+        if (toggleBtn) {
+          toggleBtn.classList.remove('fa-chevron-down');
+          toggleBtn.classList.add('fa-chevron-up');
+        }
+      }
+      
+      // Interactive demo controls
+      document.getElementById('outlierPercent').addEventListener('input', function() {
+        document.getElementById('outlierPercentValue').textContent = `${this.value}%`;
+      });
+      
+      document.getElementById('dataPoints').addEventListener('input', function() {
+        document.getElementById('dataPointsValue').textContent = this.value;
+      });
+      
+      document.getElementById('detectionThreshold').addEventListener('input', function() {
+        document.getElementById('detectionThresholdValue').textContent = parseFloat(this.value).toFixed(1);
+      });
+      
+      // Generate data button
+      document.getElementById('generateData').addEventListener('click', function() {
+        const totalPoints = parseInt(document.getElementById('dataPoints').value);
+        const outlierPercent = parseInt(document.getElementById('outlierPercent').value);
+        const threshold = parseFloat(document.getElementById('detectionThreshold').value);
+        const method = document.getElementById('detectionMethod').value;
+        
+        // Generate data
+        const generated = generateRandomData(totalPoints, outlierPercent);
+        currentData = generated.data;
+        trueLabels = generated.labels;
+        
+        // Detect outliers based on selected method
+        let detectionResult;
+        let methodDetails;
+        
+        switch(method) {
+          case 'iqr':
+            detectionResult = detectOutliersIQR(currentData, 1.5);
+            methodDetails = detectionResult;
+            break;
+          case 'zscore':
+            detectionResult = detectOutliersZScore(currentData, threshold);
+            methodDetails = detectionResult;
+            break;
+          case 'modified_zscore':
+            detectionResult = detectOutliersModifiedZScore(currentData, threshold);
+            methodDetails = detectionResult;
+            break;
+        }
+        
+        // Visualize results
+        visualizeData(currentData, trueLabels, detectionResult.outliers, method, methodDetails);
+      });
+      
+      // Generate initial data on page load
+      document.getElementById('generateData').click();
+      
+      // Add smooth scrolling
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const targetId = this.getAttribute('href');
+          if (targetId === '#') return;
+          
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            window.scrollTo({
+              top: targetElement.offsetTop - 80,
+              behavior: 'smooth'
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
