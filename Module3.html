@@ -916,23 +916,24 @@
         <div class="course-info">
           <h1>IAF 604: Machine Learning &amp; Predictive Analytics</h1>
           <h2>Module 3A — Statistics and Sampling for ML</h2>
-          <div class="badge"><i class="fa-solid fa-chart-bar"></i> Week 3: Descriptive/Inferential Statistics, Outlier Detection, Sampling</div>
+          <div class="badge"><i class="fa-solid fa-chart-bar"></i> Week 3: Descriptive/Inferential Statistics, Outlier Detection, Sampling, A/B Testing</div>
           <p class="subtitle">
             This module bridges statistics and machine learning. You'll learn essential statistical concepts for data understanding,
-            explore sampling techniques for training data, and practice descriptive statistics with Python. Statistics is the
-            foundation for making data-driven decisions and building reliable ML models.
+            explore sampling techniques for training data, practice descriptive statistics with Python, and learn A/B testing for model evaluation.
+            Statistics is the foundation for making data-driven decisions and building reliable ML models.
           </p>
         </div>
 
         <div class="meta">
           <p><strong>Instructor:</strong> Ali Noori</p>
           <p><strong>Module:</strong> 3A</p>
-          <p><strong>Estimated time:</strong> 3–4 hours (concepts + hands-on Python)</p>
+          <p><strong>Estimated time:</strong> 4–5 hours (concepts + hands-on Python)</p>
           <div class="pillrow">
             <span class="pill"><i class="fa-solid fa-chart-line"></i> Descriptive Stats</span>
             <span class="pill"><i class="fa-solid fa-magnifying-glass-chart"></i> Inferential Stats</span>
             <span class="pill"><i class="fa-solid fa-triangle-exclamation"></i> Outlier Detection</span>
             <span class="pill"><i class="fa-solid fa-filter"></i> Sampling</span>
+            <span class="pill"><i class="fa-solid fa-flask-vial"></i> A/B Testing</span>
             <span class="pill"><i class="fa-brands fa-python"></i> Python</span>
             <span class="pill"><i class="fa-solid fa-database"></i> Data Analysis</span>
           </div>
@@ -945,11 +946,11 @@
       <main id="main" class="panel main">
         <!-- MODULE OVERVIEW -->
         <section id="overview" class="section">
-          <h4><i class="fa-solid fa-map"></i> 1) Module overview: Statistics as ML Foundation</h4>
+          <h4><i class="fa-solid fa-map"></i> 1) Module Overview: Statistics as ML Foundation</h4>
           <p class="lead">
             Statistics provides the tools to understand data, detect patterns, quantify uncertainty, and make informed decisions.
             In machine learning, statistical thinking helps you: evaluate model performance correctly, detect data quality issues,
-            choose appropriate algorithms, and interpret results meaningfully.
+            choose appropriate algorithms, interpret results meaningfully, and conduct valid experiments (A/B testing).
           </p>
 
           <div class="callout">
@@ -958,6 +959,7 @@
               <li>Calculate and interpret descriptive statistics (mean, median, variance, skewness, kurtosis)</li>
               <li>Distinguish between descriptive and inferential statistics</li>
               <li>Apply statistical tests to compare groups and assess relationships</li>
+              <li>Design and analyze A/B tests for ML model comparison</li>
               <li>Identify outliers using statistical methods (IQR, z-score, Mahalanobis distance)</li>
               <li>Select appropriate sampling techniques for ML training data</li>
               <li>Implement statistical analyses in Python using pandas, numpy, and scipy</li>
@@ -1088,14 +1090,15 @@
           </div>
         </section>
 
-        <!-- INFERENTIAL STATISTICS -->
+        <!-- INFERENTIAL STATISTICS & A/B TESTING -->
         <section id="inferential" class="section">
-          <h4><i class="fa-solid fa-magnifying-glass-chart"></i> 3) Inferential Statistics: From Sample to Population</h4>
+          <h4><i class="fa-solid fa-magnifying-glass-chart"></i> 3) Inferential Statistics & A/B Testing</h4>
 
           <div class="definition">
             <p>
               <strong>Inferential Statistics</strong> make inferences and predictions about a population based on a sample.
               They use probability theory to quantify uncertainty and test hypotheses.
+              <strong>A/B Testing</strong> applies inferential statistics to compare two versions (A vs B) in controlled experiments.
             </p>
           </div>
 
@@ -1107,6 +1110,7 @@
                 <li><strong>Alternative hypothesis (H₁):</strong> What you're testing for</li>
                 <li><strong>p-value:</strong> Probability of observing data if H₀ is true</li>
                 <li><strong>Significance level (α):</strong> Threshold for rejecting H₀ (typically 0.05)</li>
+                <li><strong>Statistical power (1-β):</strong> Probability of detecting true effect</li>
               </ul>
               <div class="chiprow">
                 <span class="chip"><i class="fa-solid fa-scale-balanced"></i> Decision</span>
@@ -1121,6 +1125,7 @@
                 <li>95% CI means: 95% of such intervals contain the true parameter</li>
                 <li>Formula: \(\bar{x} \pm t_{\alpha/2} \times \frac{s}{\sqrt{n}}\)</li>
                 <li>Wider intervals indicate more uncertainty</li>
+                <li>Use for A/B test results: report difference with CI</li>
               </ul>
               <div class="chiprow">
                 <span class="chip"><i class="fa-solid fa-arrows-left-right"></i> Range</span>
@@ -1135,11 +1140,29 @@
                 <li><strong>ANOVA:</strong> Compare means among multiple groups</li>
                 <li><strong>Chi-square:</strong> Test independence between categorical variables</li>
                 <li><strong>Correlation:</strong> Measure linear relationship between variables</li>
+                <li><strong>Mann-Whitney U:</strong> Non-parametric alternative to t-test</li>
               </ul>
               <div class="chiprow">
                 <span class="chip"><i class="fa-solid fa-vial"></i> Experiments</span>
                 <span class="chip"><i class="fa-solid fa-link"></i> Relationships</span>
               </div>
+            </div>
+          </div>
+
+          <!-- A/B Testing Card -->
+          <div class="mini-card orange" style="margin-top: 20px;">
+            <h5><i class="fa-solid fa-flask-vial"></i> A/B Testing for ML</h5>
+            <ul>
+              <li><strong>Purpose:</strong> Compare two versions (A vs B) to determine which performs better</li>
+              <li><strong>ML Applications:</strong> Model selection, feature testing, hyperparameter tuning, UI changes</li>
+              <li><strong>Statistical Foundation:</strong> Two-sample t-test, chi-square test, confidence intervals</li>
+              <li><strong>Key Metrics:</strong> Conversion rate, accuracy, F1-score, RMSE, revenue per user</li>
+              <li><strong>Sample Size Calculation:</strong> Critical for adequate statistical power</li>
+            </ul>
+            <div class="chiprow">
+              <span class="chip"><i class="fa-solid fa-chart-line"></i> Experimentation</span>
+              <span class="chip"><i class="fa-solid fa-code-branch"></i> Model Comparison</span>
+              <span class="chip"><i class="fa-solid fa-calculator"></i> Statistical Significance</span>
             </div>
           </div>
 
@@ -1151,9 +1174,63 @@
             <canvas id="statTestsChart"></canvas>
           </div>
 
+          <!-- A/B Testing Interactive -->
+          <div class="interactive">
+            <h5 style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
+              <i class="fa-solid fa-flask" style="color:var(--primary)"></i> Interactive: A/B Testing Simulator
+            </h5>
+            <p class="muted">
+              Simulate an A/B test comparing two ML models. Adjust sample sizes and effect sizes to see statistical significance.
+            </p>
+
+            <div class="grid2">
+              <div>
+                <div class="range-wrap">
+                  <label for="sampleSize">Sample Size per Group</label>
+                  <input id="sampleSize" type="range" min="100" max="5000" value="1000" step="100" />
+                  <output id="sampleSizeOut">1000</output>
+                </div>
+                
+                <div class="range-wrap">
+                  <label for="effectSize">Effect Size (Difference in %)</label>
+                  <input id="effectSize" type="range" min="0.1" max="5" value="1.5" step="0.1" />
+                  <output id="effectSizeOut">1.5%</output>
+                </div>
+              </div>
+              
+              <div>
+                <div class="range-wrap">
+                  <label for="baseRate">Base Conversion Rate</label>
+                  <input id="baseRate" type="range" min="1" max="50" value="15" />
+                  <output id="baseRateOut">15%</output>
+                </div>
+                
+                <div class="range-wrap">
+                  <label for="significanceLevel">Significance Level (α)</label>
+                  <input id="significanceLevel" type="range" min="1" max="10" value="5" />
+                  <output id="significanceLevelOut">5%</output>
+                </div>
+              </div>
+            </div>
+
+            <div class="chart" style="margin-top:20px;">
+              <div class="chart-title">
+                <span>A/B Test Results</span>
+                <span class="muted" id="abTestResult">Simulating...</span>
+              </div>
+              <canvas id="abTestingChart"></canvas>
+            </div>
+
+            <div class="formula-box">
+              <strong>Statistical Power:</strong> \(1 - \beta = P(\text{reject } H_0 | H_1 \text{ true})\)<br>
+              <strong>Sample Size Formula:</strong> \(n = \frac{(Z_{1-\alpha/2} + Z_{1-\beta})^2 \cdot (p_1(1-p_1) + p_2(1-p_2))}{(p_1 - p_2)^2}\)
+            </div>
+          </div>
+
           <div class="note">
             <strong>ML Connection:</strong> Inferential statistics validate whether model improvements are real or due to chance.
             For example: Is the difference in accuracy between two models statistically significant?
+            A/B testing provides a framework for making data-driven decisions about model deployment.
           </div>
         </section>
 
@@ -1163,7 +1240,7 @@
 
           <p class="lead">
             Outliers can be errors (to remove) or valuable signals (to investigate). Statistical methods help distinguish
-            between meaningful anomalies and noise.
+            between meaningful anomalies and noise. Proper outlier handling is crucial for model robustness.
           </p>
 
           <div class="grid2">
@@ -1174,10 +1251,12 @@
                 <li><strong>Z-score:</strong> |z| > 3 (or 2.5) is unusual</li>
                 <li><strong>Modified Z-score:</strong> Robust to outliers in median</li>
                 <li><strong>Percentile-based:</strong> Outside 1st-99th percentiles</li>
+                <li><strong>Visual:</strong> Box plots, histograms</li>
               </ul>
               <div class="chiprow">
                 <span class="chip"><i class="fa-solid fa-1"></i> Single Variable</span>
                 <span class="chip"><i class="fa-solid fa-chart-simple"></i> Simple</span>
+                <span class="chip"><i class="fa-solid fa-eye"></i> Visual</span>
               </div>
             </div>
 
@@ -1188,10 +1267,12 @@
                 <li><strong>Isolation Forest:</strong> ML-based, efficient for high dimensions</li>
                 <li><strong>Local Outlier Factor (LOF):</strong> Density-based approach</li>
                 <li><strong>DBSCAN:</strong> Clustering-based outlier detection</li>
+                <li><strong>One-Class SVM:</strong> Learn normal data boundary</li>
               </ul>
               <div class="chiprow">
                 <span class="chip"><i class="fa-solid fa-network-wired"></i> Multi-variable</span>
                 <span class="chip"><i class="fa-solid fa-brain"></i> ML-based</span>
+                <span class="chip"><i class="fa-solid fa-shapes"></i> Advanced</span>
               </div>
             </div>
           </div>
@@ -1235,7 +1316,8 @@
               <summary><i class="fa-solid fa-circle-question"></i> When should I remove outliers?</summary>
               <p class="muted">
                 Remove outliers when they're measurement errors or data entry mistakes. Keep them if they represent
-                rare but important events (fraud, equipment failure, etc.). Always document your decision.
+                rare but important events (fraud, equipment failure, etc.). Always document your decision and
+                consider running models both with and without outliers to assess impact.
               </p>
             </details>
             <details>
@@ -1243,6 +1325,14 @@
               <p class="muted">
                 Outliers can distort: 1) Linear regression (pull regression line), 2) Distance-based algorithms (k-means, k-NN),
                 3) Variance calculations, 4) Model evaluation metrics. Some models (tree-based) are more robust.
+                Consider robust statistical methods or transformations for outlier-prone data.
+              </p>
+            </details>
+            <details>
+              <summary><i class="fa-solid fa-circle-question"></i> How to handle outliers in A/B testing?</summary>
+              <p class="muted">
+                In A/B testing, outliers can skew results. Options: 1) Winsorize (cap extreme values), 2) Use robust statistics (median instead of mean),
+                3) Analyze with and without outliers, 4) Use non-parametric tests. Document your approach transparently.
               </p>
             </details>
           </div>
@@ -1256,6 +1346,7 @@
             <p>
               <strong>Sampling</strong> selects a subset of data for analysis or model training.
               Good sampling ensures your ML model generalizes well without needing all available data.
+              Critical for A/B testing to ensure representative and balanced groups.
             </p>
           </div>
 
@@ -1267,6 +1358,7 @@
                 <li><strong>Stratified:</strong> Preserve class proportions</li>
                 <li><strong>Systematic:</strong> Select every kth item</li>
                 <li><strong>Cluster:</strong> Randomly select groups/clusters</li>
+                <li><strong>Use:</strong> General purposes, A/B testing</li>
               </ul>
               <div class="chiprow">
                 <span class="chip"><i class="fa-solid fa-dice"></i> Probability</span>
@@ -1281,6 +1373,7 @@
                 <li><strong>Undersampling:</strong> Remove majority class samples</li>
                 <li><strong>SMOTE:</strong> Synthetic Minority Over-sampling Technique</li>
                 <li><strong>ADASYN:</strong> Adaptive synthetic sampling</li>
+                <li><strong>Use:</strong> Imbalanced classification problems</li>
               </ul>
               <div class="chiprow">
                 <span class="chip"><i class="fa-solid fa-balance-scale"></i> Class Balance</span>
@@ -1295,6 +1388,7 @@
                 <li><strong>Cross-validation:</strong> Multiple train/test splits</li>
                 <li><strong>Time-based:</strong> Respect temporal order</li>
                 <li><strong>Active Learning:</strong> ML-guided sampling</li>
+                <li><strong>Use:</strong> Model evaluation, small datasets</li>
               </ul>
               <div class="chiprow">
                 <span class="chip"><i class="fa-solid fa-repeat"></i> Resampling</span>
@@ -1312,53 +1406,58 @@
           </div>
 
           <div class="callout">
-            <p><strong>Sampling Best Practices for ML:</strong></p>
+            <p><strong>Sampling Best Practices for ML & A/B Testing:</strong></p>
             <ul style="padding-left:20px; margin-top:12px;">
               <li>Use stratified sampling for imbalanced classification problems</li>
               <li>Always create a separate test set before any sampling/processing</li>
+              <li>For A/B testing: random assignment is critical; check for covariate balance</li>
               <li>For time series: train on past, test on future (no random shuffling)</li>
+              <li>Calculate required sample size for A/B tests using power analysis</li>
               <li>Consider computational constraints when sampling large datasets</li>
               <li>Document your sampling methodology for reproducibility</li>
             </ul>
           </div>
         </section>
 
-        <!-- HANDS-ON: PYTHON FOR DESCRIPTIVE STATISTICS -->
+        <!-- HANDS-ON: PYTHON FOR STATISTICS & A/B TESTING -->
         <section id="python-hands-on" class="section">
-          <h4><i class="fa-brands fa-python"></i> 6) Hands-On: Descriptive Statistics with Python</h4>
+          <h4><i class="fa-brands fa-python"></i> 6) Hands-On: Statistics & A/B Testing with Python</h4>
 
           <div class="callout">
             <p>
               <strong>Python Libraries for Statistics:</strong>
               pandas (data manipulation), numpy (numerical operations), scipy (statistical tests),
-              matplotlib/seaborn (visualization), statsmodels (advanced statistics).
+              matplotlib/seaborn (visualization), statsmodels (advanced statistics), scikit-learn (ML & sampling).
             </p>
           </div>
 
           <div class="interactive">
             <h5 style="margin-bottom:8px; display:flex; gap:12px; align-items:center;">
-              <i class="fa-solid fa-play" style="color:var(--primary)"></i> Complete Python Example: Data Analysis Pipeline
+              <i class="fa-solid fa-play" style="color:var(--primary)"></i> Complete Python Example: Statistical Analysis Pipeline
             </h5>
             <p class="muted">
-              This comprehensive example shows loading data, calculating statistics, detecting outliers, and visualizing results.
+              This comprehensive example shows loading data, calculating statistics, A/B testing, outlier detection, and visualizing results.
               Copy and run in Colab.
             </p>
 
-            <pre><code># Module 3A Hands-On: Descriptive Statistics with Python
-# Complete analysis pipeline from data loading to visualization
+            <pre><code># Module 3A Hands-On: Statistics & A/B Testing with Python
+# Complete analysis pipeline from data loading to A/B testing
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
+from scipy.stats import ttest_ind, chi2_contingency, shapiro
 import warnings
 warnings.filterwarnings('ignore')
 
 # Set random seed for reproducibility
 np.random.seed(42)
 
+# ============================================================================
 # 1) CREATE SIMULATED DATASET WITH DIFFERENT DISTRIBUTIONS
+# ============================================================================
 n_samples = 1000
 
 # Generate data from different distributions
@@ -1381,7 +1480,9 @@ print("Dataset shape:", data.shape)
 print("\nFirst 5 rows:")
 print(data.head())
 
+# ============================================================================
 # 2) DESCRIPTIVE STATISTICS CALCULATION
+# ============================================================================
 print("\n" + "="*60)
 print("DESCRIPTIVE STATISTICS SUMMARY")
 print("="*60)
@@ -1421,7 +1522,107 @@ for col in data.columns:
     print(f"50th percentile (Median): {percentiles[0.5]:.2f}")
     print(f"75th percentile (Q3): {percentiles[0.75]:.2f}")
 
-# 3) OUTLIER DETECTION USING IQR METHOD
+# ============================================================================
+# 3) A/B TESTING SIMULATION: MODEL COMPARISON
+# ============================================================================
+print("\n" + "="*60)
+print("A/B TESTING: COMPARING TWO ML MODELS")
+print("="*60)
+
+def run_ab_test(control_metric, treatment_metric, alpha=0.05, test_name="Model Comparison"):
+    """Run comprehensive A/B test comparing two models"""
+    
+    # Two-sample t-test
+    t_stat, p_value = ttest_ind(control_metric, treatment_metric, equal_var=False)
+    
+    # Calculate descriptive statistics
+    control_mean = np.mean(control_metric)
+    treatment_mean = np.mean(treatment_metric)
+    control_std = np.std(control_metric, ddof=1)
+    treatment_std = np.std(treatment_metric, ddof=1)
+    n_control = len(control_metric)
+    n_treatment = len(treatment_metric)
+    
+    # Standard error for difference
+    se_diff = np.sqrt(control_std**2/n_control + treatment_std**2/n_treatment)
+    
+    # Confidence interval for difference
+    t_critical = stats.t.ppf(1 - alpha/2, n_control + n_treatment - 2)
+    diff = treatment_mean - control_mean
+    ci_lower = diff - t_critical * se_diff
+    ci_upper = diff + t_critical * se_diff
+    
+    # Effect size (Cohen's d)
+    pooled_std = np.sqrt(((n_control-1)*control_std**2 + (n_treatment-1)*treatment_std**2) / 
+                         (n_control + n_treatment - 2))
+    cohens_d = diff / pooled_std if pooled_std != 0 else 0
+    
+    # Statistical power (approximate)
+    # For demonstration - in practice use power analysis libraries
+    power = "High" if n_control > 100 and n_treatment > 100 else "Medium"
+    
+    return {
+        'test_name': test_name,
+        't_statistic': t_stat,
+        'p_value': p_value,
+        'significant': p_value < alpha,
+        'control_mean': control_mean,
+        'treatment_mean': treatment_mean,
+        'difference': diff,
+        'relative_improvement': (diff / control_mean) * 100 if control_mean != 0 else 0,
+        'ci_lower': ci_lower,
+        'ci_upper': ci_upper,
+        'cohens_d': cohens_d,
+        'statistical_power': power,
+        'sample_size_control': n_control,
+        'sample_size_treatment': n_treatment
+    }
+
+def print_ab_results(results):
+    """Pretty print A/B test results"""
+    print(f"\n{results['test_name']}")
+    print("-" * 40)
+    print(f"Control Mean: {results['control_mean']:.3%}")
+    print(f"Treatment Mean: {results['treatment_mean']:.3%}")
+    print(f"Difference: {results['difference']:.3%}")
+    print(f"Relative Improvement: {results['relative_improvement']:.2f}%")
+    print(f"t-statistic: {results['t_statistic']:.4f}")
+    print(f"p-value: {results['p_value']:.6f}")
+    print(f"Statistically Significant (α=0.05): {results['significant']}")
+    print(f"95% CI for Difference: [{results['ci_lower']:.4f}, {results['ci_upper']:.4f}]")
+    print(f"Cohen's d (effect size): {results['cohens_d']:.3f}")
+    print(f"Statistical Power: {results['statistical_power']}")
+    print(f"Sample Sizes: Control={results['sample_size_control']}, Treatment={results['sample_size_treatment']}")
+    
+    # Interpretation
+    if results['significant']:
+        if results['difference'] > 0:
+            print(f"CONCLUSION: Treatment is significantly better than control.")
+        else:
+            print(f"CONCLUSION: Control is significantly better than treatment.")
+    else:
+        print(f"CONCLUSION: No significant difference detected.")
+
+# Simulate A/B test data for model accuracy comparison
+np.random.seed(42)
+n_samples_ab = 500
+
+# Model A (control) accuracy: 85% ± 3%
+model_a_accuracy = np.random.normal(0.85, 0.03, n_samples_ab)
+model_a_accuracy = np.clip(model_a_accuracy, 0, 1)
+
+# Model B (treatment) accuracy: 87.5% ± 3% (2.5% improvement)
+model_b_accuracy = np.random.normal(0.875, 0.03, n_samples_ab)
+model_b_accuracy = np.clip(model_b_accuracy, 0, 1)
+
+# Run A/B test
+ab_results = run_ab_test(model_a_accuracy, model_b_accuracy, 
+                         test_name="Model Accuracy A/B Test")
+print_ab_results(ab_results)
+
+# ============================================================================
+# 4) OUTLIER DETECTION USING IQR METHOD
+# ============================================================================
 print("\n" + "="*60)
 print("OUTLIER DETECTION (IQR METHOD)")
 print("="*60)
@@ -1440,34 +1641,40 @@ for col in data.columns:
     print(f"\n{col}: {len(outliers)} outliers ({len(outliers)/len(data)*100:.1f}%)")
     if len(outliers) > 0:
         print(f"  Range: [{lower:.2f}, {upper:.2f}]")
-        print(f"  Outlier values: {outliers.values[:5]}")  # Show first 5
+        print(f"  Outlier values: {outliers.values[:3]}")  # Show first 3
 
-# 4) STATISTICAL TESTS
+# ============================================================================
+# 5) STATISTICAL TESTS
+# ============================================================================
 print("\n" + "="*60)
 print("STATISTICAL TESTS")
 print("="*60)
 
 # Test normality for each column
 print("\nNormality Tests (Shapiro-Wilk):")
-for col in data.columns:
-    stat, p_value = stats.shapiro(data[col])
+for col in data.columns[:3]:  # Test first 3 columns
+    stat, p_value = shapiro(data[col].sample(min(500, len(data[col]))))  # Limit sample size for Shapiro
     is_normal = p_value > 0.05
     print(f"{col:15s} p-value: {p_value:.4f} {'(Normal)' if is_normal else '(Not Normal)'}")
 
 # Compare means between normal and skewed_right columns
 print("\nT-test: normal vs skewed_right columns:")
-t_stat, p_value = stats.ttest_ind(data['normal'], data['skewed_right'])
+t_stat, p_value = ttest_ind(data['normal'], data['skewed_right'], equal_var=False)
 print(f"t-statistic: {t_stat:.4f}, p-value: {p_value:.4f}")
 print(f"Means are {'significantly different' if p_value < 0.05 else 'not significantly different'}")
 
-# 5) CORRELATION ANALYSIS
+# ============================================================================
+# 6) CORRELATION ANALYSIS
+# ============================================================================
 print("\n" + "="*60)
 print("CORRELATION MATRIX")
 print("="*60)
 correlation_matrix = data.corr()
 print(correlation_matrix.round(3))
 
-# 6) DATA VISUALIZATION
+# ============================================================================
+# 7) DATA VISUALIZATION
+# ============================================================================
 print("\n" + "="*60)
 print("GENERATING VISUALIZATIONS...")
 print("="*60)
@@ -1493,71 +1700,81 @@ if len(data.columns) % 2 != 0:
 plt.tight_layout()
 plt.show()
 
-# Box plots for outlier visualization
-plt.figure(figsize=(12, 6))
-sns.boxplot(data=data, palette='Set2')
-plt.title('Box Plots with Outliers', fontweight='bold')
-plt.xticks(rotation=45)
-plt.grid(True, alpha=0.3)
-plt.show()
+# A/B Test visualization
+fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-# Correlation heatmap
-plt.figure(figsize=(10, 8))
-sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0, 
-            square=True, linewidths=1, cbar_kws={"shrink": 0.8})
-plt.title('Correlation Heatmap', fontweight='bold')
-plt.tight_layout()
-plt.show()
+# Box plot
+axes[0].boxplot([model_a_accuracy, model_b_accuracy], 
+                labels=['Model A (Control)', 'Model B (Treatment)'])
+axes[0].set_title('A/B Test: Model Accuracy Comparison', fontweight='bold')
+axes[0].set_ylabel('Accuracy')
+axes[0].grid(True, alpha=0.3)
 
-# Q-Q plots for normality check
-fig, axes = plt.subplots(2, 3, figsize=(14, 8))
-fig.suptitle('Q-Q Plots for Normality Assessment', fontsize=16, fontweight='bold')
-
-for idx, col in enumerate(data.columns):
-    ax = axes[idx // 3, idx % 3]
-    stats.probplot(data[col], dist="norm", plot=ax)
-    ax.set_title(f'{col}')
-    ax.grid(True, alpha=0.3)
+# Distribution plot
+axes[1].hist(model_a_accuracy, alpha=0.5, bins=30, label='Model A', density=True)
+axes[1].hist(model_b_accuracy, alpha=0.5, bins=30, label='Model B', density=True)
+axes[1].axvline(np.mean(model_a_accuracy), color='blue', linestyle='--', linewidth=2)
+axes[1].axvline(np.mean(model_b_accuracy), color='orange', linestyle='--', linewidth=2)
+axes[1].set_title('Accuracy Distributions', fontweight='bold')
+axes[1].set_xlabel('Accuracy')
+axes[1].set_ylabel('Density')
+axes[1].legend()
+axes[1].grid(True, alpha=0.3)
 
 plt.tight_layout()
 plt.show()
 
 print("\nAnalysis complete! Key takeaways:")
-print("1. Different distributions require different statistical approaches")
-print("2. Always visualize data before applying statistical tests")
-print("3. Outliers should be investigated, not automatically removed")
-print("4. Statistical assumptions (like normality) must be checked")</code></pre>
+print("1. Always check assumptions before applying statistical tests")
+print("2. A/B testing requires proper sample size calculation")
+print("3. Report effect sizes and confidence intervals, not just p-values")
+print("4. Visualize data to complement numerical analysis")
+print("5. Consider outliers' impact on both descriptive stats and A/B tests")</code></pre>
 
             <div class="note">
               <strong>Statistical Thinking in Practice:</strong>
-              This pipeline shows the complete workflow from data exploration to statistical testing.
-              Notice how visualization complements numerical analysis, and how assumptions are tested before
-              applying statistical methods.
+              This pipeline shows the complete workflow from data exploration to A/B testing.
+              Notice how we check assumptions, calculate effect sizes, and provide confidence intervals
+              alongside p-values for more meaningful interpretation.
             </div>
           </div>
         </section>
 
-        <!-- SAMPLING IMPLEMENTATION -->
+        <!-- SAMPLING & A/B TESTING IMPLEMENTATION -->
         <section id="sampling-implementation" class="section">
-          <h4><i class="fa-solid fa-code"></i> 7) Python Implementation: Sampling Techniques</h4>
+          <h4><i class="fa-solid fa-code"></i> 7) Python Implementation: Sampling & A/B Testing</h4>
 
           <div class="interactive">
             <h5 style="margin-bottom:8px; display:flex; gap:12px; align-items:center;">
-              <i class="fa-solid fa-filter" style="color:var(--primary)"></i> Sampling Methods in Python
+              <i class="fa-solid fa-filter" style="color:var(--primary)"></i> Sampling & A/B Testing Methods in Python
             </h5>
             <p class="muted">
-              Implement various sampling techniques and compare their effects on data distribution.
+              Implement various sampling techniques and A/B testing with power analysis.
             </p>
 
-            <pre><code># Sampling Techniques Implementation
+            <pre><code># Sampling Techniques & A/B Testing Implementation
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+import seaborn as sns
+from scipy import stats
+from scipy.stats import norm
+from sklearn.model_selection import train_test_split, StratifiedKFold
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
+from statsmodels.stats.power import TTestIndPower
+from statsmodels.stats.proportion import proportion_effectsize
+import warnings
+warnings.filterwarnings('ignore')
 
 np.random.seed(42)
+
+# ============================================================================
+# 1) SAMPLING TECHNIQUES
+# ============================================================================
+print("="*60)
+print("SAMPLING TECHNIQUES IMPLEMENTATION")
+print("="*60)
 
 # Create an imbalanced dataset
 n_samples = 1000
@@ -1570,14 +1787,14 @@ X = np.random.randn(n_samples, n_features)
 y = np.zeros(n_samples)
 y[:100] = 1  # Only 10% are class 1
 
-print(f"Original class distribution:")
+print(f"\nOriginal class distribution:")
 print(f"Class 0: {(y == 0).sum()} samples ({(y == 0).sum()/len(y)*100:.1f}%)")
 print(f"Class 1: {(y == 1).sum()} samples ({(y == 1).sum()/len(y)*100:.1f}%)")
 
 # 1) SIMPLE RANDOM SAMPLING
-print("\n" + "="*60)
+print("\n" + "-"*40)
 print("1) SIMPLE RANDOM SAMPLING")
-print("="*60)
+print("-"*40)
 
 sample_size = 200
 random_indices = np.random.choice(len(X), size=sample_size, replace=False)
@@ -1586,15 +1803,14 @@ y_random_sample = y[random_indices]
 
 print(f"Random sample size: {sample_size}")
 print(f"Sampled class distribution:")
-print(f"Class 0: {(y_random_sample == 0).sum()} samples")
-print(f"Class 1: {(y_random_sample == 1).sum()} samples")
+print(f"Class 0: {(y_random_sample == 0).sum()} samples ({(y_random_sample == 0).sum()/len(y_random_sample)*100:.1f}%)")
+print(f"Class 1: {(y_random_sample == 1).sum()} samples ({(y_random_sample == 1).sum()/len(y_random_sample)*100:.1f}%)")
 
 # 2) STRATIFIED SAMPLING (preserves class proportions)
-print("\n" + "="*60)
+print("\n" + "-"*40)
 print("2) STRATIFIED SAMPLING")
-print("="*60)
+print("-"*40)
 
-# Using sklearn's train_test_split for stratified sampling
 X_strat, _, y_strat, _ = train_test_split(
     X, y, 
     train_size=0.2,  # 20% sample
@@ -1608,9 +1824,9 @@ print(f"Class 0: {(y_strat == 0).sum()} samples ({(y_strat == 0).sum()/len(y_str
 print(f"Class 1: {(y_strat == 1).sum()} samples ({(y_strat == 1).sum()/len(y_strat)*100:.1f}%)")
 
 # 3) OVERSAMPLING MINORITY CLASS (SMOTE)
-print("\n" + "="*60)
+print("\n" + "-"*40)
 print("3) SMOTE OVERSAMPLING")
-print("="*60)
+print("-"*40)
 
 smote = SMOTE(random_state=42)
 X_resampled, y_resampled = smote.fit_resample(X, y)
@@ -1619,112 +1835,248 @@ print(f"After SMOTE:")
 print(f"Class 0: {(y_resampled == 0).sum()} samples ({(y_resampled == 0).sum()/len(y_resampled)*100:.1f}%)")
 print(f"Class 1: {(y_resampled == 1).sum()} samples ({(y_resampled == 1).sum()/len(y_resampled)*100:.1f}%)")
 
-# 4) UNDERSAMPLING MAJORITY CLASS
+# ============================================================================
+# 2) A/B TESTING WITH POWER ANALYSIS
+# ============================================================================
 print("\n" + "="*60)
-print("4) RANDOM UNDERSAMPLING")
+print("A/B TESTING POWER ANALYSIS")
 print("="*60)
 
-undersample = RandomUnderSampler(random_state=42)
-X_under, y_under = undersample.fit_resample(X, y)
+def calculate_sample_size(effect_size, alpha=0.05, power=0.8):
+    """Calculate required sample size per group for A/B test"""
+    # Standard normal percentiles
+    z_alpha = norm.ppf(1 - alpha/2)
+    z_beta = norm.ppf(power)
+    
+    # Sample size formula for two proportions
+    n_per_group = (2 * (z_alpha + z_beta)**2) / (effect_size**2)
+    return int(np.ceil(n_per_group))
 
-print(f"After undersampling:")
-print(f"Class 0: {(y_under == 0).sum()} samples ({(y_under == 0).sum()/len(y_under)*100:.1f}%)")
-print(f"Class 1: {(y_under == 1).sum()} samples ({(y_under == 1).sum()/len(y_under)*100:.1f}%)")
+def run_power_analysis():
+    """Demonstrate power analysis for A/B testing"""
+    
+    print("\nPower Analysis for Different Effect Sizes (α=0.05, power=0.8):")
+    print("-"*50)
+    print(f"{'Effect Size':<15} {'Sample per Group':<20} {'Total Sample':<15}")
+    print("-"*50)
+    
+    effect_sizes = [0.1, 0.2, 0.3, 0.5, 0.8]  # Cohen's d
+    
+    for es in effect_sizes:
+        n_per_group = calculate_sample_size(es)
+        print(f"{es:<15.2f} {n_per_group:<20} {2*n_per_group:<15}")
+    
+    # Real-world example: Click-through rate A/B test
+    print("\n" + "-"*50)
+    print("EXAMPLE: Click-through Rate A/B Test")
+    print("-"*50)
+    
+    # Current conversion rate: 5%
+    p_control = 0.05
+    # Expected improvement: 10% relative (to 5.5%)
+    p_treatment = 0.055
+    
+    # Calculate effect size for proportions
+    effect_size_prop = proportion_effectsize(p_control, p_treatment)
+    n_needed = calculate_sample_size(effect_size_prop)
+    
+    print(f"Control conversion rate: {p_control:.1%}")
+    print(f"Treatment conversion rate: {p_treatment:.1%}")
+    print(f"Relative improvement: {(p_treatment/p_control - 1)*100:.1f}%")
+    print(f"Effect size: {effect_size_prop:.3f}")
+    print(f"Required sample per group: {n_needed}")
+    print(f"Total required sample: {2*n_needed}")
+    
+    # What if we have limited sample?
+    print(f"\nWith fixed sample of 1000 per group:")
+    power_analyzer = TTestIndPower()
+    achieved_power = power_analyzer.solve_power(
+        effect_size=effect_size_prop,
+        nobs1=1000,
+        alpha=0.05,
+        ratio=1.0
+    )
+    print(f"Achieved power: {achieved_power:.1%}")
+    print(f"Risk of Type II error (false negative): {(1-achieved_power):.1%}")
 
-# 5) BOOTSTRAPPING (with replacement)
+run_power_analysis()
+
+# ============================================================================
+# 3) BOOTSTRAPPING FOR CONFIDENCE INTERVALS
+# ============================================================================
 print("\n" + "="*60)
-print("5) BOOTSTRAPPING")
+print("BOOTSTRAPPING FOR CONFIDENCE INTERVALS")
 print("="*60)
 
-n_bootstrap = 1000
-bootstrap_means = []
+# Bootstrap function
+def bootstrap_ci(data, statistic_func, n_bootstrap=1000, ci=95):
+    """Calculate bootstrap confidence interval"""
+    n = len(data)
+    bootstrap_stats = []
+    
+    for _ in range(n_bootstrap):
+        # Sample with replacement
+        sample = np.random.choice(data, size=n, replace=True)
+        stat = statistic_func(sample)
+        bootstrap_stats.append(stat)
+    
+    # Calculate confidence interval
+    lower = np.percentile(bootstrap_stats, (100-ci)/2)
+    upper = np.percentile(bootstrap_stats, 100 - (100-ci)/2)
+    
+    return {
+        'original': statistic_func(data),
+        'bootstrap_mean': np.mean(bootstrap_stats),
+        'ci_lower': lower,
+        'ci_upper': upper,
+        'bootstrap_std': np.std(bootstrap_stats)
+    }
 
-for i in range(n_bootstrap):
-    # Sample with replacement
-    indices = np.random.choice(len(X), size=len(X), replace=True)
-    X_boot = X[indices]
-    # Calculate mean of first feature
-    bootstrap_means.append(X_boot[:, 0].mean())
+# Example: Bootstrap confidence interval for mean
+print("\nBootstrap Confidence Interval Example:")
+data_example = np.random.exponential(scale=10, size=500) + 20  # Right-skewed data
 
-bootstrap_means = np.array(bootstrap_means)
+results = bootstrap_ci(data_example, np.mean, n_bootstrap=2000, ci=95)
+print(f"Original mean: {results['original']:.2f}")
+print(f"Bootstrap mean: {results['bootstrap_mean']:.2f}")
+print(f"95% CI: [{results['ci_lower']:.2f}, {results['ci_upper']:.2f}]")
+print(f"Bootstrap std: {results['bootstrap_std']:.2f}")
 
-print(f"Bootstrap statistics for feature 0:")
-print(f"  Original mean: {X[:, 0].mean():.4f}")
-print(f"  Bootstrap mean: {bootstrap_means.mean():.4f}")
-print(f"  Bootstrap std: {bootstrap_means.std():.4f}")
-print(f"  95% Confidence Interval: [{np.percentile(bootstrap_means, 2.5):.4f}, "
-      f"{np.percentile(bootstrap_means, 97.5):.4f}]")
+# Compare with parametric CI
+from scipy.stats import sem, t
+mean_val = np.mean(data_example)
+sem_val = sem(data_example)
+n = len(data_example)
+t_crit = t.ppf(0.975, n-1)
+parametric_ci = (mean_val - t_crit*sem_val, mean_val + t_crit*sem_val)
+print(f"Parametric 95% CI: [{parametric_ci[0]:.2f}, {parametric_ci[1]:.2f}]")
 
-# Visualization
-fig, axes = plt.subplots(2, 3, figsize=(15, 8))
-fig.suptitle('Sampling Techniques Comparison', fontsize=16, fontweight='bold')
+# ============================================================================
+# 4) VISUALIZATION
+# ============================================================================
+print("\n" + "="*60)
+print("GENERATING VISUALIZATIONS...")
+print("="*60)
 
-# Plot 1: Original distribution
-axes[0, 0].hist(X[:, 0], bins=30, alpha=0.7, color='blue')
-axes[0, 0].axvline(X[:, 0].mean(), color='red', linestyle='--')
-axes[0, 0].set_title('Original Data (Feature 0)')
-axes[0, 0].set_xlabel('Value')
-axes[0, 0].set_ylabel('Frequency')
+# Create visualizations
+fig, axes = plt.subplots(2, 3, figsize=(15, 10))
+fig.suptitle('Sampling & A/B Testing Analysis', fontsize=16, fontweight='bold')
+
+# Plot 1: Original vs sampled distributions
+axes[0, 0].hist(X[:, 0], bins=30, alpha=0.5, label='Original', density=True)
+axes[0, 0].hist(X_random_sample[:, 0], bins=20, alpha=0.5, label='Random Sample', density=True)
+axes[0, 0].set_title('Random Sampling Distribution')
+axes[0, 0].set_xlabel('Feature 1')
+axes[0, 0].set_ylabel('Density')
+axes[0, 0].legend()
 axes[0, 0].grid(True, alpha=0.3)
 
-# Plot 2: Random sample
-axes[0, 1].hist(X_random_sample[:, 0], bins=30, alpha=0.7, color='green')
-axes[0, 1].axvline(X_random_sample[:, 0].mean(), color='red', linestyle='--')
-axes[0, 1].set_title('Random Sample')
-axes[0, 1].set_xlabel('Value')
+# Plot 2: Class distribution comparison
+class_counts = {
+    'Original': [(y == 0).sum(), (y == 1).sum()],
+    'Random Sample': [(y_random_sample == 0).sum(), (y_random_sample == 1).sum()],
+    'Stratified': [(y_strat == 0).sum(), (y_strat == 1).sum()],
+    'After SMOTE': [(y_resampled == 0).sum(), (y_resampled == 1).sum()]
+}
+
+x = np.arange(len(class_counts))
+width = 0.35
+axes[0, 1].bar(x - width/2, [counts[0] for counts in class_counts.values()], 
+                width, label='Class 0', color='blue')
+axes[0, 1].bar(x + width/2, [counts[1] for counts in class_counts.values()], 
+                width, label='Class 1', color='red')
+axes[0, 1].set_title('Class Distribution Comparison')
+axes[0, 1].set_xticks(x)
+axes[0, 1].set_xticklabels(list(class_counts.keys()), rotation=45)
+axes[0, 1].set_ylabel('Count')
+axes[0, 1].legend()
 axes[0, 1].grid(True, alpha=0.3)
 
-# Plot 3: Stratified sample
-axes[0, 2].hist(X_strat[:, 0], bins=30, alpha=0.7, color='orange')
-axes[0, 2].axvline(X_strat[:, 0].mean(), color='red', linestyle='--')
-axes[0, 2].set_title('Stratified Sample')
-axes[0, 2].set_xlabel('Value')
+# Plot 3: Effect size vs sample size
+axes[0, 2].clear()
+effect_sizes = np.linspace(0.1, 1.0, 20)
+sample_sizes = [calculate_sample_size(es) for es in effect_sizes]
+axes[0, 2].plot(effect_sizes, sample_sizes, 'b-', linewidth=2)
+axes[0, 2].set_title('Effect Size vs Required Sample Size')
+axes[0, 2].set_xlabel('Effect Size (Cohen\'s d)')
+axes[0, 2].set_ylabel('Sample per Group')
 axes[0, 2].grid(True, alpha=0.3)
+axes[0, 2].fill_between(effect_sizes, 0, sample_sizes, alpha=0.2)
 
-# Plot 4: Class distribution - original
-class_counts_orig = [(y == 0).sum(), (y == 1).sum()]
-axes[1, 0].bar(['Class 0', 'Class 1'], class_counts_orig, color=['blue', 'red'])
-axes[1, 0].set_title('Original Class Distribution')
-axes[1, 0].set_ylabel('Count')
+# Plot 4: Bootstrap distribution
+bootstrap_means = []
+for _ in range(1000):
+    sample = np.random.choice(data_example, size=len(data_example), replace=True)
+    bootstrap_means.append(np.mean(sample))
+
+axes[1, 0].hist(bootstrap_means, bins=30, alpha=0.7, color='purple', density=True)
+axes[1, 0].axvline(np.mean(data_example), color='red', linestyle='--', linewidth=2, label='Original Mean')
+axes[1, 0].axvline(results['ci_lower'], color='gray', linestyle=':', linewidth=1.5)
+axes[1, 0].axvline(results['ci_upper'], color='gray', linestyle=':', linewidth=1.5)
+axes[1, 0].axvspan(results['ci_lower'], results['ci_upper'], alpha=0.1, color='gray')
+axes[1, 0].set_title('Bootstrap Distribution of Means')
+axes[1, 0].set_xlabel('Mean Value')
+axes[1, 0].set_ylabel('Density')
+axes[1, 0].legend()
 axes[1, 0].grid(True, alpha=0.3)
 
-# Plot 5: Class distribution - after SMOTE
-class_counts_smote = [(y_resampled == 0).sum(), (y_resampled == 1).sum()]
-axes[1, 1].bar(['Class 0', 'Class 1'], class_counts_smote, color=['blue', 'red'])
-axes[1, 1].set_title('After SMOTE')
-axes[1, 1].set_ylabel('Count')
-axes[1, 1].grid(True, alpha=0.3)
+# Plot 5: Power analysis visualization
+axes[1, 1].clear()
+sample_range = np.arange(100, 5001, 100)
+powers = []
+for n in sample_range:
+    power_analyzer = TTestIndPower()
+    power = power_analyzer.solve_power(effect_size=0.3, nobs1=n, alpha=0.05, ratio=1.0)
+    powers.append(power)
 
-# Plot 6: Bootstrap distribution
-axes[1, 2].hist(bootstrap_means, bins=30, alpha=0.7, color='purple')
-axes[1, 2].axvline(bootstrap_means.mean(), color='red', linestyle='--')
-axes[1, 2].axvline(np.percentile(bootstrap_means, 2.5), color='gray', linestyle=':')
-axes[1, 2].axvline(np.percentile(bootstrap_means, 97.5), color='gray', linestyle=':')
-axes[1, 2].set_title('Bootstrap Means Distribution')
-axes[1, 2].set_xlabel('Mean Value')
-axes[1, 2].set_ylabel('Frequency')
+axes[1, 1].plot(sample_range, powers, 'g-', linewidth=2)
+axes[1, 1].axhline(0.8, color='red', linestyle='--', alpha=0.7, label='Target Power (0.8)')
+axes[1, 1].set_title('Statistical Power vs Sample Size')
+axes[1, 1].set_xlabel('Sample Size per Group')
+axes[1, 1].set_ylabel('Statistical Power')
+axes[1, 1].grid(True, alpha=0.3)
+axes[1, 1].legend()
+
+# Plot 6: Sampling error visualization
+axes[1, 2].clear()
+sample_sizes = [50, 100, 200, 500, 1000]
+sampling_errors = []
+
+for n in sample_sizes:
+    means = []
+    for _ in range(100):
+        sample = np.random.choice(data_example, size=n, replace=True)
+        means.append(np.mean(sample))
+    sampling_errors.append(np.std(means))
+
+axes[1, 2].plot(sample_sizes, sampling_errors, 'ro-', linewidth=2, markersize=8)
+axes[1, 2].set_title('Sampling Error vs Sample Size')
+axes[1, 2].set_xlabel('Sample Size')
+axes[1, 2].set_ylabel('Standard Error of Mean')
 axes[1, 2].grid(True, alpha=0.3)
+axes[1, 2].set_xscale('log')
 
 plt.tight_layout()
 plt.show()
 
 print("\nKey Insights:")
-print("1. Random sampling may not preserve class proportions in imbalanced data")
-print("2. Stratified sampling maintains original class ratios")
-print("3. SMOTE creates synthetic samples for the minority class")
-print("4. Bootstrap provides confidence intervals for statistics")
-print("5. Choose sampling method based on your specific ML problem")</code></pre>
+print("1. Stratified sampling preserves class proportions in imbalanced data")
+print("2. Power analysis is essential for designing valid A/B tests")
+print("3. Bootstrap provides robust CIs without distributional assumptions")
+print("4. Sample size dramatically affects statistical power")
+print("5. Always report confidence intervals alongside point estimates")</code></pre>
           </div>
         </section>
 
-        <!-- PRACTICAL APPLICATION -->
+        <!-- PRACTICAL APPLICATION: E-COMMERCE CASE STUDY -->
         <section id="application" class="section">
-          <h4><i class="fa-solid fa-flask"></i> 8) Practical Application: Statistical Analysis Project</h4>
+          <h4><i class="fa-solid fa-flask"></i> 8) Practical Application: E-commerce Statistical Analysis</h4>
 
           <div class="callout">
             <p>
               <strong>Project Scenario:</strong> You're a data scientist at an e-commerce company. The marketing team wants to
-              understand customer purchase behavior. Your task is to analyze the dataset and provide statistical insights.
+              understand customer purchase behavior and test a new recommendation algorithm. Your task is to analyze the dataset,
+              conduct A/B testing, and provide statistical insights for business decisions.
             </p>
           </div>
 
@@ -1733,48 +2085,102 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
               <h5><i class="fa-solid fa-clipboard-question"></i> Step 1 — Understand the Data</h5>
               <p class="muted">Load and explore the dataset:</p>
               <ul>
-                <li>Check for missing values</li>
-                <li>Calculate descriptive statistics</li>
-                <li>Visualize distributions</li>
-                <li>Identify data types</li>
+                <li>Check for missing values and outliers</li>
+                <li>Calculate descriptive statistics by segment</li>
+                <li>Visualize purchase amount distributions</li>
+                <li>Identify data types and relationships</li>
+                <li>Check for sampling biases</li>
               </ul>
             </div>
             <div class="mini-card cyan">
-              <h5><i class="fa-solid fa-chart-simple"></i> Step 2 — Analyze Relationships</h5>
-              <p class="muted">Investigate patterns:</p>
+              <h5><i class="fa-solid fa-chart-simple"></i> Step 2 — A/B Testing Design</h5>
+              <p class="muted">Design experiment for new algorithm:</p>
               <ul>
-                <li>Correlation between variables</li>
-                <li>Compare groups (e.g., by region)</li>
-                <li>Time trends if applicable</li>
-                <li>Segment customers statistically</li>
+                <li>Hypothesis: New algorithm increases add-to-cart rate</li>
+                <li>Primary metric: Add-to-cart rate</li>
+                <li>Secondary metrics: Revenue, session duration</li>
+                <li>Calculate required sample size</li>
+                <li>Random assignment strategy</li>
+                <li>Test duration determination</li>
               </ul>
             </div>
             <div class="mini-card cyan">
-              <h5><i class="fa-solid fa-triangle-exclamation"></i> Step 3 — Statistical Testing</h5>
-              <p class="muted">Test hypotheses:</p>
+              <h5><i class="fa-solid fa-triangle-exclamation"></i> Step 3 — Statistical Analysis</h5>
+              <p class="muted">Comprehensive analysis:</p>
               <ul>
-                <li>Are purchase amounts normally distributed?</li>
-                <li>Do different customer segments have different purchase behaviors?</li>
-                <li>Is there a significant difference between marketing channels?</li>
-                <li>What factors correlate with customer loyalty?</li>
+                <li>Test purchase amount normality</li>
+                <li>Compare customer segments statistically</li>
+                <li>Analyze A/B test results with CIs</li>
+                <li>Calculate effect sizes and practical significance</li>
+                <li>Check for novelty effects and seasonality</li>
               </ul>
+            </div>
+          </div>
+
+          <!-- A/B Testing Extension -->
+          <div class="mini-card orange" style="margin-top: 20px;">
+            <h5><i class="fa-solid fa-flask-vial"></i> A/B Testing Design Template</h5>
+            <p class="muted">Complete A/B test design for the e-commerce scenario:</p>
+            <ul>
+              <li><strong>Experiment:</strong> New recommendation algorithm vs current system</li>
+              <li><strong>Hypothesis:</strong> H₀: No difference in add-to-cart rate; H₁: New algorithm has higher add-to-cart rate</li>
+              <li><strong>Primary Metric:</strong> Add-to-cart rate (proportion)</li>
+              <li><strong>Secondary Metrics:</strong> Average order value, conversion rate, revenue per session</li>
+              <li><strong>Statistical Test:</strong> Two-sample proportion test (chi-square)</li>
+              <li><strong>Sample Size:</strong> 5,000 users per group (based on power analysis)</li>
+              <li><strong>Significance Level:</strong> α = 0.05 (with Bonferroni correction for multiple metrics)</li>
+              <li><strong>Minimum Detectable Effect:</strong> 10% relative improvement (from 5% to 5.5%)</li>
+              <li><strong>Test Duration:</strong> 2 weeks (accounting for weekly patterns)</li>
+              <li><strong>Randomization:</strong> User-level randomization, stratified by historical purchase behavior</li>
+            </ul>
+            <div class="chiprow">
+              <span class="chip"><i class="fa-solid fa-calculator"></i> Power Analysis</span>
+              <span class="chip"><i class="fa-solid fa-shield-halved"></i> Randomization</span>
+              <span class="chip"><i class="fa-solid fa-chart-line"></i> Multiple Metrics</span>
             </div>
           </div>
 
           <div class="interactive">
             <h5 style="display:flex; gap:12px; align-items:center; margin-bottom:8px;">
-              <i class="fa-solid fa-lightbulb" style="color:var(--primary)"></i> Project Reflection
+              <i class="fa-solid fa-lightbulb" style="color:var(--primary)"></i> Project Reflection: Statistical Analysis Plan
             </h5>
             <p class="muted">Outline your statistical analysis approach for the e-commerce scenario.</p>
-            <textarea id="projectReflection" placeholder="Example: 
-1. Data loading and cleaning: Check for missing values in purchase_amount, customer_age, region...
-2. Descriptive statistics: Calculate mean, median, std for purchase_amount by region...
-3. Hypothesis testing: Use t-test to compare purchase amounts between mobile vs desktop users...
-4. Correlation analysis: Calculate correlation between purchase_amount and time_on_site...
-5. Sampling strategy: Use stratified sampling for train/test split by customer segment...
-6. Visualization: Create histograms, box plots, and scatter plots to support findings..."></textarea>
+            <textarea id="projectReflection" placeholder="Example Statistical Analysis Plan:
+
+1. DATA PREPARATION:
+   - Load customer purchase data (purchase_amount, customer_age, region, device_type, session_duration)
+   - Handle missing values: Impute with median for continuous, mode for categorical
+   - Detect outliers using IQR method for purchase_amount
+   - Check for data quality issues (negative purchase amounts, impossible ages)
+
+2. DESCRIPTIVE ANALYSIS:
+   - Calculate summary statistics by region and device type
+   - Visualize purchase_amount distribution (histogram, box plot)
+   - Calculate correlation matrix for numerical variables
+   - Segment customers using K-means clustering on purchase behavior
+
+3. A/B TESTING DESIGN:
+   - Primary hypothesis: New recommendation algorithm increases add-to-cart rate by 10%
+   - Sample size calculation: Need 5,000 users per group (90% power, α=0.05)
+   - Random assignment with stratification by customer tier (high/medium/low value)
+   - Test duration: 14 days to capture weekly patterns
+   - Guardrail metrics: Check for negative impact on other KPIs
+
+4. STATISTICAL TESTS:
+   - Normality test (Shapiro-Wilk) for purchase amounts
+   - T-test to compare average order value between mobile vs desktop users
+   - Chi-square test for add-to-cart rate in A/B test
+   - ANOVA to compare purchase amounts across regions
+   - Calculate 95% confidence intervals for all key metrics
+
+5. REPORTING:
+   - Present effect sizes alongside p-values
+   - Include visualizations: confidence interval plots, distribution comparisons
+   - Discuss practical significance (minimum business effect)
+   - Address limitations: novelty effect, external factors, sample representativeness
+   - Make clear recommendations with confidence levels"></textarea>
             <div class="formrow">
-              <button class="btn" id="saveProjectReflection" type="button"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+              <button class="btn" id="saveProjectReflection" type="button"><i class="fa-solid fa-floppy-disk"></i> Save Analysis Plan</button>
               <button class="btn btn-ghost" id="clearProjectReflection" type="button"><i class="fa-solid fa-eraser"></i> Clear</button>
             </div>
             <div id="projectReflectionStatus" class="muted" style="margin-top:12px;"></div>
@@ -1783,13 +2189,16 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
           <div class="note">
             <strong>Statistical Report Checklist:</strong>
             <ul style="padding-left:20px; margin-top:8px;">
-              <li>Clearly state your research questions</li>
-              <li>Describe your data and any preprocessing steps</li>
-              <li>Report descriptive statistics with context</li>
+              <li>Clearly state research questions and hypotheses</li>
+              <li>Describe data sources, cleaning, and preprocessing steps</li>
+              <li>Report descriptive statistics with appropriate context</li>
               <li>Include visualizations that support your findings</li>
               <li>State statistical tests used and justify their selection</li>
-              <li>Interpret results in business terms</li>
-              <li>Acknowledge limitations of your analysis</li>
+              <li>Report effect sizes, confidence intervals, and p-values</li>
+              <li>Interpret results in business terms with practical significance</li>
+              <li>Discuss limitations and assumptions of your analysis</li>
+              <li>Provide clear, actionable recommendations</li>
+              <li>Include reproducibility information (code, seed values)</li>
             </ul>
           </div>
         </section>
@@ -1804,10 +2213,12 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
               <li>✅ You can calculate and interpret descriptive statistics</li>
               <li>✅ You understand the difference between descriptive and inferential statistics</li>
               <li>✅ You can apply statistical tests to compare groups and assess relationships</li>
+              <li>✅ You can design and analyze A/B tests for ML model comparison</li>
               <li>✅ You can identify outliers using multiple methods</li>
               <li>✅ You can select appropriate sampling techniques for different ML scenarios</li>
-              <li>✅ You implemented statistical analyses in Python</li>
+              <li>✅ You implemented statistical analyses and A/B testing in Python</li>
               <li>✅ You can interpret statistical outputs in the context of ML problems</li>
+              <li>✅ You understand power analysis and sample size calculation for experiments</li>
             </ul>
           </div>
 
@@ -1823,6 +2234,7 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
             <strong>Next Module Preview:</strong>
             Module 3B will cover Probability Theory for ML, including probability distributions,
             Bayes' Theorem, maximum likelihood estimation, and their applications in machine learning algorithms.
+            You'll learn how probability theory underpins ML algorithms and enables uncertainty quantification.
           </div>
         </section>
       </main>
@@ -1834,26 +2246,26 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
           <nav class="toc" aria-label="Module 3A table of contents">
             <a href="#overview"><i class="fa-solid fa-map"></i> Overview</a>
             <a href="#descriptive"><i class="fa-solid fa-chart-column"></i> Descriptive Statistics</a>
-            <a href="#inferential"><i class="fa-solid fa-magnifying-glass-chart"></i> Inferential Statistics</a>
+            <a href="#inferential"><i class="fa-solid fa-magnifying-glass-chart"></i> Inferential Stats & A/B Testing</a>
             <a href="#outliers"><i class="fa-solid fa-triangle-exclamation"></i> Outlier Detection</a>
             <a href="#sampling"><i class="fa-solid fa-filter"></i> Sampling Techniques</a>
             <a href="#python-hands-on"><i class="fa-brands fa-python"></i> Python Hands-On</a>
-            <a href="#sampling-implementation"><i class="fa-solid fa-code"></i> Sampling Implementation</a>
+            <a href="#sampling-implementation"><i class="fa-solid fa-code"></i> Sampling & A/B Testing</a>
             <a href="#application"><i class="fa-solid fa-flask"></i> Practical Application</a>
             <a href="#wrap"><i class="fa-solid fa-circle-check"></i> Wrap-up</a>
           </nav>
         </div>
 
         <div class="panel card">
-          <h3><i class="fa-solid fa-clock"></i> Suggested Pacing (3–4 hours)</h3>
-          <div class="agenda-item"><div class="agenda-time">0:00–0:30</div><div>Overview + Descriptive Statistics</div></div>
-          <div class="agenda-item"><div class="agenda-time">0:30–1:15</div><div>Inferential Statistics + Hypothesis Testing</div></div>
-          <div class="agenda-item"><div class="agenda-time">1:15–1:45</div><div>Outlier Detection Methods</div></div>
-          <div class="agenda-item"><div class="agenda-time">1:45–2:15</div><div>Sampling Techniques for ML</div></div>
-          <div class="agenda-item"><div class="agenda-time">2:15–2:45</div><div>Python Descriptive Stats</div></div>
-          <div class="agenda-item"><div class="agenda-time">2:45–3:15</div><div>Sampling Implementation</div></div>
-          <div class="agenda-item"><div class="agenda-time">3:15–3:40</div><div>Practical Application</div></div>
-          <div class="agenda-item"><div class="agenda-time">3:40–4:00</div><div>Wrap-up + Reflection</div></div>
+          <h3><i class="fa-solid fa-clock"></i> Suggested Pacing (4–5 hours)</h3>
+          <div class="agenda-item"><div class="agenda-time">0:00–0:40</div><div>Overview + Descriptive Statistics</div></div>
+          <div class="agenda-item"><div class="agenda-time">0:40–1:30</div><div>Inferential Statistics + A/B Testing</div></div>
+          <div class="agenda-item"><div class="agenda-time">1:30–2:00</div><div>Outlier Detection Methods</div></div>
+          <div class="agenda-item"><div class="agenda-time">2:00–2:30</div><div>Sampling Techniques for ML</div></div>
+          <div class="agenda-item"><div class="agenda-time">2:30–3:15</div><div>Python Statistics & A/B Testing</div></div>
+          <div class="agenda-item"><div class="agenda-time">3:15–3:45</div><div>Sampling & Power Analysis</div></div>
+          <div class="agenda-item"><div class="agenda-time">3:45–4:15</div><div>Practical Application</div></div>
+          <div class="agenda-item"><div class="agenda-time">4:15–4:30</div><div>Wrap-up + Reflection</div></div>
         </div>
 
         <div class="panel card">
@@ -1865,15 +2277,19 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
             <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://imbalanced-learn.org/" target="_blank" rel="noreferrer">Imbalanced-learn</a> — sampling techniques</li>
             <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://www.statsmodels.org/" target="_blank" rel="noreferrer">Statsmodels</a> — advanced statistics</li>
             <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://seeing-theory.brown.edu/" target="_blank" rel="noreferrer">Seeing Theory</a> — visual statistics</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://www.evanmiller.org/ab-testing/" target="_blank" rel="noreferrer">A/B Test Calculator</a> — sample size & significance</li>
+            <li><i class="fa-solid fa-arrow-up-right-from-square"></i> <a href="https://cran.r-project.org/web/packages/pwr/vignettes/pwr-vignette.html" target="_blank" rel="noreferrer">Power Analysis Guide</a> — statistical power</li>
           </ul>
         </div>
 
         <div class="panel card">
           <h3><i class="fa-solid fa-circle-question"></i> Common Questions</h3>
           <p><strong>Which statistical test should I use?</strong><br/><span class="muted">Depends on data type (continuous/categorical), distribution (normal/not), and what you're comparing. Use the decision tree in Section 3.</span></p>
-          <p style="margin-top:12px;"><strong>How do I handle non-normal data?</strong><br/><span class="muted">Use non-parametric tests (Mann-Whitney, Kruskal-Wallis) or transform data (log, sqrt, Box-Cox).</span></p>
-          <p style="margin-top:12px;"><strong>When to use SMOTE vs random oversampling?</strong><br/><span class="muted">SMOTE creates synthetic samples, reducing overfitting risk. Use it when random oversampling causes overfitting.</span></p>
-          <p style="margin-top:12px;"><strong>What p-value threshold should I use?</strong><br/><span class="muted">0.05 is standard, but consider context. For high-stakes decisions, use 0.01 or 0.001. Report actual p-values.</span></p>
+          <p style="margin-top:12px;"><strong>How to design A/B tests for ML models?</strong><br/><span class="muted">1) Define success metric, 2) Calculate required sample size, 3) Randomly assign samples, 4) Run test for sufficient duration, 5) Use appropriate statistical test, 6) Consider multiple comparison corrections.</span></p>
+          <p style="margin-top:12px;"><strong>How do I handle non-normal data?</strong><br/><span class="muted">Use non-parametric tests (Mann-Whitney, Kruskal-Wallis) or transform data (log, sqrt, Box-Cox). For A/B testing, consider bootstrapping.</span></p>
+          <p style="margin-top:12px;"><strong>When to use SMOTE vs random oversampling?</strong><br/><span class="muted">SMOTE creates synthetic samples, reducing overfitting risk. Use it when random oversampling causes overfitting in imbalanced classification.</span></p>
+          <p style="margin-top:12px;"><strong>What p-value threshold should I use?</strong><br/><span class="muted">0.05 is standard, but consider context. For high-stakes decisions, use 0.01 or 0.001. Always report actual p-values and confidence intervals.</span></p>
+          <p style="margin-top:12px;"><strong>How to calculate sample size for A/B tests?</strong><br/><span class="muted">Use power analysis: specify desired power (typically 0.8), significance level (0.05), minimum detectable effect, and baseline conversion rate.</span></p>
         </div>
 
         <div class="panel card">
@@ -1884,6 +2300,8 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
             <p><strong>Z-score:</strong> \(z = \frac{x - \mu}{\sigma}\)</p>
             <p><strong>Correlation:</strong> \(r = \frac{\sum (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum (x_i - \bar{x})^2 \sum (y_i - \bar{y})^2}}\)</p>
             <p><strong>Confidence Interval:</strong> \(\bar{x} \pm t_{\alpha/2} \times \frac{s}{\sqrt{n}}\)</p>
+            <p><strong>Cohen's d:</strong> \(d = \frac{\bar{x}_1 - \bar{x}_2}{s_{pooled}}\)</p>
+            <p><strong>Sample Size (proportions):</strong> \(n = \frac{(Z_{1-\alpha/2} + Z_{1-\beta})^2 \cdot (p_1(1-p_1) + p_2(1-p_2))}{(p_1 - p_2)^2}\)</p>
           </div>
         </div>
       </aside>
@@ -2014,12 +2432,12 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
       charts.statsWorkflowChart = new Chart(document.getElementById("statsWorkflowChart"), {
         type: "bar",
         data: {
-          labels: ["Data Understanding", "Feature Engineering", "Model Selection", "Evaluation", "Interpretation"],
+          labels: ["Data Understanding", "Feature Engineering", "Model Selection", "A/B Testing", "Evaluation", "Interpretation"],
           datasets: [{
             label: "Statistical Methods Used",
-            data: [95, 80, 70, 90, 85],
-            backgroundColor: [colors.primary, colors.secondary, colors.accent, colors.success, colors.cyan],
-            borderColor: [colors.primary, colors.secondary, colors.accent, colors.success, colors.cyan],
+            data: [95, 80, 70, 90, 90, 85],
+            backgroundColor: [colors.primary, colors.secondary, colors.accent, colors.warning, colors.success, colors.cyan],
+            borderColor: [colors.primary, colors.secondary, colors.accent, colors.warning, colors.success, colors.cyan],
             borderWidth: 2
           }]
         },
@@ -2105,6 +2523,13 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
               borderWidth: 2
             },
             {
+              label: "A/B Testing",
+              data: [75, 90, 70, 85, 90, 85],
+              borderColor: colors.warning,
+              backgroundColor: colors.warning + '20',
+              borderWidth: 2
+            },
+            {
               label: "ANOVA",
               data: [70, 85, 60, 80, 80, 65],
               borderColor: colors.secondary,
@@ -2137,6 +2562,59 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
               grid: { color: colors.grid },
               angleLines: { color: colors.grid },
               pointLabels: { color: colors.text, font: { size: 11 } }
+            }
+          }
+        }
+      });
+
+      // A/B Testing Chart
+      charts.abTestingChart = new Chart(document.getElementById("abTestingChart"), {
+        type: "bar",
+        data: {
+          labels: ["Control", "Treatment"],
+          datasets: [{
+            label: "Conversion Rate",
+            data: [0.15, 0.165],
+            backgroundColor: [colors.primary + '80', colors.secondary + '80'],
+            borderColor: [colors.primary, colors.secondary],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          ...baseOptions("A/B Test Results"),
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 0.20,
+              ticks: {
+                callback: value => (value * 100).toFixed(1) + '%'
+              },
+              title: {
+                display: true,
+                text: 'Conversion Rate',
+                color: colors.text
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: 'Test Group',
+                color: colors.text
+              }
+            }
+          },
+          plugins: {
+            annotation: {
+              annotations: {
+                line1: {
+                  type: 'line',
+                  yMin: 0.15,
+                  yMax: 0.15,
+                  borderColor: colors.text,
+                  borderWidth: 1,
+                  borderDash: [5, 5]
+                }
+              }
             }
           }
         }
@@ -2204,10 +2682,10 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
               borderWidth: 1
             },
             {
-              label: "Suitable for Imbalance",
-              data: [30, 90, 70, 60, 95, 50],
-              backgroundColor: colors.accent + '80',
-              borderColor: colors.accent,
+              label: "Suitable for A/B Testing",
+              data: [90, 85, 40, 40, 60, 75],
+              backgroundColor: colors.warning + '80',
+              borderColor: colors.warning,
               borderWidth: 1
             }
           ]
@@ -2222,11 +2700,11 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
       charts.progressionChart = new Chart(document.getElementById("progressionChart"), {
         type: "line",
         data: {
-          labels: ["Module 1", "Module 2", "Module 3A", "Module 4", "Module 5", "Module 6", "Capstone"],
+          labels: ["Module 1", "Module 2", "Module 3A", "Module 3B", "Module 4", "Module 5", "Capstone"],
           datasets: [
             {
               label: "Statistical Knowledge",
-              data: [20, 40, 85, 90, 92, 95, 98],
+              data: [20, 40, 90, 92, 94, 96, 98],
               borderColor: colors.primary,
               backgroundColor: colors.primary + '20',
               borderWidth: 3,
@@ -2235,9 +2713,18 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
             },
             {
               label: "ML Application",
-              data: [15, 35, 60, 75, 85, 90, 95],
+              data: [15, 35, 75, 80, 85, 90, 95],
               borderColor: colors.secondary,
               backgroundColor: colors.secondary + '20',
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true
+            },
+            {
+              label: "A/B Testing Skills",
+              data: [5, 15, 85, 88, 90, 92, 95],
+              borderColor: colors.warning,
+              backgroundColor: colors.warning + '20',
               borderWidth: 3,
               tension: 0.4,
               fill: true
@@ -2250,6 +2737,7 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
       // Initialize interactive charts with data
       updateDistributionChart();
       updateOutlierChart();
+      updateABTestingChart();
     }
 
     function updateChartThemes() {
@@ -2408,6 +2896,87 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
       outlierMethod.addEventListener("change", updateOutlierChart);
     }
 
+    // A/B Testing Simulation
+    const sampleSize = document.getElementById("sampleSize");
+    const sampleSizeOut = document.getElementById("sampleSizeOut");
+    const effectSize = document.getElementById("effectSize");
+    const effectSizeOut = document.getElementById("effectSizeOut");
+    const baseRate = document.getElementById("baseRate");
+    const baseRateOut = document.getElementById("baseRateOut");
+    const significanceLevel = document.getElementById("significanceLevel");
+    const significanceLevelOut = document.getElementById("significanceLevelOut");
+    const abTestResult = document.getElementById("abTestResult");
+
+    function simulateABTest() {
+      const nPerGroup = parseInt(sampleSize.value);
+      const effect = parseFloat(effectSize.value) / 100; // Convert % to decimal
+      const baseline = parseFloat(baseRate.value) / 100; // Convert % to decimal
+      const alpha = parseFloat(significanceLevel.value) / 100;
+      
+      // Update outputs
+      sampleSizeOut.value = nPerGroup;
+      effectSizeOut.value = effectSize.value + '%';
+      baseRateOut.value = baseRate.value + '%';
+      significanceLevelOut.value = significanceLevel.value + '%';
+      
+      // Simulate data
+      const controlData = Array.from({length: nPerGroup}, () => 
+        Math.random() < baseline ? 1 : 0
+      );
+      
+      const treatmentData = Array.from({length: nPerGroup}, () => 
+        Math.random() < (baseline + effect) ? 1 : 0
+      );
+      
+      // Calculate conversion rates
+      const controlRate = controlData.reduce((a, b) => a + b) / nPerGroup;
+      const treatmentRate = treatmentData.reduce((a, b) => a + b) / nPerGroup;
+      const difference = treatmentRate - controlRate;
+      const relativeImprovement = (difference / controlRate) * 100;
+      
+      // Simple statistical test (z-test for proportions)
+      const pooledRate = (controlRate * nPerGroup + treatmentRate * nPerGroup) / (2 * nPerGroup);
+      const se = Math.sqrt(pooledRate * (1 - pooledRate) * (2 / nPerGroup));
+      const zScore = difference / se;
+      const pValue = 2 * (1 - normCDF(Math.abs(zScore)));
+      
+      // Determine significance
+      const significant = pValue < alpha;
+      
+      // Update chart
+      charts.abTestingChart.data.datasets[0].data = [controlRate, treatmentRate];
+      charts.abTestingChart.update();
+      
+      // Update result text
+      if (significant) {
+        abTestResult.textContent = `Significant! p = ${pValue.toFixed(4)} | Improvement: ${relativeImprovement.toFixed(1)}%`;
+        abTestResult.style.color = getChartColors().success;
+      } else {
+        abTestResult.textContent = `Not significant. p = ${pValue.toFixed(4)} | Improvement: ${relativeImprovement.toFixed(1)}%`;
+        abTestResult.style.color = getChartColors().danger;
+      }
+    }
+
+    // Normal CDF approximation
+    function normCDF(x) {
+      const t = 1 / (1 + 0.2316419 * Math.abs(x));
+      const d = 0.3989423 * Math.exp(-x * x / 2);
+      let prob = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+      if (x > 0) prob = 1 - prob;
+      return prob;
+    }
+
+    function updateABTestingChart() {
+      simulateABTest();
+    }
+
+    if (sampleSize && effectSize && baseRate && significanceLevel) {
+      sampleSize.addEventListener("input", updateABTestingChart);
+      effectSize.addEventListener("input", updateABTestingChart);
+      baseRate.addEventListener("input", updateABTestingChart);
+      significanceLevel.addEventListener("input", updateABTestingChart);
+    }
+
     /************************************************************
      * Reflection Storage
      ************************************************************/
@@ -2452,6 +3021,7 @@ print("5. Choose sampling method based on your specific ML problem")</code></pre
       updateChartThemes();
       updateDistributionChart();
       updateOutlierChart();
+      updateABTestingChart();
       
       // Initialize MathJax
       if (window.MathJax) {
