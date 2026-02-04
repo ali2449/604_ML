@@ -1,1 +1,1459 @@
-Module3_section6.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IAF 604 - Section 6: Interactive Python Notebook</title>
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  
+  <!-- Pyodide -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.2/full/pyodide.js"></script>
+  
+  <style>
+    /* EXACT THEME FROM ORIGINAL MODULE */
+    :root {
+      /* Night Mode (Default) */
+      --bg0: #070A12;
+      --bg1: #0B1020;
+      --panel: #0F172A;
+      --panel2: #0B1226;
+      --card: #101B34;
+      --text: #EAF0FF;
+      --muted: rgba(234, 240, 255, 0.75);
+      --muted2: rgba(234, 240, 255, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+
+      --primary: #60A5FA;
+      --secondary: #A78BFA;
+      --accent: #F472B6;
+      --success: #34D399;
+      --warning: #FBBF24;
+      --danger: #FB7185;
+      --cyan: #22D3EE;
+
+      --radius: 16px;
+      --radius2: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --ring: 0 0 0 4px rgba(96, 165, 250, 0.22);
+      --ring2: 0 0 0 4px rgba(167, 139, 250, 0.20);
+
+      /* Theme toggle variables */
+      --mode-icon: '\f186'; /* moon */
+      --mode-label: 'Night Mode';
+    }
+
+    /* Day Mode Theme */
+    [data-theme="day"] {
+      --bg0: #F8FAFC;
+      --bg1: #F1F5F9;
+      --panel: #FFFFFF;
+      --panel2: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --muted: rgba(15, 23, 42, 0.75);
+      --muted2: rgba(15, 23, 42, 0.62);
+      --border: rgba(148, 163, 184, 0.25);
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+
+      --primary: #2563EB;
+      --secondary: #7C3AED;
+      --accent: #DB2777;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --cyan: #06B6D4;
+
+      --ring: 0 0 0 4px rgba(37, 99, 235, 0.15);
+      --ring2: 0 0 0 4px rgba(124, 58, 237, 0.15);
+
+      --mode-icon: '\f185'; /* sun */
+      --mode-label: 'Day Mode';
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg0);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      transition: background-color 0.35s ease, color 0.35s ease;
+      overflow-x: hidden;
+    }
+
+    /* Dynamic background gradients based on theme */
+    body:not([data-theme="day"]) {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(96, 165, 250, 0.18), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(244, 114, 182, 0.16), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(34, 211, 238, 0.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    body[data-theme="day"] {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(37, 99, 235, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(219, 39, 119, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(6, 182, 212, 0.06), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .container { max-width: 1240px; margin: 0 auto; padding: 22px; }
+
+    /************************************************************
+     * THEME TOGGLE
+     ************************************************************/
+    .theme-toggle-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 50px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-toggle::before {
+      content: var(--mode-icon);
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 1.1em;
+    }
+
+    .theme-toggle .label {
+      font-size: 0.9em;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /************************************************************
+     * HEADER
+     ************************************************************/
+    header {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.90), rgba(16, 27, 52, 0.92));
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      color: var(--text);
+      padding: 28px;
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    body[data-theme="day"] header {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .course-info h1 {
+      font-size: clamp(24px, 2.8vw, 38px);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .course-info h2 {
+      font-size: clamp(16px, 1.8vw, 20px);
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      width: fit-content;
+      margin-top: 10px;
+    }
+
+    /************************************************************
+     * NOTEBOOK LAYOUT
+     ************************************************************/
+    .notebook-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Notebook Cell - VS Code/Colab Style */
+    .notebook-cell {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .notebook-cell:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    /* Cell Header */
+    .cell-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 20px;
+      background: var(--panel2);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cell-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .cell-title .cell-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .cell-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .cell-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cell-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--primary);
+    }
+
+    .cell-btn.run-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+    }
+
+    .cell-btn.run-btn:hover {
+      box-shadow: var(--ring);
+    }
+
+    .cell-btn.run-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Code Area */
+    .code-area {
+      position: relative;
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .code-content {
+      padding: 20px;
+      background: rgba(15, 23, 42, 0.95);
+      color: #EAF0FF;
+      white-space: pre;
+      overflow-x: auto;
+      min-height: 100px;
+      max-height: 500px;
+      overflow-y: auto;
+      tab-size: 4;
+    }
+
+    body[data-theme="day"] .code-content {
+      background: rgba(248, 250, 252, 0.95);
+      color: var(--text);
+    }
+
+    .code-line {
+      counter-increment: line;
+      position: relative;
+      padding-left: 3.5em;
+      padding-right: 1em;
+    }
+
+    .code-line::before {
+      content: counter(line);
+      position: absolute;
+      left: 1em;
+      width: 2em;
+      text-align: right;
+      color: var(--muted2);
+      user-select: none;
+    }
+
+    /* Output Area */
+    .output-area {
+      border-top: 1px solid var(--border);
+      background: var(--panel2);
+      min-height: 60px;
+    }
+
+    .output-header {
+      padding: 8px 20px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .output-content {
+      padding: 20px;
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: var(--text);
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    /* Markdown Cell */
+    .markdown-cell {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .markdown-cell h3 {
+      color: var(--text);
+      margin-bottom: 16px;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .markdown-cell p {
+      margin-bottom: 15px;
+      color: var(--muted);
+    }
+
+    .markdown-cell ul, .markdown-cell ol {
+      padding-left: 24px;
+      margin: 15px 0;
+      color: var(--muted);
+    }
+
+    .markdown-cell li {
+      margin-bottom: 8px;
+    }
+
+    .markdown-cell code {
+      background: rgba(96, 165, 250, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 0.9em;
+      color: var(--primary);
+    }
+
+    /* Status Messages */
+    .status-loading {
+      color: var(--warning);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .status-success {
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .status-error {
+      color: var(--danger);
+      background: rgba(251, 113, 133, 0.1);
+      padding: 12px;
+      border-radius: 8px;
+      border-left: 4px solid var(--danger);
+      margin: 10px;
+    }
+
+    /* Pyodide Status */
+    .pyodide-status {
+      padding: 15px;
+      background: var(--panel2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin: 20px 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+    }
+
+    .pyodide-status.ready { color: var(--success); }
+    .pyodide-status.loading { color: var(--warning); }
+    .pyodide-status.error { color: var(--danger); }
+
+    /* Control Panel */
+    .control-panel {
+      display: flex;
+      gap: 15px;
+      padding: 20px;
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .control-panel button {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .control-panel button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--ring);
+    }
+
+    .control-panel button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .package-install {
+      display: flex;
+      gap: 10px;
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .package-install input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel2);
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    .package-install input:focus {
+      border-color: var(--primary);
+      box-shadow: var(--ring);
+    }
+
+    /* Info Box */
+    .info-box {
+      background: rgba(96, 165, 250, 0.1);
+      border-left: 4px solid var(--primary);
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+
+    .info-box p {
+      margin: 0;
+      color: var(--text);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted2);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .notebook-cell, .markdown-cell {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container { padding: 15px; }
+      .control-panel { flex-direction: column; }
+      .package-install { min-width: 100%; }
+      .cell-actions { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+
+<body data-theme="night">
+  <!-- Theme Toggle -->
+  <div class="theme-toggle-container">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Theme: Night Mode (click to toggle)">
+      <span class="label" id="themeLabel">Night Mode</span>
+    </button>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="course-info">
+        <h1>IAF 604: Machine Learning & Predictive Analytics</h1>
+        <h2>Section 6 — Interactive Python Notebook: Statistics & A/B Testing</h2>
+        <div class="badge"><i class="fa-brands fa-python"></i> VS Code Style Interactive Cells</div>
+        <p style="margin-top: 15px; color: var(--muted);">
+          This is a Jupyter-like notebook interface that runs Python directly in your browser using Pyodide.
+          Click "Run" on any cell to execute Python code and see the output.
+        </p>
+      </div>
+    </header>
+
+    <!-- Pyodide Status -->
+    <div id="pyodideStatus" class="pyodide-status loading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Initializing Python environment (Pyodide)... This may take 15-20 seconds.</span>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+      <button id="runAllBtn" onclick="runAllCells()" disabled>
+        <i class="fas fa-play-circle"></i> Run All Cells
+      </button>
+      
+      <div class="package-install">
+        <input type="text" id="packageInput" placeholder="Install Python package (e.g., numpy)" value="numpy">
+        <button onclick="installPackage()">
+          <i class="fas fa-download"></i> Install
+        </button>
+      </div>
+      <div id="packageStatus"></div>
+    </div>
+
+    <!-- Notebook Container -->
+    <div class="notebook-container">
+      
+      <!-- Markdown Cell 1 -->
+      <div class="markdown-cell">
+        <h3><i class="fas fa-chart-bar"></i> Statistics & A/B Testing with Python</h3>
+        <p>This interactive notebook demonstrates statistical analysis and A/B testing using Python. Each cell below contains executable Python code.</p>
+        
+        <div class="info-box">
+          <p><i class="fas fa-info-circle"></i> <strong>How to use:</strong> Click the "Run" button on any code cell. Results will appear in the output area below the code.</p>
+        </div>
+        
+        <p><strong>Cells in this notebook:</strong></p>
+        <ol>
+          <li>Create sample dataset with customer purchase data</li>
+          <li>Calculate descriptive statistics (mean, median, standard deviation)</li>
+          <li>Perform A/B testing simulation and statistical analysis</li>
+          <li>Create visualizations and detect outliers</li>
+        </ol>
+      </div>
+
+      <!-- Code Cell 1 -->
+      <div class="notebook-cell" id="cell-1">
+        <div class="cell-header">
+          <div class="cell-title">
+            <span class="cell-number">1</span>
+            <span>Create Sample Dataset</span>
+          </div>
+          <div class="cell-actions">
+            <button class="cell-btn run-btn" onclick="runCell(1)" id="runBtn1" disabled>
+              <i class="fas fa-play"></i> Run
+            </button>
+            <button class="cell-btn" onclick="clearOutput(1)">
+              <i class="fas fa-eraser"></i> Clear
+            </button>
+          </div>
+        </div>
+        <div class="code-area">
+          <div class="code-content">
+import random
+
+# Set seed for reproducibility
+random.seed(42)
+
+# Create sample dataset
+# Group A: Control group (current system)
+# Group B: Treatment group (new system)
+
+sample_size = 50
+
+group_a = []  # Control group
+group_b = []  # Treatment group
+
+print("Generating sample data...")
+print("=" * 50)
+
+for i in range(sample_size):
+    # Generate purchase amounts
+    # Group A: Mean = $50, Std = $10
+    purchase_a = random.normalvariate(50, 10)
+    group_a.append(round(purchase_a, 2))
+    
+    # Group B: Slightly higher mean to simulate improvement
+    purchase_b = random.normalvariate(55, 10)
+    group_b.append(round(purchase_b, 2))
+
+print(f"✅ Dataset created successfully!")
+print(f"\n📊 Dataset Information:")
+print(f"   • Sample size per group: {sample_size}")
+print(f"   • Total observations: {sample_size * 2}")
+print(f"   • Data range: Purchase amounts in dollars")
+
+print(f"\n📝 First 10 values - Group A (Control):")
+for i, val in enumerate(group_a[:10], 1):
+    print(f"   {i:2d}. ${val:6.2f}")
+
+print(f"\n📝 First 10 values - Group B (Treatment):")
+for i, val in enumerate(group_b[:10], 1):
+    print(f"   {i:2d}. ${val:6.2f}")
+
+print(f"\n💰 Summary Totals:")
+print(f"   Group A total: ${sum(group_a):.2f}")
+print(f"   Group B total: ${sum(group_b):.2f}")
+print(f"   Combined total: ${sum(group_a) + sum(group_b):.2f}")
+
+# Store data for next cells
+DATA_CACHE = {
+    'group_a': group_a,
+    'group_b': group_b,
+    'sample_size': sample_size
+}
+          </div>
+        </div>
+        <div class="output-area">
+          <div class="output-header">
+            <i class="fas fa-terminal"></i>
+            <span>Output</span>
+          </div>
+          <div class="output-content" id="output-1"></div>
+        </div>
+      </div>
+
+      <!-- Markdown Cell 2 -->
+      <div class="markdown-cell">
+        <h3><i class="fas fa-calculator"></i> Descriptive Statistics</h3>
+        <p>Now let's calculate descriptive statistics for both groups. We'll implement statistical functions from scratch to understand the underlying mathematics.</p>
+        <p><strong>What we'll calculate:</strong> Mean, Median, Standard Deviation, Variance, Quartiles, and Interquartile Range (IQR).</p>
+      </div>
+
+      <!-- Code Cell 2 -->
+      <div class="notebook-cell" id="cell-2">
+        <div class="cell-header">
+          <div class="cell-title">
+            <span class="cell-number">2</span>
+            <span>Calculate Descriptive Statistics</span>
+          </div>
+          <div class="cell-actions">
+            <button class="cell-btn run-btn" onclick="runCell(2)" id="runBtn2" disabled>
+              <i class="fas fa-play"></i> Run
+            </button>
+            <button class="cell-btn" onclick="clearOutput(2)">
+              <i class="fas fa-eraser"></i> Clear
+            </button>
+          </div>
+        </div>
+        <div class="code-area">
+          <div class="code-content">
+# Descriptive Statistics Functions
+def calculate_mean(data):
+    """Calculate the mean (average)"""
+    return sum(data) / len(data)
+
+def calculate_median(data):
+    """Calculate the median (middle value)"""
+    sorted_data = sorted(data)
+    n = len(data)
+    if n % 2 == 0:
+        return (sorted_data[n//2 - 1] + sorted_data[n//2]) / 2
+    else:
+        return sorted_data[n//2]
+
+def calculate_variance(data):
+    """Calculate variance"""
+    mean = calculate_mean(data)
+    return sum((x - mean) ** 2 for x in data) / (len(data) - 1)
+
+def calculate_std(data):
+    """Calculate standard deviation"""
+    return calculate_variance(data) ** 0.5
+
+def calculate_quartiles(data):
+    """Calculate Q1 and Q3"""
+    sorted_data = sorted(data)
+    n = len(data)
+    q1 = sorted_data[n // 4]
+    q3 = sorted_data[3 * n // 4]
+    return q1, q3
+
+# Get data from previous cell
+group_a = DATA_CACHE['group_a']
+group_b = DATA_CACHE['group_b']
+
+print("📊 DESCRIPTIVE STATISTICS ANALYSIS")
+print("=" * 60)
+
+# Calculate statistics for Group A
+mean_a = calculate_mean(group_a)
+median_a = calculate_median(group_a)
+std_a = calculate_std(group_a)
+variance_a = calculate_variance(group_a)
+q1_a, q3_a = calculate_quartiles(group_a)
+iqr_a = q3_a - q1_a
+
+print("\n🎯 GROUP A (Control Group):")
+print("-" * 40)
+print(f"   Count: {len(group_a)}")
+print(f"   Mean: ${mean_a:.2f}")
+print(f"   Median: ${median_a:.2f}")
+print(f"   Standard Deviation: ${std_a:.2f}")
+print(f"   Variance: ${variance_a:.2f}")
+print(f"   Minimum: ${min(group_a):.2f}")
+print(f"   Maximum: ${max(group_a):.2f}")
+print(f"   Range: ${max(group_a) - min(group_a):.2f}")
+print(f"   Q1 (25th percentile): ${q1_a:.2f}")
+print(f"   Q3 (75th percentile): ${q3_a:.2f}")
+print(f"   IQR: ${iqr_a:.2f}")
+
+# Calculate statistics for Group B
+mean_b = calculate_mean(group_b)
+median_b = calculate_median(group_b)
+std_b = calculate_std(group_b)
+variance_b = calculate_variance(group_b)
+q1_b, q3_b = calculate_quartiles(group_b)
+iqr_b = q3_b - q1_b
+
+print("\n🎯 GROUP B (Treatment Group):")
+print("-" * 40)
+print(f"   Count: {len(group_b)}")
+print(f"   Mean: ${mean_b:.2f}")
+print(f"   Median: ${median_b:.2f}")
+print(f"   Standard Deviation: ${std_b:.2f}")
+print(f"   Variance: ${variance_b:.2f}")
+print(f"   Minimum: ${min(group_b):.2f}")
+print(f"   Maximum: ${max(group_b):.2f}")
+print(f"   Range: ${max(group_b) - min(group_b):.2f}")
+print(f"   Q1 (25th percentile): ${q1_b:.2f}")
+print(f"   Q3 (75th percentile): ${q3_b:.2f}")
+print(f"   IQR: ${iqr_b:.2f}")
+
+# Comparison
+print("\n🔍 GROUP COMPARISON:")
+print("-" * 40)
+mean_diff = mean_b - mean_a
+percent_diff = (mean_diff / mean_a) * 100
+
+print(f"   Mean Difference (B - A): ${mean_diff:.2f}")
+print(f"   Percentage Difference: {percent_diff:.1f}%")
+print(f"   Standard Deviation Ratio: {std_b/std_a:.2f}")
+
+print("\n📈 Interpretation:")
+if mean_diff > 0:
+    print(f"   ✅ Treatment group shows higher average purchases (+${mean_diff:.2f})")
+else:
+    print(f"   ⚠️  Control group shows higher average purchases")
+
+# Store for next cells
+STATS_CACHE = {
+    'mean_a': mean_a, 'mean_b': mean_b,
+    'std_a': std_a, 'std_b': std_b,
+    'median_a': median_a, 'median_b': median_b,
+    'q1_a': q1_a, 'q3_a': q3_a,
+    'q1_b': q1_b, 'q3_b': q3_b
+}
+          </div>
+        </div>
+        <div class="output-area">
+          <div class="output-header">
+            <i class="fas fa-terminal"></i>
+            <span>Output</span>
+          </div>
+          <div class="output-content" id="output-2"></div>
+        </div>
+      </div>
+
+      <!-- Markdown Cell 3 -->
+      <div class="markdown-cell">
+        <h3><i class="fas fa-flask-vial"></i> A/B Testing & Statistical Significance</h3>
+        <p>Now we'll perform A/B testing to determine if the difference between groups is statistically significant. We'll simulate multiple experiments to calculate statistical power.</p>
+      </div>
+
+      <!-- Code Cell 3 -->
+      <div class="notebook-cell" id="cell-3">
+        <div class="cell-header">
+          <div class="cell-title">
+            <span class="cell-number">3</span>
+            <span>A/B Testing Simulation</span>
+          </div>
+          <div class="cell-actions">
+            <button class="cell-btn run-btn" onclick="runCell(3)" id="runBtn3" disabled>
+              <i class="fas fa-play"></i> Run
+            </button>
+            <button class="cell-btn" onclick="clearOutput(3)">
+              <i class="fas fa-eraser"></i> Clear
+            </button>
+          </div>
+        </div>
+        <div class="code-area">
+          <div class="code-content">
+import random
+import math
+
+# A/B Testing Functions
+def simulate_conversion_test(conversion_a, conversion_b, sample_size=1000):
+    """Simulate one A/B test experiment"""
+    conversions_a = 0
+    conversions_b = 0
+    
+    # Simulate users
+    for _ in range(sample_size):
+        if random.random() < conversion_a:
+            conversions_a += 1
+        if random.random() < conversion_b:
+            conversions_b += 1
+    
+    # Calculate conversion rates
+    rate_a = conversions_a / sample_size
+    rate_b = conversions_b / sample_size
+    
+    return rate_a, rate_b, conversions_a, conversions_b
+
+def run_multiple_simulations(conversion_a, conversion_b, sample_size=1000, n_simulations=1000):
+    """Run multiple A/B test simulations"""
+    results = []
+    
+    for sim in range(n_simulations):
+        rate_a, rate_b, conv_a, conv_b = simulate_conversion_test(
+            conversion_a, conversion_b, sample_size
+        )
+        
+        results.append({
+            'rate_a': rate_a,
+            'rate_b': rate_b,
+            'difference': rate_b - rate_a,
+            'b_wins': rate_b > rate_a
+        })
+    
+    return results
+
+# Parameters for our simulation
+print("🧪 A/B TESTING SIMULATION")
+print("=" * 60)
+
+conversion_a = 0.10  # 10% conversion for control
+conversion_b = 0.12  # 12% conversion for treatment
+sample_size = 1000
+n_simulations = 500
+
+print(f"\n🎯 Experiment Parameters:")
+print(f"   • Control conversion rate: {conversion_a*100:.1f}%")
+print(f"   • Treatment conversion rate: {conversion_b*100:.1f}%")
+print(f"   • Expected improvement: {(conversion_b/conversion_a - 1)*100:.1f}%")
+print(f"   • Sample size per group: {sample_size:,}")
+print(f"   • Number of simulations: {n_simulations:,}")
+
+print(f"\n🔄 Running {n_simulations:,} simulations...")
+
+# Run simulations
+results = run_multiple_simulations(conversion_a, conversion_b, sample_size, n_simulations)
+
+# Analyze results
+b_wins = sum(1 for r in results if r['b_wins'])
+win_rate = b_wins / n_simulations
+differences = [r['difference'] for r in results]
+avg_difference = sum(differences) / len(differences)
+
+print(f"\n📊 Simulation Results:")
+print("-" * 40)
+print(f"   Treatment beats control: {b_wins:,}/{n_simulations:,} times")
+print(f"   Win rate: {win_rate*100:.1f}%")
+print(f"   Average difference: {avg_difference*100:.3f}%")
+
+# Calculate confidence interval
+sorted_diffs = sorted(differences)
+ci_lower = sorted_diffs[int(0.025 * len(sorted_diffs))]
+ci_upper = sorted_diffs[int(0.975 * len(sorted_diffs))]
+
+print(f"\n📈 Confidence Interval (95%):")
+print(f"   Lower bound: {ci_lower*100:.3f}%")
+print(f"   Upper bound: {ci_upper*100:.3f}%")
+print(f"   Width: {(ci_upper - ci_lower)*100:.3f}%")
+
+# Statistical significance
+print(f"\n🔍 Statistical Significance:")
+if win_rate > 0.95:
+    print(f"   ✅ STRONGLY SIGNIFICANT (p < 0.05)")
+    print(f"   Treatment is statistically better than control")
+elif win_rate > 0.90:
+    print(f"   ⚠️  MODERATELY SIGNIFICANT")
+    print(f"   Some evidence treatment is better")
+else:
+    print(f"   ❓ NOT SIGNIFICANT")
+    print(f"   No strong evidence of difference")
+
+# Sample size calculation
+print(f"\n📏 Sample Size Analysis:")
+print("-" * 40)
+
+# Simple sample size formula
+z_alpha = 1.96  # 95% confidence
+z_beta = 0.84   # 80% power
+pooled_p = (conversion_a + conversion_b) / 2
+effect_size = conversion_b - conversion_a
+
+required_n = ((z_alpha + z_beta) ** 2 * (conversion_a * (1 - conversion_a) + conversion_b * (1 - conversion_b))) / (effect_size ** 2)
+required_n = math.ceil(required_n)
+
+print(f"   Required sample size per group (80% power, 95% confidence):")
+print(f"   • Minimum: {required_n:,} users")
+print(f"   • Total: {required_n * 2:,} users")
+
+if sample_size >= required_n:
+    print(f"   ✅ Current sample size ({sample_size:,}) is sufficient")
+else:
+    print(f"   ⚠️  Need larger sample size for reliable results")
+          </div>
+        </div>
+        <div class="output-area">
+          <div class="output-header">
+            <i class="fas fa-terminal"></i>
+            <span>Output</span>
+          </div>
+          <div class="output-content" id="output-3"></div>
+        </div>
+      </div>
+
+      <!-- Markdown Cell 4 -->
+      <div class="markdown-cell">
+        <h3><i class="fas fa-chart-line"></i> Data Visualization & Outlier Detection</h3>
+        <p>Let's create visualizations and perform outlier detection. Since we're in a browser environment, we'll create text-based charts and analysis.</p>
+      </div>
+
+      <!-- Code Cell 4 -->
+      <div class="notebook-cell" id="cell-4">
+        <div class="cell-header">
+          <div class="cell-title">
+            <span class="cell-number">4</span>
+            <span>Data Visualization & Analysis</span>
+          </div>
+          <div class="cell-actions">
+            <button class="cell-btn run-btn" onclick="runCell(4)" id="runBtn4" disabled>
+              <i class="fas fa-play"></i> Run
+            </button>
+            <button class="cell-btn" onclick="clearOutput(4)">
+              <i class="fas fa-eraser"></i> Clear
+            </button>
+          </div>
+        </div>
+        <div class="code-area">
+          <div class="code-content">
+# Data Visualization Functions
+def create_histogram(data, title="", bins=8):
+    """Create a text histogram"""
+    if not data:
+        return "No data available"
+    
+    # Calculate bin ranges
+    min_val = min(data)
+    max_val = max(data)
+    bin_width = (max_val - min_val) / bins
+    
+    # Initialize bins
+    histogram = [0] * bins
+    
+    # Count values in each bin
+    for value in data:
+        bin_idx = min(int((value - min_val) / bin_width), bins - 1)
+        histogram[bin_idx] += 1
+    
+    max_count = max(histogram)
+    
+    # Build histogram string
+    result = [f"\n{title}", "=" * 50]
+    
+    for i in range(bins):
+        bin_start = min_val + i * bin_width
+        bin_end = min_val + (i + 1) * bin_width
+        count = histogram[i]
+        
+        # Calculate bar length
+        bar_length = int((count / max_count) * 40) if max_count > 0 else 0
+        bar = "█" * bar_length
+        
+        # Format the line
+        result.append(f"${bin_start:6.1f}-${bin_end:6.1f} | {bar} {count:3d}")
+    
+    return "\n".join(result)
+
+def detect_outliers(data, q1, q3):
+    """Detect outliers using IQR method"""
+    iqr = q3 - q1
+    lower_bound = q1 - 1.5 * iqr
+    upper_bound = q3 + 1.5 * iqr
+    
+    outliers = [x for x in data if x < lower_bound or x > upper_bound]
+    return outliers, lower_bound, upper_bound
+
+# Get data from previous cells
+group_a = DATA_CACHE['group_a']
+group_b = DATA_CACHE['group_b']
+q1_a = STATS_CACHE['q1_a']
+q3_a = STATS_CACHE['q3_a']
+q1_b = STATS_CACHE['q1_b']
+q3_b = STATS_CACHE['q3_b']
+
+print("📊 DATA VISUALIZATION & ANALYSIS")
+print("=" * 60)
+
+# Create histograms
+print(create_histogram(group_a, "📈 Group A (Control) - Purchase Distribution"))
+print(create_histogram(group_b, "📈 Group B (Treatment) - Purchase Distribution"))
+
+# Outlier detection
+print("\n🔍 OUTLIER DETECTION (IQR Method)")
+print("-" * 40)
+
+outliers_a, lower_a, upper_a = detect_outliers(group_a, q1_a, q3_a)
+outliers_b, lower_b, upper_b = detect_outliers(group_b, q1_b, q3_b)
+
+print(f"\nGroup A (Control):")
+print(f"   • IQR bounds: ${lower_a:.2f} to ${upper_a:.2f}")
+print(f"   • Outliers detected: {len(outliers_a)}")
+if outliers_a:
+    print(f"   • Outlier values: {sorted(outliers_a)[:5]}")  # Show first 5
+    if len(outliers_a) > 5:
+        print(f"     ... and {len(outliers_a) - 5} more")
+
+print(f"\nGroup B (Treatment):")
+print(f"   • IQR bounds: ${lower_b:.2f} to ${upper_b:.2f}")
+print(f"   • Outliers detected: {len(outliers_b)}")
+if outliers_b:
+    print(f"   • Outlier values: {sorted(outliers_b)[:5]}")
+    if len(outliers_b) > 5:
+        print(f"     ... and {len(outliers_b) - 5} more")
+
+# Comparative analysis
+print("\n📈 COMPARATIVE ANALYSIS")
+print("-" * 40)
+
+# Create comparative visualization
+mean_a = STATS_CACHE['mean_a']
+mean_b = STATS_CACHE['mean_b']
+
+max_val = max(mean_a, mean_b)
+scale = 50 / max_val
+
+bar_a = "█" * int(mean_a * scale)
+bar_b = "█" * int(mean_b * scale)
+
+print(f"\nAverage Purchase Comparison:")
+print(f"   Group A: {bar_a} ${mean_a:.2f}")
+print(f"   Group B: {bar_b} ${mean_b:.2f}")
+
+# Distribution comparison
+print(f"\nDistribution Characteristics:")
+print(f"   • Group A spread: ${STATS_CACHE['std_a']:.2f} (std dev)")
+print(f"   • Group B spread: ${STATS_CACHE['std_b']:.2f} (std dev)")
+print(f"   • Spread ratio (B/A): {STATS_CACHE['std_b']/STATS_CACHE['std_a']:.2f}")
+
+# Summary statistics
+print(f"\n📋 SUMMARY")
+print("-" * 40)
+print(f"   Total purchases - Group A: ${sum(group_a):.2f}")
+print(f"   Total purchases - Group B: ${sum(group_b):.2f}")
+print(f"   Total difference: ${sum(group_b) - sum(group_a):.2f}")
+print(f"   Percentage difference: {(sum(group_b)/sum(group_a) - 1)*100:.1f}%")
+
+print(f"\n   Average purchase - Group A: ${mean_a:.2f}")
+print(f"   Average purchase - Group B: ${mean_b:.2f}")
+print(f"   Average difference: ${mean_b - mean_a:.2f}")
+
+print(f"\n   Outliers - Group A: {len(outliers_a)} ({len(outliers_a)/len(group_a)*100:.1f}%)")
+print(f"   Outliers - Group B: {len(outliers_b)} ({len(outliers_b)/len(group_b)*100:.1f}%)")
+
+print(f"\n🎯 Key Insight:")
+if mean_b > mean_a:
+    print(f"   The treatment group shows {((mean_b - mean_a)/mean_a)*100:.1f}% higher average purchases.")
+    if len(outliers_b) > len(outliers_a):
+        print(f"   Note: Treatment group has more outliers, which may affect results.")
+else:
+    print(f"   No clear improvement observed in the treatment group.")
+          </div>
+        </div>
+        <div class="output-area">
+          <div class="output-header">
+            <i class="fas fa-terminal"></i>
+            <span>Output</span>
+          </div>
+          <div class="output-content" id="output-4"></div>
+        </div>
+      </div>
+
+      <!-- Markdown Cell 5 -->
+      <div class="markdown-cell">
+        <h3><i class="fas fa-graduation-cap"></i> Learning Summary</h3>
+        
+        <p><strong>What we accomplished in this notebook:</strong></p>
+        <ol>
+          <li><strong>Data Generation:</strong> Created synthetic customer data for A/B testing</li>
+          <li><strong>Statistical Analysis:</strong> Calculated descriptive statistics from scratch</li>
+          <li><strong>A/B Testing:</strong> Simulated experiments and evaluated statistical significance</li>
+          <li><strong>Visualization:</strong> Created text-based charts and detected outliers</li>
+        </ol>
+        
+        <div class="info-box">
+          <p><i class="fas fa-lightbulb"></i> <strong>Try modifying the code:</strong></p>
+          <ul>
+            <li>Change sample sizes in Cell 1 and see how it affects results</li>
+            <li>Adjust conversion rates in Cell 3</li>
+            <li>Install numpy with the package installer and use it for calculations</li>
+            <li>Modify the visualization functions in Cell 4</li>
+          </ul>
+        </div>
+        
+        <p><strong>Key Statistical Concepts Covered:</strong></p>
+        <ul>
+          <li>Mean, Median, Standard Deviation</li>
+          <li>Quartiles and Interquartile Range (IQR)</li>
+          <li>Outlier detection using IQR method</li>
+          <li>Statistical significance and p-values</li>
+          <li>Confidence intervals</li>
+          <li>Sample size calculation for experiments</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      IAF 604: Machine Learning & Predictive Analytics | Section 6: Interactive Python Notebook<br/>
+      Powered by Pyodide - Python running entirely in your browser
+    </footer>
+  </div>
+
+  <script>
+    // Global variables
+    let pyodide;
+    let pyodideReady = false;
+    let outputBuffer = [];
+
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+    const body = document.body;
+    const THEME_KEY = 'iaf604-theme';
+
+    function applyTheme(theme) {
+      body.setAttribute('data-theme', theme);
+      const isDay = theme === 'day';
+      themeLabel.textContent = isDay ? 'Day Mode' : 'Night Mode';
+      themeToggle.setAttribute('aria-label', `Theme: ${themeLabel.textContent} (click to toggle)`);
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'day' || savedTheme === 'night') {
+        applyTheme(savedTheme);
+      } else {
+        const defaultTheme = prefersDark ? 'night' : 'day';
+        applyTheme(defaultTheme);
+        localStorage.setItem(THEME_KEY, defaultTheme);
+      }
+    }
+
+    function toggleTheme() {
+      const current = body.getAttribute('data-theme');
+      const next = current === 'night' ? 'day' : 'night';
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+    }
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // Pyodide Initialization
+    async function initializePyodide() {
+      try {
+        const statusDiv = document.getElementById('pyodideStatus');
+        
+        // Load Pyodide
+        pyodide = await loadPyodide({
+          indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.2/full/",
+          stdout: (text) => {
+            outputBuffer.push(text);
+          },
+          stderr: (text) => {
+            console.error("Python error:", text);
+            outputBuffer.push(`[ERROR] ${text}`);
+          }
+        });
+
+        // Load micropip
+        await pyodide.loadPackage("micropip");
+        
+        // Initialize Python environment
+        await pyodide.runPythonAsync(`
+import sys
+import io
+
+class OutputCatcher(io.StringIO):
+    def write(self, text):
+        # Store output
+        if hasattr(self, '_output_buffer'):
+            self._output_buffer.append(text)
+        return len(text)
+
+# Create output catcher
+sys.stdout = OutputCatcher()
+sys.stderr = OutputCatcher()
+        `);
+        
+        // Update status
+        statusDiv.className = "pyodide-status ready";
+        statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> <span>Python environment ready! You can run cells.</span>';
+        
+        // Enable all buttons
+        for (let i = 1; i <= 4; i++) {
+          document.getElementById(`runBtn${i}`).disabled = false;
+        }
+        document.getElementById('runAllBtn').disabled = false;
+        
+        pyodideReady = true;
+        
+        console.log("✅ Pyodide initialized successfully!");
+        
+      } catch (error) {
+        console.error("❌ Failed to initialize Pyodide:", error);
+        const statusDiv = document.getElementById('pyodideStatus');
+        statusDiv.className = "pyodide-status error";
+        statusDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> <span>Error: ${error.message}</span>`;
+      }
+    }
+
+    // Run a cell
+    async function runCell(cellNumber) {
+      if (!pyodideReady) {
+        alert("Python environment is still loading. Please wait...");
+        return;
+      }
+
+      const outputDiv = document.getElementById(`output-${cellNumber}`);
+      const runBtn = document.getElementById(`runBtn${cellNumber}`);
+      
+      // Clear and show loading
+      outputDiv.innerHTML = '<div class="status-loading"><i class="fas fa-spinner fa-spin"></i> Executing Python code...</div>';
+      runBtn.disabled = true;
+      runBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running';
+      
+      try {
+        // Clear output buffer
+        outputBuffer = [];
+        
+        // Get the code
+        const cell = document.getElementById(`cell-${cellNumber}`);
+        const codeElement = cell.querySelector('.code-content');
+        const code = codeElement.textContent;
+        
+        console.log(`Running cell ${cellNumber}...`);
+        
+        // Run the Python code
+        await pyodide.runPythonAsync(code);
+        
+        // Get the output
+        let output = outputBuffer.join('');
+        
+        // If no output was captured, run again with print wrapper
+        if (!output.trim()) {
+          output = await pyodide.runPythonAsync(`
+import sys
+from io import StringIO
+
+# Capture output
+old_stdout = sys.stdout
+sys.stdout = mystdout = StringIO()
+
+try:
+${code.split('\n').map(line => '    ' + line).join('\n')}
+except Exception as e:
+    print(f"Error: {e}")
+
+sys.stdout = old_stdout
+output = mystdout.getvalue()
+output
+          `);
+        }
+        
+        // Display output
+        if (output && output.trim()) {
+          outputDiv.innerHTML = `<pre>${output}</pre>`;
+        } else {
+          outputDiv.innerHTML = '<div class="status-success"><i class="fas fa-check-circle"></i> Code executed (no output)</div>';
+        }
+        
+        console.log(`✅ Cell ${cellNumber} executed successfully`);
+        
+      } catch (error) {
+        console.error(`❌ Error in cell ${cellNumber}:`, error);
+        outputDiv.innerHTML = `<div class="status-error"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</div>`;
+      } finally {
+        runBtn.disabled = false;
+        runBtn.innerHTML = '<i class="fas fa-play"></i> Run';
+      }
+    }
+
+    // Clear output
+    function clearOutput(cellNumber) {
+      const outputDiv = document.getElementById(`output-${cellNumber}`);
+      outputDiv.innerHTML = '';
+    }
+
+    // Run all cells
+    async function runAllCells() {
+      if (!pyodideReady) {
+        alert("Python environment is still loading. Please wait...");
+        return;
+      }
+
+      const runAllBtn = document.getElementById('runAllBtn');
+      runAllBtn.disabled = true;
+      runAllBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Running all...';
+      
+      // Run cells sequentially
+      for (let i = 1; i <= 4; i++) {
+        await runCell(i);
+        // Small delay between cells
+        await new Promise(resolve => setTimeout(resolve, 800));
+      }
+      
+      runAllBtn.disabled = false;
+      runAllBtn.innerHTML = '<i class="fas fa-play-circle"></i> Run All Cells';
+    }
+
+    // Install package
+    async function installPackage() {
+      if (!pyodideReady) {
+        alert("Python environment is still loading. Please wait...");
+        return;
+      }
+
+      const packageInput = document.getElementById('packageInput');
+      const packageName = packageInput.value.trim();
+      const statusDiv = document.getElementById('packageStatus');
+      
+      if (!packageName) {
+        statusDiv.innerHTML = '<div class="status-error">Please enter a package name</div>';
+        return;
+      }
+      
+      statusDiv.innerHTML = `<div class="status-loading"><i class="fas fa-spinner fa-spin"></i> Installing ${packageName}...</div>`;
+      
+      try {
+        const micropip = pyodide.pyimport("micropip");
+        await micropip.install(packageName);
+        
+        statusDiv.innerHTML = `<div class="status-success"><i class="fas fa-check-circle"></i> Successfully installed ${packageName}</div>`;
+        packageInput.value = "";
+        
+        console.log(`✅ Package ${packageName} installed`);
+        
+      } catch (error) {
+        console.error(`❌ Failed to install ${packageName}:`, error);
+        statusDiv.innerHTML = `<div class="status-error"><i class="fas fa-exclamation-circle"></i> Failed: ${error.message}</div>`;
+      }
+    }
+
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("Initializing...");
+      initTheme();
+      initializePyodide();
+    });
+  </script>
+</body>
+</html>
