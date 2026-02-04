@@ -1,1 +1,1551 @@
-Module3_section3.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Section 3: A/B Testing for ML | IAF 604</title>
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- MathJax -->
+  <script defer src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script defer id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.7;
+      color: #1a1a1a;
+      background: #f8fafc;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    
+    header {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      padding: 40px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    
+    .course-info h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    
+    .course-info h2 {
+      font-size: 18px;
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 12px;
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      font-weight: 600;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    
+    .nav-buttons {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 50px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-2px);
+    }
+    
+    main {
+      padding: 40px;
+    }
+    
+    .section {
+      margin-bottom: 40px;
+    }
+    
+    h3 {
+      font-size: 24px;
+      color: #1e293b;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    h3 i {
+      color: #2563eb;
+    }
+    
+    h4 {
+      font-size: 20px;
+      color: #334155;
+      margin: 25px 0 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    h4 i {
+      color: #7c3aed;
+    }
+    
+    p {
+      margin-bottom: 16px;
+      color: #475569;
+    }
+    
+    .lead {
+      font-size: 18px;
+      color: #475569;
+      background: #f1f5f9;
+      padding: 20px;
+      border-radius: 12px;
+      border-left: 4px solid #2563eb;
+      margin-bottom: 25px;
+    }
+    
+    .highlight {
+      background: linear-gradient(120deg, #dbeafe 0%, #e0e7ff 100%);
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border: 1px solid #c7d2fe;
+    }
+    
+    .example-box {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    
+    .example-box h5 {
+      color: #0369a1;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    th {
+      background: #1e40af;
+      color: white;
+      font-weight: 600;
+      padding: 16px;
+      text-align: left;
+    }
+    
+    td {
+      padding: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    
+    tr:nth-child(even) {
+      background: #f8fafc;
+    }
+    
+    tr:hover {
+      background: #f1f5f9;
+    }
+    
+    .comparison-table td:first-child {
+      font-weight: 600;
+      background: #f8fafc;
+    }
+    
+    .formula-box {
+      background: white;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .formula-box .formula {
+      color: #dc2626;
+      font-size: 18px;
+      margin: 10px 0;
+    }
+    
+    .visual-guide {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 30px 0;
+    }
+    
+    .guide-item {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      border: 1px solid #e2e8f0;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    .guide-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+    
+    .guide-item h5 {
+      color: #1e40af;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .guide-item .number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: #2563eb;
+      color: white;
+      border-radius: 50%;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+    
+    .code-container {
+      margin: 30px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .code-header {
+      background: #1e293b;
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+    
+    .code-header:hover {
+      background: #334155;
+    }
+    
+    .code-header .title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+    }
+    
+    .code-header .toggle-btn {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 20px;
+      transition: transform 0.2s ease;
+    }
+    
+    .code-header .toggle-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .code-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease;
+    }
+    
+    .code-content.expanded {
+      max-height: 2000px;
+    }
+    
+    .code-content pre {
+      margin: 0;
+      padding: 24px;
+      background: #0f172a;
+      color: #e2e8f0;
+      overflow-x: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .code-content code {
+      font-family: 'Courier New', monospace;
+    }
+    
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .data-table th {
+      background: #475569;
+    }
+    
+    .data-table td {
+      padding: 12px 16px;
+    }
+    
+    .ml-connection {
+      background: linear-gradient(135deg, #dbeafe, #f0f9ff);
+      border-left: 4px solid #2563eb;
+      padding: 20px;
+      border-radius: 0 12px 12px 0;
+      margin: 25px 0;
+    }
+    
+    .ml-connection h5 {
+      color: #1e40af;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin: 25px 0;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    
+    .stat-card h6 {
+      color: #334155;
+      margin-bottom: 12px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .stat-card .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #2563eb;
+      margin: 8px 0;
+    }
+    
+    .stat-card .explanation {
+      font-size: 14px;
+      color: #64748b;
+    }
+    
+    .test-types {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 25px 0;
+    }
+    
+    .test-type {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      border: 2px solid #e2e8f0;
+      transition: all 0.3s ease;
+    }
+    
+    .test-type:hover {
+      border-color: #2563eb;
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+    }
+    
+    .test-type h5 {
+      color: #1e40af;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .test-type ul {
+      padding-left: 20px;
+      margin: 12px 0;
+    }
+    
+    .test-type li {
+      margin-bottom: 6px;
+      color: #475569;
+    }
+    
+    .practice-box {
+      background: linear-gradient(135deg, #f0f9ff, #fef7ff);
+      border: 2px dashed #c7d2fe;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 30px 0;
+    }
+    
+    .practice-box h5 {
+      color: #7c3aed;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .steps {
+      counter-reset: step-counter;
+      margin: 25px 0;
+    }
+    
+    .step {
+      position: relative;
+      padding-left: 60px;
+      margin-bottom: 25px;
+      padding-bottom: 25px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+    
+    .step:last-child {
+      border-bottom: none;
+    }
+    
+    .step::before {
+      counter-increment: step-counter;
+      content: counter(step-counter);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 40px;
+      height: 40px;
+      background: #2563eb;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .warning {
+      background: #fef3c7;
+      border: 1px solid #fbbf24;
+      color: #92400e;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .warning i {
+      color: #d97706;
+      font-size: 20px;
+      margin-top: 2px;
+    }
+    
+    .success {
+      background: #d1fae5;
+      border: 1px solid #34d399;
+      color: #065f46;
+      padding: 16px;
+      border-radius: 8px;
+      margin: 20px 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .success i {
+      color: #10b981;
+      font-size: 20px;
+      margin-top: 2px;
+    }
+    
+    footer {
+      background: #1e293b;
+      color: white;
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #334155;
+    }
+    
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    
+    .footer-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      header, main {
+        padding: 25px;
+      }
+      
+      .course-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .nav-buttons {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .visual-guide, .stats-grid, .test-types {
+        grid-template-columns: 1fr;
+      }
+      
+      h3 {
+        font-size: 22px;
+      }
+      
+      h4 {
+        font-size: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="course-header">
+        <div class="course-info">
+          <h1>Module 3A: Statistics for Machine Learning</h1>
+          <h2>Section 3 — A/B Testing Fundamentals & Applications</h2>
+          <div class="badge">
+            <i class="fa-solid fa-flask-vial"></i>
+            Hands-on A/B Testing for Data Science & ML
+          </div>
+        </div>
+        <div class="nav-buttons">
+          <a href="Module3_section2.html" class="nav-btn">
+            <i class="fa-solid fa-arrow-left"></i> Previous
+          </a>
+          <a href="Module3_section4.html" class="nav-btn">
+            Next <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </header>
+    
+    <main>
+      <section class="section">
+        <h3><i class="fa-solid fa-flask-vial"></i> What is A/B Testing?</h3>
+        
+        <div class="lead">
+          <strong>A/B Testing</strong> is a statistical method that compares two versions (A and B) to determine which performs better. 
+          In data science, it's used to make data-driven decisions by testing hypotheses with controlled experiments.
+        </div>
+        
+        <div class="visual-guide">
+          <div class="guide-item">
+            <h5><span class="number">1</span> Control Group (A)</h5>
+            <p>The current version or baseline. Users see the existing feature, algorithm, or design.</p>
+          </div>
+          <div class="guide-item">
+            <h5><span class="number">2</span> Treatment Group (B)</h5>
+            <p>The new version being tested. Contains the change you want to evaluate.</p>
+          </div>
+          <div class="guide-item">
+            <h5><span class="number">3</span> Random Assignment</h5>
+            <p>Users are randomly assigned to either group to ensure fair comparison.</p>
+          </div>
+          <div class="guide-item">
+            <h5><span class="number">4</span> Statistical Analysis</h5>
+            <p>Compare performance metrics using statistical tests to determine significance.</p>
+          </div>
+        </div>
+        
+        <div class="example-box">
+          <h5><i class="fa-solid fa-lightbulb"></i> Real-World Example: E-commerce Website</h5>
+          <p><strong>Problem:</strong> Your online store has a 5% conversion rate (5 out of 100 visitors make a purchase).</p>
+          <p><strong>Hypothesis:</strong> Changing the checkout button from green to red will increase conversions.</p>
+          <p><strong>Test:</strong> 
+            - Group A (Control): Green button (5,000 visitors)<br>
+            - Group B (Treatment): Red button (5,000 visitors)<br>
+            <strong>Result:</strong> Group B shows 5.5% conversion → 10% relative improvement!
+          </p>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-chart-line"></i> Why A/B Testing is CRUCIAL for ML</h3>
+        
+        <div class="highlight">
+          <h4><i class="fa-solid fa-brain"></i> ML Connection</h4>
+          <p>A/B testing helps answer critical ML questions:</p>
+          <ul>
+            <li><strong>Is our new ML model actually better?</strong> (Not just lucky results)</li>
+            <li><strong>Which features should we add to our model?</strong></li>
+            <li><strong>What's the business impact of our ML system?</strong></li>
+            <li><strong>How do we know if improvements are statistically significant?</strong></li>
+          </ul>
+        </div>
+        
+        <div class="test-types">
+          <div class="test-type">
+            <h5><i class="fa-solid fa-robot"></i> Model Comparison Testing</h5>
+            <p>Compare two ML models in production:</p>
+            <ul>
+              <li>Old model (A) vs New model (B)</li>
+              <li>Different algorithms</li>
+              <li>Different hyperparameters</li>
+              <li>Different feature sets</li>
+            </ul>
+          </div>
+          
+          <div class="test-type">
+            <h5><i class="fa-solid fa-sliders"></i> Feature Testing</h5>
+            <p>Test new features in ML systems:</p>
+            <ul>
+              <li>Add new data sources</li>
+              <li>Change feature engineering</li>
+              <li>Test preprocessing steps</li>
+              <li>Evaluate feature importance</li>
+            </ul>
+          </div>
+          
+          <div class="test-type">
+            <h5><i class="fa-solid fa-users"></i> User Experience Testing</h5>
+            <p>How users interact with ML outputs:</p>
+            <ul>
+              <li>Different recommendation layouts</li>
+              <li>Various confidence thresholds</li>
+              <li>Alternative explanations</li>
+              <li>Different interface designs</li>
+            </ul>
+          </div>
+        </div>
+        
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ML Task</th>
+              <th>A/B Testing Application</th>
+              <th>Key Metric</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Recommendation Systems</td>
+              <td>Test new algorithm vs old algorithm</td>
+              <td>Click-through Rate (CTR)</td>
+            </tr>
+            <tr>
+              <td>Fraud Detection</td>
+              <td>Compare new model's false positives</td>
+              <td>Precision & Recall</td>
+            </tr>
+            <tr>
+              <td>Customer Churn Prediction</td>
+              <td>Test intervention strategies</td>
+              <td>Churn Reduction %</td>
+            </tr>
+            <tr>
+              <td>Price Optimization</td>
+              <td>Test different pricing models</td>
+              <td>Revenue per User</td>
+            </tr>
+            <tr>
+              <td>Image Classification</td>
+              <td>Compare model architectures</td>
+              <td>Accuracy & F1-Score</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-calculator"></i> Key Statistical Concepts</h3>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h6><i class="fa-solid fa-hyphen"></i> Null Hypothesis (H₀)</h6>
+            <div class="value">No Difference</div>
+            <div class="explanation">Default assumption: Both versions perform equally</div>
+            <p><small>Example: "The red button doesn't change conversion rates"</small></p>
+          </div>
+          
+          <div class="stat-card">
+            <h6><i class="fa-solid fa-arrow-up"></i> Alternative Hypothesis (H₁)</h6>
+            <div class="value">There IS a Difference</div>
+            <div class="explanation">What you're trying to prove</div>
+            <p><small>Example: "The red button increases conversions"</small></p>
+          </div>
+          
+          <div class="stat-card">
+            <h6><i class="fa-solid fa-percent"></i> P-value</h6>
+            <div class="value">&lt; 0.05</div>
+            <div class="explanation">Probability of seeing results if H₀ is true</div>
+            <p><small>Lower = stronger evidence against H₀</small></p>
+          </div>
+          
+          <div class="stat-card">
+            <h6><i class="fa-solid fa-bullseye"></i> Statistical Power</h6>
+            <div class="value">80%</div>
+            <div class="explanation">Probability of detecting real effect</div>
+            <p><small>Higher power = better test design</small></p>
+          </div>
+        </div>
+        
+        <div class="formula-box">
+          <h4><i class="fa-solid fa-square-root-variable"></i> Conversion Rate Formula</h4>
+          <div class="formula">
+            \[ \text{Conversion Rate} = \frac{\text{Conversions}}{\text{Total Visitors}} \times 100\% \]
+          </div>
+          <div class="example-box">
+            <h5><i class="fa-solid fa-calculator"></i> Example Calculation:</h5>
+            <p><strong>Group A (Control):</strong> 250 conversions / 5,000 visitors = 5.0%</p>
+            <p><strong>Group B (Treatment):</strong> 275 conversions / 5,000 visitors = 5.5%</p>
+            <p><strong>Improvement:</strong> (5.5% - 5.0%) / 5.0% = 10% relative increase</p>
+          </div>
+        </div>
+        
+        <div class="formula-box">
+          <h4><i class="fa-solid fa-cube"></i> Statistical Significance Test</h4>
+          <div class="formula">
+            \[ Z = \frac{p_B - p_A}{\sqrt{p_{pooled}(1-p_{pooled})(\frac{1}{n_A} + \frac{1}{n_B})}} \]
+          </div>
+          <p>Where:<br>
+          • \(p_A, p_B\) = conversion rates for groups A and B<br>
+          • \(p_{pooled}\) = combined conversion rate<br>
+          • \(n_A, n_B\) = sample sizes<br>
+          • If \(|Z| > 1.96\), result is significant at 95% confidence</p>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-code"></i> Python Implementation: Complete A/B Test</h3>
+        
+        <div class="warning">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <div>
+            <strong>Important:</strong> Always run statistical tests BEFORE concluding results. 
+            Random variations can sometimes look like improvements!
+          </div>
+        </div>
+        
+        <div class="code-container">
+          <div class="code-header" onclick="toggleCode('completeABTest')">
+            <div class="title">
+              <i class="fa-brands fa-python"></i>
+              <span>Complete A/B Testing Pipeline in Python</span>
+            </div>
+            <button class="toggle-btn" aria-label="Toggle code visibility">
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+          </div>
+          <div class="code-content" id="completeABTest">
+            <pre><code># Complete A/B Testing Implementation for ML
+# Author: IAF 604 Course Module
+# Purpose: Demonstrate statistical testing for ML model comparison
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+from scipy.stats import ttest_ind, chi2_contingency, norm
+import warnings
+warnings.filterwarnings('ignore')
+
+# Set random seed for reproducibility
+np.random.seed(42)
+
+print("="*60)
+print("A/B TESTING PIPELINE FOR ML MODEL COMPARISON")
+print("="*60)
+
+# ============================================================================
+# 1. SIMULATE A/B TEST DATA
+# ============================================================================
+print("\n1. GENERATING SIMULATED A/B TEST DATA")
+print("-"*40)
+
+def generate_ab_data(n_samples=1000, baseline_rate=0.05, improvement=0.10):
+    """
+    Generate simulated A/B test data
+    
+    Parameters:
+    - n_samples: Number of samples per group
+    - baseline_rate: Conversion rate for control group (e.g., 0.05 = 5%)
+    - improvement: Relative improvement for treatment group (e.g., 0.10 = 10%)
+    
+    Returns: DataFrames for control and treatment groups
+    """
+    
+    # Control group (A) - current model
+    control_data = pd.DataFrame({
+        'user_id': range(n_samples),
+        'group': 'Control',
+        'converted': np.random.binomial(1, baseline_rate, n_samples),
+        'revenue': np.random.exponential(50, n_samples) * 0.8,
+        'session_duration': np.random.normal(300, 60, n_samples)
+    })
+    
+    # Treatment group (B) - new model (with improvement)
+    treatment_rate = baseline_rate * (1 + improvement)
+    treatment_data = pd.DataFrame({
+        'user_id': range(n_samples, n_samples*2),
+        'group': 'Treatment',
+        'converted': np.random.binomial(1, treatment_rate, n_samples),
+        'revenue': np.random.exponential(50, n_samples) * 0.9,  # Slight revenue improvement
+        'session_duration': np.random.normal(320, 60, n_samples)  # Longer sessions
+    })
+    
+    # Combine data
+    all_data = pd.concat([control_data, treatment_data], ignore_index=True)
+    
+    return control_data, treatment_data, all_data
+
+# Generate data for our test
+control_df, treatment_df, combined_df = generate_ab_data(
+    n_samples=5000, 
+    baseline_rate=0.05, 
+    improvement=0.10  # 10% improvement expected
+)
+
+print(f"Control group size: {len(control_df)} users")
+print(f"Treatment group size: {len(treatment_df)} users")
+print(f"\nControl group conversion rate: {control_df['converted'].mean():.3%}")
+print(f"Treatment group conversion rate: {treatment_df['converted'].mean():.3%}")
+
+# ============================================================================
+# 2. DESCRIPTIVE STATISTICS
+# ============================================================================
+print("\n\n2. DESCRIPTIVE STATISTICS")
+print("-"*40)
+
+def calculate_descriptive_stats(control_df, treatment_df):
+    """Calculate and compare descriptive statistics"""
+    
+    stats_summary = pd.DataFrame({
+        'Metric': ['Sample Size', 'Conversion Rate', 'Average Revenue', 'Avg Session Duration'],
+        'Control': [
+            len(control_df),
+            f"{control_df['converted'].mean():.3%}",
+            f"${control_df['revenue'].mean():.2f}",
+            f"{control_df['session_duration'].mean():.1f} sec"
+        ],
+        'Treatment': [
+            len(treatment_df),
+            f"{treatment_df['converted'].mean():.3%}",
+            f"${treatment_df['revenue'].mean():.2f}",
+            f"{treatment_df['session_duration'].mean():.1f} sec"
+        ],
+        'Difference': [
+            '',
+            f"{(treatment_df['converted'].mean() - control_df['converted'].mean()):.3%}",
+            f"${(treatment_df['revenue'].mean() - control_df['revenue'].mean()):.2f}",
+            f"{(treatment_df['session_duration'].mean() - control_df['session_duration'].mean()):.1f} sec"
+        ],
+        'Relative Change': [
+            '',
+            f"{((treatment_df['converted'].mean() / control_df['converted'].mean()) - 1) * 100:+.1f}%",
+            f"{((treatment_df['revenue'].mean() / control_df['revenue'].mean()) - 1) * 100:+.1f}%",
+            f"{((treatment_df['session_duration'].mean() / control_df['session_duration'].mean()) - 1) * 100:+.1f}%"
+        ]
+    })
+    
+    return stats_summary
+
+stats_table = calculate_descriptive_stats(control_df, treatment_df)
+print("\nComparison Statistics:")
+print(stats_table.to_string(index=False))
+
+# ============================================================================
+# 3. STATISTICAL SIGNIFICANCE TESTING
+# ============================================================================
+print("\n\n3. STATISTICAL SIGNIFICANCE TESTS")
+print("-"*40)
+
+def run_statistical_tests(control_df, treatment_df, alpha=0.05):
+    """Run comprehensive statistical tests for A/B testing"""
+    
+    results = {}
+    
+    # 3.1 Conversion Rate Test (Chi-square)
+    print("\n3.1 Conversion Rate Test (Chi-square):")
+    print("-"*30)
+    
+    # Create contingency table
+    control_converted = control_df['converted'].sum()
+    control_not = len(control_df) - control_converted
+    treatment_converted = treatment_df['converted'].sum()
+    treatment_not = len(treatment_df) - treatment_converted
+    
+    contingency_table = [
+        [control_converted, control_not],
+        [treatment_converted, treatment_not]
+    ]
+    
+    chi2_stat, p_value_chi, dof, expected = chi2_contingency(contingency_table)
+    
+    print(f"Chi-square statistic: {chi2_stat:.4f}")
+    print(f"P-value: {p_value_chi:.6f}")
+    print(f"Significant at α={alpha}: {'YES' if p_value_chi < alpha else 'NO'}")
+    
+    results['conversion_chi2'] = chi2_stat
+    results['conversion_p'] = p_value_chi
+    results['conversion_sig'] = p_value_chi < alpha
+    
+    # 3.2 Revenue Comparison (t-test)
+    print("\n3.2 Revenue Comparison (t-test):")
+    print("-"*30)
+    
+    t_stat_rev, p_value_rev = ttest_ind(
+        control_df['revenue'], 
+        treatment_df['revenue'],
+        equal_var=False  # Welch's t-test (doesn't assume equal variance)
+    )
+    
+    print(f"t-statistic: {t_stat_rev:.4f}")
+    print(f"P-value: {p_value_rev:.6f}")
+    print(f"Significant at α={alpha}: {'YES' if p_value_rev < alpha else 'NO'}")
+    
+    results['revenue_t'] = t_stat_rev
+    results['revenue_p'] = p_value_rev
+    results['revenue_sig'] = p_value_rev < alpha
+    
+    # 3.3 Session Duration (t-test)
+    print("\n3.3 Session Duration (t-test):")
+    print("-"*30)
+    
+    t_stat_dur, p_value_dur = ttest_ind(
+        control_df['session_duration'], 
+        treatment_df['session_duration'],
+        equal_var=False
+    )
+    
+    print(f"t-statistic: {t_stat_dur:.4f}")
+    print(f"P-value: {p_value_dur:.6f}")
+    print(f"Significant at α={alpha}: {'YES' if p_value_dur < alpha else 'NO'}")
+    
+    results['duration_t'] = t_stat_dur
+    results['duration_p'] = p_value_dur
+    results['duration_sig'] = p_value_dur < alpha
+    
+    return results
+
+# Run all statistical tests
+test_results = run_statistical_tests(control_df, treatment_df)
+
+# ============================================================================
+# 4. CONFIDENCE INTERVALS
+# ============================================================================
+print("\n\n4. CONFIDENCE INTERVALS (95%)")
+print("-"*40)
+
+def calculate_confidence_interval(data, confidence=0.95):
+    """Calculate confidence interval for conversion rate"""
+    n = len(data)
+    p = data['converted'].mean()
+    
+    # Standard error
+    se = np.sqrt(p * (1 - p) / n)
+    
+    # Z-score for confidence level
+    z = norm.ppf(1 - (1 - confidence) / 2)
+    
+    # Confidence interval
+    ci_lower = p - z * se
+    ci_upper = p + z * se
+    
+    return p, ci_lower, ci_upper
+
+# Calculate confidence intervals
+p_control, ci_lower_control, ci_upper_control = calculate_confidence_interval(control_df)
+p_treatment, ci_lower_treatment, ci_upper_treatment = calculate_confidence_interval(treatment_df)
+
+print(f"Control Group Conversion Rate: {p_control:.3%}")
+print(f"95% Confidence Interval: [{ci_lower_control:.3%}, {ci_upper_control:.3%}]")
+print(f"\nTreatment Group Conversion Rate: {p_treatment:.3%}")
+print(f"95% Confidence Interval: [{ci_lower_treatment:.3%}, {ci_upper_treatment:.3%}]")
+
+# Confidence interval for the difference
+diff = p_treatment - p_control
+se_diff = np.sqrt(p_control * (1 - p_control) / len(control_df) + 
+                  p_treatment * (1 - p_treatment) / len(treatment_df))
+z = norm.ppf(0.975)  # 95% confidence
+ci_lower_diff = diff - z * se_diff
+ci_upper_diff = diff + z * se_diff
+
+print(f"\nDifference (Treatment - Control): {diff:.3%}")
+print(f"95% CI for Difference: [{ci_lower_diff:.3%}, {ci_upper_diff:.3%}]")
+
+# ============================================================================
+# 5. SAMPLE SIZE CALCULATION (POWER ANALYSIS)
+# ============================================================================
+print("\n\n5. SAMPLE SIZE CALCULATION (POWER ANALYSIS)")
+print("-"*40)
+
+def calculate_sample_size(p1, p2, alpha=0.05, power=0.8):
+    """
+    Calculate required sample size per group for A/B test
+    
+    Parameters:
+    - p1: Baseline conversion rate (control)
+    - p2: Expected conversion rate (treatment)
+    - alpha: Significance level (default 0.05)
+    - power: Statistical power (default 0.8)
+    
+    Returns: Required sample size per group
+    """
+    # Z-scores
+    z_alpha = norm.ppf(1 - alpha/2)
+    z_beta = norm.ppf(power)
+    
+    # Pooled probability
+    p_bar = (p1 + p2) / 2
+    
+    # Sample size formula for two proportions
+    n = (z_alpha * np.sqrt(2 * p_bar * (1 - p_bar)) + 
+         z_beta * np.sqrt(p1 * (1 - p1) + p2 * (1 - p2))) ** 2 / (p1 - p2) ** 2
+    
+    return int(np.ceil(n))
+
+# Example: How many samples do we need?
+print("Sample Size Requirements for Different Effect Sizes:")
+print(f"{'Effect Size':<15} {'Sample per Group':<20} {'Total Sample':<15}")
+print("-"*50)
+
+effect_sizes = [0.01, 0.05, 0.10, 0.15, 0.20]  # Relative improvements
+baseline = 0.05
+
+for effect in effect_sizes:
+    p2 = baseline * (1 + effect)
+    n_per_group = calculate_sample_size(baseline, p2)
+    print(f"{effect:>5.0%} ({p2:.2%}) {'':<5} {n_per_group:<20} {2 * n_per_group:<15}")
+
+# ============================================================================
+# 6. VISUALIZATION
+# ============================================================================
+print("\n\n6. GENERATING VISUALIZATIONS...")
+print("-"*40)
+
+# Create visualizations
+fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+fig.suptitle('A/B Test Analysis Dashboard', fontsize=16, fontweight='bold')
+
+# Plot 1: Conversion rates with confidence intervals
+axes[0, 0].bar(['Control', 'Treatment'], 
+               [p_control, p_treatment], 
+               color=['#4f46e5', '#10b981'], 
+               alpha=0.7)
+axes[0, 0].errorbar(['Control', 'Treatment'], 
+                    [p_control, p_treatment],
+                    yerr=[(p_control - ci_lower_control), (ci_upper_treatment - p_treatment)],
+                    fmt='none', color='black', capsize=5)
+axes[0, 0].set_title('Conversion Rates with 95% CI', fontweight='bold')
+axes[0, 0].set_ylabel('Conversion Rate')
+axes[0, 0].grid(True, alpha=0.3)
+axes[0, 0].set_ylim([0, max(p_control, p_treatment) * 1.3])
+
+# Plot 2: Revenue distributions
+axes[0, 1].hist(control_df['revenue'], bins=30, alpha=0.5, label='Control', density=True)
+axes[0, 1].hist(treatment_df['revenue'], bins=30, alpha=0.5, label='Treatment', density=True)
+axes[0, 1].set_title('Revenue Distributions', fontweight='bold')
+axes[0, 1].set_xlabel('Revenue ($)')
+axes[0, 1].set_ylabel('Density')
+axes[0, 1].legend()
+axes[0, 1].grid(True, alpha=0.3)
+
+# Plot 3: Statistical significance indicators
+metrics = ['Conversion\nRate', 'Average\nRevenue', 'Session\nDuration']
+p_values = [test_results['conversion_p'], test_results['revenue_p'], test_results['duration_p']]
+colors = ['green' if p < 0.05 else 'red' for p in p_values]
+
+axes[1, 0].bar(metrics, [-np.log10(p) for p in p_values], color=colors)
+axes[1, 0].axhline(y=-np.log10(0.05), color='red', linestyle='--', label='Significance Threshold (p=0.05)')
+axes[1, 0].set_title('Statistical Significance (-log10(p-value))', fontweight='bold')
+axes[1, 0].set_ylabel('-log10(p-value)')
+axes[1, 0].legend()
+axes[1, 0].grid(True, alpha=0.3)
+
+# Plot 4: Cumulative conversions over time (simulated)
+# Simulate daily data
+days = 14
+daily_control = np.random.binomial(n=500, p=p_control, size=days).cumsum()
+daily_treatment = np.random.binomial(n=500, p=p_treatment, size=days).cumsum()
+
+axes[1, 1].plot(range(1, days+1), daily_control, 'b-', label='Control', linewidth=2)
+axes[1, 1].plot(range(1, days+1), daily_treatment, 'g-', label='Treatment', linewidth=2)
+axes[1, 1].set_title('Cumulative Conversions Over Time', fontweight='bold')
+axes[1, 1].set_xlabel('Day')
+axes[1, 1].set_ylabel('Cumulative Conversions')
+axes[1, 1].legend()
+axes[1, 1].grid(True, alpha=0.3)
+
+plt.tight_layout()
+plt.show()
+
+# ============================================================================
+# 7. INTERPRETATION AND DECISION MAKING
+# ============================================================================
+print("\n\n7. INTERPRETATION AND DECISION")
+print("-"*40)
+print("\n" + "="*50)
+print("A/B TEST CONCLUSION")
+print("="*50)
+
+# Make decision based on results
+conversion_sig = test_results['conversion_sig']
+revenue_sig = test_results['revenue_sig']
+duration_sig = test_results['duration_sig']
+
+if conversion_sig:
+    print("✅ CONVERSION RATE: Statistically significant improvement!")
+    print(f"   Control: {p_control:.2%} → Treatment: {p_treatment:.2%}")
+    print(f"   Relative improvement: {((p_treatment/p_control)-1)*100:.1f}%")
+else:
+    print("❌ CONVERSION RATE: No statistically significant difference")
+    print(f"   p-value: {test_results['conversion_p']:.4f}")
+
+if revenue_sig:
+    print("✅ REVENUE: Statistically significant improvement!")
+    rev_diff = treatment_df['revenue'].mean() - control_df['revenue'].mean()
+    print(f"   Revenue increase per user: ${rev_diff:.2f}")
+else:
+    print("❌ REVENUE: No statistically significant difference")
+    print(f"   p-value: {test_results['revenue_p']:.4f}")
+
+print("\n" + "-"*50)
+print("RECOMMENDATION:")
+
+if conversion_sig and revenue_sig:
+    print("🚀 STRONG RECOMMENDATION: IMPLEMENT THE NEW MODEL")
+    print("   - Conversion rate improved significantly")
+    print("   - Revenue increased significantly")
+    print("   - Business impact is positive and measurable")
+elif conversion_sig and not revenue_sig:
+    print("⚠️ CAUTIOUS RECOMMENDATION: Consider implementation")
+    print("   - Conversion improved but revenue didn't increase")
+    print("   - May need to investigate revenue per conversion")
+elif not conversion_sig and revenue_sig:
+    print("⚠️ UNEXPECTED RESULT: Further investigation needed")
+    print("   - Revenue increased but conversion didn't change")
+    print("   - Check for data quality issues")
+else:
+    print("❌ NO RECOMMENDATION: Keep current model")
+    print("   - No statistically significant improvements")
+    print("   - New model doesn't perform better")
+
+print("\n" + "="*50)
+print("KEY LEARNINGS:")
+print("1. Always test statistical significance, not just % differences")
+print("2. Look at multiple metrics (conversion, revenue, engagement)")
+print("3. Consider confidence intervals, not just point estimates")
+print("4. Ensure adequate sample size for reliable results")
+print("5. Document all assumptions and methodology")
+print("="*50)</code></pre>
+          </div>
+        </div>
+        
+        <div class="practice-box">
+          <h5><i class="fa-solid fa-hands"></i> Try It Yourself: Interactive Analysis</h5>
+          <p>Use the Python code above to test different scenarios:</p>
+          <ol>
+            <li>Change the sample size from 5,000 to 500 - what happens to statistical significance?</li>
+            <li>Reduce the improvement from 10% to 2% - can you still detect the difference?</li>
+            <li>Add a third metric (like "time_to_purchase") to the analysis</li>
+            <li>Calculate the minimum sample size needed for your business case</li>
+          </ol>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-list-check"></i> A/B Testing Checklist for ML Projects</h3>
+        
+        <div class="steps">
+          <div class="step">
+            <h4>1. Define Clear Objectives</h4>
+            <p>What exactly are you testing? Be specific!</p>
+            <ul>
+              <li>Primary metric (e.g., conversion rate, accuracy)</li>
+              <li>Secondary metrics (e.g., revenue, user engagement)</li>
+              <li>Success criteria (e.g., 5% improvement with p < 0.05)</li>
+            </ul>
+          </div>
+          
+          <div class="step">
+            <h4>2. Calculate Required Sample Size</h4>
+            <p>Use power analysis to avoid inconclusive results:</p>
+            <div class="formula-box">
+              <p><strong>Formula:</strong> \(n = \frac{(Z_{1-\alpha/2} + Z_{1-\beta})^2 \cdot (p_1(1-p_1) + p_2(1-p_2))}{(p_1 - p_2)^2}\)</p>
+            </div>
+            <table class="data-table">
+              <thead>
+                <tr><th>Baseline</th><th>Minimum Detectable Effect</th><th>Required Sample (per group)</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>5%</td><td>10% relative (5.5%)</td><td>15,400</td></tr>
+                <tr><td>5%</td><td>20% relative (6.0%)</td><td>3,850</td></tr>
+                <tr><td>10%</td><td>10% relative (11%)</td><td>7,700</td></tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="step">
+            <h4>3. Random Assignment</h4>
+            <p>Ensure fair comparison:</p>
+            <ul>
+              <li>Use random number generators</li>
+              <li>Consider stratification for important user segments</li>
+              <li>Avoid time-based biases</li>
+              <li>Check for balance between groups</li>
+            </ul>
+          </div>
+          
+          <div class="step">
+            <h4>4. Run Test & Collect Data</h4>
+            <p>Execute properly:</p>
+            <ul>
+              <li>Run for sufficient duration (usually 1-2 weeks minimum)</li>
+              <li>Monitor for technical issues</li>
+              <li>Don't peek at results too early</li>
+              <li>Ensure data quality throughout</li>
+            </ul>
+          </div>
+          
+          <div class="step">
+            <h4>5. Statistical Analysis</h4>
+            <p>Analyze correctly:</p>
+            <ul>
+              <li>Calculate p-values and confidence intervals</li>
+              <li>Check assumptions of statistical tests</li>
+              <li>Consider multiple comparison corrections if needed</li>
+              <li>Calculate effect sizes (not just significance)</li>
+            </ul>
+          </div>
+          
+          <div class="step">
+            <h4>6. Make Decision & Document</h4>
+            <p>Turn analysis into action:</p>
+            <ul>
+              <li>Interpret results in business context</li>
+              <li>Consider practical significance alongside statistical</li>
+              <li>Document methodology and results</li>
+              <li>Plan rollout if successful</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="success">
+          <i class="fa-solid fa-circle-check"></i>
+          <div>
+            <strong>Pro Tip:</strong> Always report both statistical significance (p-values) AND practical significance 
+            (effect sizes, confidence intervals, business impact). A result can be statistically significant 
+            but not practically important for your business.
+          </div>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-triangle-exclamation"></i> Common A/B Testing Mistakes in ML</h3>
+        
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Mistake</th>
+              <th>Why It's Bad</th>
+              <th>How to Avoid</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Peeking at results early</td>
+              <td>Increases false positive rate</td>
+              <td>Decide sample size upfront, don't stop early</td>
+            </tr>
+            <tr>
+              <td>Testing too many things at once</td>
+              <td>Can't isolate what caused improvement</td>
+              <td>Test one change at a time</td>
+            </tr>
+            <tr>
+              <td>Ignoring seasonal effects</td>
+              <td>Holiday traffic ≠ normal traffic</td>
+              <td>Run tests for full business cycles</td>
+            </tr>
+            <tr>
+              <td>Not checking randomization</td>
+              <td>Groups might be systematically different</td>
+              <td>Validate balance on key metrics</td>
+            </tr>
+            <tr>
+              <td>Only looking at primary metric</td>
+              <td>Might improve one metric but harm others</td>
+              <td>Monitor guardrail metrics</td>
+            </tr>
+            <tr>
+              <td>Using wrong statistical test</td>
+              <td>Invalid conclusions</td>
+              <td>Match test to data type and distribution</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="warning">
+          <i class="fa-solid fa-bug"></i>
+          <div>
+            <strong>Novelty Effect Warning:</strong> When you introduce something new, users might interact with it differently 
+            just because it's new, not because it's better. This effect usually wears off in 1-2 weeks. 
+            Always run A/B tests long enough to capture normal behavior.
+          </div>
+        </div>
+      </section>
+      
+      <section class="section">
+        <h3><i class="fa-solid fa-arrow-right"></i> Next Steps & Practice</h3>
+        
+        <div class="ml-connection">
+          <h5><i class="fa-solid fa-link"></i> Connection to Module 4: Model Evaluation</h5>
+          <p>A/B testing is closely related to ML model evaluation. In the next module, you'll learn:</p>
+          <ul>
+            <li>How to properly split data for training, validation, and testing</li>
+            <li>Cross-validation techniques to evaluate model stability</li>
+            <li>Statistical tests for comparing ML model performance</li>
+            <li>How to set up continuous evaluation of ML models in production</li>
+          </ul>
+        </div>
+        
+        <div class="practice-box">
+          <h5><i class="fa-solid fa-laptop-code"></i> Practice Exercise: E-commerce A/B Test</h5>
+          <p><strong>Scenario:</strong> You work for an e-commerce company. The data science team built a new recommendation algorithm that should increase add-to-cart rate.</p>
+          <p><strong>Your Task:</strong> Design and analyze an A/B test using the Python code template.</p>
+          
+          <h4>Steps to Complete:</h4>
+          <ol>
+            <li>Generate simulated data with 3% baseline add-to-cart rate</li>
+            <li>Assume the new algorithm provides a 15% relative improvement</li>
+            <li>Calculate required sample size for 80% power at α=0.05</li>
+            <li>Run the A/B test simulation</li>
+            <li>Interpret results: Is the improvement statistically significant?</li>
+            <li>Calculate the confidence interval for the improvement</li>
+            <li>Make a business recommendation</li>
+          </ol>
+          
+          <div class="highlight">
+            <p><strong>Expected Output:</strong> You should find that with adequate sample size, a 15% improvement (from 3% to 3.45%) is statistically significant and worth implementing.</p>
+          </div>
+        </div>
+        
+        <div class="success">
+          <i class="fa-solid fa-graduation-cap"></i>
+          <div>
+            <strong>Learning Check:</strong> Can you explain to a non-technical stakeholder why statistical significance matters in A/B testing, 
+            and why a 10% improvement might not always mean you should implement the change?
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <footer>
+      <div class="footer-content">
+        <h4>IAF 604: Machine Learning & Predictive Analytics</h4>
+        <p>Module 3A: Statistics and Sampling for ML | Section 3: A/B Testing</p>
+        
+        <div class="footer-links">
+          <a href="Module3_section2.html"><i class="fa-solid fa-arrow-left"></i> Previous: Descriptive Statistics</a>
+          <a href="Module3_section4.html">Next: Outlier Detection <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="index.html"><i class="fa-solid fa-house"></i> Back to Main Module</a>
+        </div>
+        
+        <p style="margin-top: 20px; color: #cbd5e1; font-size: 14px;">
+          © 2024 Department of Informatics and Analytics — Educational Material<br>
+          Instructor: Ali Noori | University of North Carolina at Greensboro
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // Toggle code blocks
+    function toggleCode(codeId) {
+      const codeContent = document.getElementById(codeId);
+      const toggleBtn = codeContent.previousElementSibling.querySelector('.toggle-btn i');
+      
+      if (codeContent.classList.contains('expanded')) {
+        codeContent.classList.remove('expanded');
+        toggleBtn.classList.remove('fa-chevron-up');
+        toggleBtn.classList.add('fa-chevron-down');
+      } else {
+        codeContent.classList.add('expanded');
+        toggleBtn.classList.remove('fa-chevron-down');
+        toggleBtn.classList.add('fa-chevron-up');
+      }
+    }
+    
+    // Initialize MathJax
+    if (window.MathJax) {
+      MathJax.typesetPromise();
+    }
+    
+    // Add smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        if (targetId === '#') return;
+        
+        const targetElement = document.querySelector(targetId);
+        if (targetElement) {
+          window.scrollTo({
+            top: targetElement.offsetTop - 80,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+    
+    // Add syntax highlighting for code blocks
+    function highlightPythonCode() {
+      const codeBlocks = document.querySelectorAll('pre code');
+      const pythonKeywords = [
+        'import', 'from', 'as', 'def', 'return', 'class', 'if', 'elif', 'else',
+        'for', 'in', 'while', 'break', 'continue', 'try', 'except', 'finally',
+        'with', 'as', 'lambda', 'yield', 'assert', 'raise', 'global', 'nonlocal',
+        'True', 'False', 'None', 'and', 'or', 'not', 'is', 'del', 'pass'
+      ];
+      
+      codeBlocks.forEach(block => {
+        let code = block.textContent;
+        
+        // Highlight keywords
+        pythonKeywords.forEach(keyword => {
+          const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+          code = code.replace(regex, `<span class="keyword">${keyword}</span>`);
+        });
+        
+        // Highlight strings
+        code = code.replace(/(['"])(.*?)\1/g, '<span class="string">$1$2$1</span>');
+        
+        // Highlight comments
+        code = code.replace(/(#.*$)/gm, '<span class="comment">$1</span>');
+        
+        // Highlight numbers
+        code = code.replace(/\b(\d+\.?\d*)\b/g, '<span class="number">$1</span>');
+        
+        block.innerHTML = code;
+      });
+    }
+    
+    // Add CSS for syntax highlighting
+    const style = document.createElement('style');
+    style.textContent = `
+      .keyword { color: #ff79c6; font-weight: bold; }
+      .string { color: #f1fa8c; }
+      .comment { color: #6272a4; font-style: italic; }
+      .number { color: #bd93f9; }
+      .function { color: #50fa7b; }
+    `;
+    document.head.appendChild(style);
+    
+    // Run when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+      highlightPythonCode();
+      
+      // Expand first code block by default
+      const firstCodeBlock = document.querySelector('.code-content');
+      if (firstCodeBlock) {
+        firstCodeBlock.classList.add('expanded');
+        const toggleBtn = firstCodeBlock.previousElementSibling.querySelector('.toggle-btn i');
+        if (toggleBtn) {
+          toggleBtn.classList.remove('fa-chevron-down');
+          toggleBtn.classList.add('fa-chevron-up');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
