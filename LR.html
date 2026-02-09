@@ -758,6 +758,173 @@
     }
 
     /************************************************************
+     * TIMELINE STYLES
+     ************************************************************/
+    .timeline {
+      position: relative;
+      max-width: 1200px;
+      margin: 40px auto;
+    }
+
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--primary), var(--secondary));
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -2px;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .timeline::after {
+        left: 31px;
+      }
+    }
+
+    .timeline-item {
+      padding: 10px 40px;
+      position: relative;
+      width: 50%;
+      box-sizing: border-box;
+      margin: 20px 0;
+    }
+
+    .timeline-item:nth-child(odd) {
+      left: 0;
+    }
+
+    .timeline-item:nth-child(even) {
+      left: 50%;
+    }
+
+    @media (max-width: 768px) {
+      .timeline-item {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+      }
+      .timeline-item:nth-child(even) {
+        left: 0;
+      }
+    }
+
+    .timeline-content {
+      padding: 20px;
+      background: var(--panel2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .timeline-content:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: var(--primary);
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      right: -10px;
+      background: var(--panel2);
+      border: 2px solid var(--primary);
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+      border-radius: 3px;
+    }
+
+    .timeline-item:nth-child(even) .timeline-content::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: -10px;
+      background: var(--panel2);
+      border: 2px solid var(--primary);
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+      border-radius: 3px;
+    }
+
+    @media (max-width: 768px) {
+      .timeline-content::after {
+        left: -10px !important;
+        right: auto !important;
+      }
+    }
+
+    .timeline-icon {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      z-index: 1;
+      top: 50%;
+      transform: translateY(-50%);
+      right: -20px;
+    }
+
+    .timeline-item:nth-child(even) .timeline-icon {
+      left: -20px;
+      right: auto;
+    }
+
+    @media (max-width: 768px) {
+      .timeline-icon {
+        left: 21px !important;
+        right: auto !important;
+      }
+    }
+
+    .timeline-date {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .timeline-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .timeline-description {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tech-tag {
+      padding: 4px 10px;
+      background: rgba(96, 165, 250, 0.1);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--primary);
+      font-family: var(--mono);
+    }
+
+    /************************************************************
      * FOOTER
      ************************************************************/
     footer {
@@ -863,7 +1030,7 @@
     <header>
       <div class="course-info">
         <h1>Module 4: Linear Algebra & Linear Regression</h1>
-        <h2>Mathematics for Machine Learning - Complete Foundation with Step-by-Step Calculations</h2>
+        <h2>Mathematics for Machine Learning </h2>
         <div class="badge"><i class="fas fa-calculator"></i> IAF 604: From Theory to Implementation</div>
         <p style="margin-top: 15px; color: var(--muted);">
           Every formula explained with numerical examples. Interactive visualizations with detailed step-by-step calculations.
@@ -1745,70 +1912,114 @@
       </div>
 
       <div class="panel section">
-        <h3><i class="fas fa-graduation-cap"></i> 5.2 Learning Progression Timeline</h3>
+        <h3><i class="fas fa-road"></i> 5.2 Real-World ML Project Journey</h3>
         
-        <table class="detailed-table">
-          <thead>
-            <tr>
-              <th>Week</th>
-              <th>Math Concept</th>
-              <th>ML Application</th>
-              <th>Key Formula</th>
-              <th>Assessment</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1-2</td>
-              <td>Vectors & Dot Products</td>
-              <td>Similarity measures, k-NN</td>
-              <td>a·b = Σaᵢbᵢ</td>
-              <td>Quiz 1</td>
-            </tr>
-            <tr>
-              <td>3-4</td>
-              <td>Matrix Operations</td>
-              <td>Linear regression, PCA</td>
-              <td>y = Xβ</td>
-              <td>Assignment 1</td>
-            </tr>
-            <tr>
-              <td>5-6</td>
-              <td>Gradients & Optimization</td>
-              <td>Gradient descent</td>
-              <td>w ← w - α∇L</td>
-              <td>Midterm</td>
-            </tr>
-            <tr>
-              <td>7-8</td>
-              <td>Eigen Decomposition</td>
-              <td>PCA, Dimensionality reduction</td>
-              <td>Av = λv</td>
-              <td>Project 1</td>
-            </tr>
-            <tr>
-              <td>9-10</td>
-              <td>Probability & Stats</td>
-              <td>Bayesian methods, Naive Bayes</td>
-              <td>P(A|B) = P(B|A)P(A)/P(B)</td>
-              <td>Quiz 2</td>
-            </tr>
-            <tr>
-              <td>11-12</td>
-              <td>Information Theory</td>
-              <td>Decision trees, Random forests</td>
-              <td>H(X) = -Σp(x)log p(x)</td>
-              <td>Final Project</td>
-            </tr>
-            <tr>
-              <td>13-14</td>
-              <td>Neural Networks</td>
-              <td>Backpropagation, Deep Learning</td>
-              <td>δⱼ = σ'(zⱼ)Σδₖwⱼₖ</td>
-              <td>Final Exam</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="timeline">
+          <!-- Phase 1 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-search"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Phase 1: Problem Definition</div>
+              <div class="timeline-title">Business Understanding & Data Collection</div>
+              <div class="timeline-description">
+                Define the business problem, identify success metrics, and gather relevant data from various sources (databases, APIs, files).
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">SQL</span>
+                <span class="tech-tag">APIs</span>
+                <span class="tech-tag">Business Analysis</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Phase 2 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-broom"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Phase 2: Data Preparation</div>
+              <div class="timeline-title">Cleaning & Feature Engineering</div>
+              <div class="timeline-description">
+                Handle missing values, detect outliers, normalize features, and create new features from existing data using domain knowledge.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">Pandas</span>
+                <span class="tech-tag">NumPy</span>
+                <span class="tech-tag">Scikit-learn</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Phase 3 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Phase 3: Model Development</div>
+              <div class="timeline-title">Algorithm Selection & Training</div>
+              <div class="timeline-description">
+                Choose appropriate algorithms, split data into training/validation sets, train models, and tune hyperparameters.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">Linear Regression</span>
+                <span class="tech-tag">Decision Trees</span>
+                <span class="tech-tag">Cross-validation</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Phase 4 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-tachometer-alt"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Phase 4: Evaluation</div>
+              <div class="timeline-title">Performance Metrics & Validation</div>
+              <div class="timeline-description">
+                Evaluate models using appropriate metrics (R², MSE, RMSE), conduct statistical tests, and validate on unseen test data.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">Metrics</span>
+                <span class="tech-tag">Statistical Tests</span>
+                <span class="tech-tag">A/B Testing</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Phase 5 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-rocket"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Phase 5: Deployment</div>
+              <div class="timeline-title">Production & Monitoring</div>
+              <div class="timeline-description">
+                Deploy model as API or service, set up monitoring for performance drift, and establish retraining pipeline.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">FastAPI</span>
+                <span class="tech-tag">Docker</span>
+                <span class="tech-tag">MLflow</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="info-box info" style="margin-top: 30px;">
+          <h4><i class="fas fa-lightbulb"></i> Key Insights</h4>
+          <ul style="color: var(--muted); padding-left: 20px;">
+            <li><strong>80/20 Rule:</strong> 80% of time is spent on data preparation, 20% on modeling</li>
+            <li><strong>Iterative Process:</strong> ML projects require continuous refinement and improvement</li>
+            <li><strong>Business Focus:</strong> The best model is useless if it doesn't solve a business problem</li>
+            <li><strong>Monitoring is Critical:</strong> Models decay over time as data distributions change</li>
+          </ul>
+        </div>
       </div>
 
       <div class="panel section">
@@ -1878,8 +2089,7 @@
     </div>
 
     <footer>
-      Module 4: IAF 604 Mathematics for Machine Learning | Linear Algebra & Linear Regression<br/>
-      Complete foundation with step-by-step numerical examples | © 2024
+      Module 3B: IAF 604 Mathematics for Machine Learning | Linear Algebra & Linear Regression<br/>
     </footer>
   </div>
 
