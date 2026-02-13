@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  <!-- Include Base Template - Note: This assumes base.html is in the same directory -->
+  <!-- In a real implementation, you'd use a template engine or copy the base content -->
+  <!-- For now, we'll create a self-contained file that follows the base structure -->
+  
+  <title>Module 5: Supervised Machine Learning - Regression</title>
+  
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+  <!-- MathJax -->
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    /************************************************************
+     * THEME: Aurora with Day/Night Mode - CORE SYSTEM
+     * (Copied from base.html for self-contained file)
+     ************************************************************/
+    :root {
+      /* Night Mode (Default) */
+      --bg0: #070A12;
+      --bg1: #0B1020;
+      --panel: #0F172A;
+      --panel2: #0B1226;
+      --card: #101B34;
+      --text: #EAF0FF;
+      --muted: rgba(234, 240, 255, 0.75);
+      --muted2: rgba(234, 240, 255, 0.62);
+      --border: rgba(148, 163, 184, 0.14);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+
+      --primary: #60A5FA;
+      --secondary: #A78BFA;
+      --accent: #F472B6;
+      --success: #34D399;
+      --warning: #FBBF24;
+      --danger: #FB7185;
+      --cyan: #22D3EE;
+
+      --radius: 16px;
+      --radius2: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --ring: 0 0 0 4px rgba(96, 165, 250, 0.22);
+      --ring2: 0 0 0 4px rgba(167, 139, 250, 0.20);
+
+      /* Theme toggle variables */
+      --mode-icon: '\f186'; /* moon */
+      --mode-label: 'Night Mode';
+    }
+
+    /* Day Mode Theme */
+    [data-theme="day"] {
+      --bg0: #F8FAFC;
+      --bg1: #F1F5F9;
+      --panel: #FFFFFF;
+      --panel2: #F8FAFC;
+      --card: #FFFFFF;
+      --text: #0F172A;
+      --muted: rgba(15, 23, 42, 0.75);
+      --muted2: rgba(15, 23, 42, 0.62);
+      --border: rgba(148, 163, 184, 0.25);
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+
+      --primary: #2563EB;
+      --secondary: #7C3AED;
+      --accent: #DB2777;
+      --success: #10B981;
+      --warning: #F59E0B;
+      --danger: #EF4444;
+      --cyan: #06B6D4;
+
+      --ring: 0 0 0 4px rgba(37, 99, 235, 0.15);
+      --ring2: 0 0 0 4px rgba(124, 58, 237, 0.15);
+
+      --mode-icon: '\f185'; /* sun */
+      --mode-label: 'Day Mode';
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: var(--bg0);
+      color: var(--text);
+      line-height: 1.7;
+      min-height: 100vh;
+      transition: background-color 0.35s ease, color 0.35s ease;
+      overflow-x: hidden;
+    }
+
+    /* Dynamic background gradients */
+    body:not([data-theme="day"]) {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(96, 165, 250, 0.18), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(244, 114, 182, 0.16), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(34, 211, 238, 0.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    body[data-theme="day"] {
+      background:
+        radial-gradient(1200px 520px at 15% 0%, rgba(37, 99, 235, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 90% 10%, rgba(219, 39, 119, 0.08), transparent 55%),
+        radial-gradient(900px 520px at 75% 90%, rgba(6, 182, 212, 0.06), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 22px; }
+
+    /************************************************************
+     * THEME TOGGLE - Reusable Component
+     ************************************************************/
+    .theme-toggle-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 50px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      backdrop-filter: blur(10px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: none;
+      font-family: inherit;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .theme-toggle::before {
+      content: var(--mode-icon);
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      font-size: 1.1em;
+    }
+
+    .theme-toggle .label {
+      font-size: 0.9em;
+      opacity: 0.9;
+      white-space: nowrap;
+    }
+
+    /************************************************************
+     * HEADER - Module 5 Specific
+     ************************************************************/
+    header {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.90), rgba(16, 27, 52, 0.92));
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      color: var(--text);
+      padding: 28px;
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    body[data-theme="day"] header {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .course-info h1 {
+      font-size: clamp(24px, 2.8vw, 38px);
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .course-info h2 {
+      font-size: clamp(16px, 1.8vw, 20px);
+      font-weight: 400;
+      opacity: 0.9;
+      margin-bottom: 12px;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      width: fit-content;
+      margin-top: 10px;
+    }
+
+    /************************************************************
+     * NAVIGATION - Module 5 Specific
+     ************************************************************/
+    .module-nav {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 50px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      border: none;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: var(--ring);
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+    }
+
+    /************************************************************
+     * MODULE CONTENT SYSTEM
+     ************************************************************/
+    .module-content {
+      display: none;
+    }
+
+    .module-content.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /************************************************************
+     * CORE UI COMPONENTS - From base.html
+     ************************************************************/
+    .panel {
+      background: var(--panel);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 24px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .panel:hover {
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .section {
+      padding: 24px;
+    }
+
+    .section h3 {
+      color: var(--text);
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section h4 {
+      color: var(--text);
+      margin: 20px 0 12px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section p {
+      margin-bottom: 15px;
+      color: var(--muted);
+    }
+
+    .info-box {
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin: 20px 0;
+    }
+
+    .info-box.warning {
+      border-left: 4px solid var(--warning);
+      background: rgba(251, 191, 36, 0.08);
+    }
+
+    .info-box.success {
+      border-left: 4px solid var(--success);
+      background: rgba(52, 211, 153, 0.08);
+    }
+
+    .info-box.danger {
+      border-left: 4px solid var(--danger);
+      background: rgba(251, 113, 133, 0.08);
+    }
+
+    .info-box.info {
+      border-left: 4px solid var(--primary);
+      background: rgba(96, 165, 250, 0.08);
+    }
+
+    .info-box h4 {
+      color: var(--text);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /************************************************************
+     * REGRESSION VISUALIZATION - Module 5 Specific
+     ************************************************************/
+    .regression-container {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 1100px) {
+      .regression-container { grid-template-columns: 1fr; }
+    }
+
+    .regression-chart {
+      height: 400px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .regression-controls {
+      padding: 20px;
+      background: var(--panel2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+    }
+
+    .control-group {
+      margin-bottom: 24px;
+    }
+
+    .control-group h4 {
+      color: var(--text);
+      margin-bottom: 16px;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .slider-container label {
+      min-width: 160px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      outline: none;
+      accent-color: var(--primary);
+    }
+
+    .slider-value {
+      min-width: 50px;
+      text-align: right;
+      font-family: var(--mono);
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /************************************************************
+     * ALGORITHM COMPARISON CARDS
+     ************************************************************/
+    .algorithm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .algorithm-card {
+      background: var(--panel2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      transition: transform 0.2s ease;
+    }
+
+    .algorithm-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+    }
+
+    .algorithm-header {
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(167, 139, 250, 0.1));
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .algorithm-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .algorithm-title {
+      flex: 1;
+    }
+
+    .algorithm-title h4 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--text);
+    }
+
+    .algorithm-title p {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .algorithm-body {
+      padding: 16px;
+    }
+
+    .algorithm-metric {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .algorithm-metric span:last-child {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .algorithm-progress {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 8px 0 16px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    /************************************************************
+     * CODE EDITOR STYLES
+     ************************************************************/
+    .code-editor-container {
+      margin: 20px 0;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .code-header {
+      background: var(--panel);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .code-title {
+      font-weight: 600;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .code-body {
+      background: var(--panel2);
+      padding: 0;
+      overflow: auto;
+    }
+
+    .code-block {
+      font-family: var(--mono);
+      font-size: 14px;
+      line-height: 1.6;
+      padding: 20px;
+      margin: 0;
+      tab-size: 2;
+      white-space: pre-wrap;
+      min-height: 200px;
+    }
+
+    .code-block code {
+      display: block;
+      color: var(--text);
+    }
+
+    .keyword { color: var(--danger); }
+    .function { color: var(--primary); }
+    .string { color: var(--success); }
+    .comment { color: var(--muted2); font-style: italic; }
+    .number { color: var(--warning); }
+    .operator { color: var(--cyan); }
+
+    /************************************************************
+     * METRICS DISPLAY
+     ************************************************************/
+    .metrics-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 1100px) {
+      .metrics-container { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .metrics-container { grid-template-columns: 1fr; }
+    }
+
+    .metric-card {
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin: 10px 0;
+    }
+
+    .metric-label {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-good { color: var(--success); }
+    .metric-warning { color: var(--warning); }
+    .metric-danger { color: var(--danger); }
+
+    /************************************************************
+     * DETAILED TABLES
+     ************************************************************/
+    .detailed-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      margin: 16px 0;
+      font-size: 13px;
+    }
+
+    .detailed-table th, .detailed-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+    }
+
+    .detailed-table th {
+      background: var(--panel);
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .detailed-table td {
+      color: var(--text);
+      font-family: var(--mono);
+    }
+
+    .detailed-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .highlight-cell {
+      background: rgba(96, 165, 250, 0.1);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /************************************************************
+     * BUTTONS
+     ************************************************************/
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: var(--panel);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: var(--ring);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    /************************************************************
+     * CONCEPT CARDS
+     ************************************************************/
+    .concept-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .concept-card {
+      padding: 20px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      transition: transform 0.2s ease;
+    }
+
+    .concept-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+    }
+
+    .concept-card h5 {
+      color: var(--text);
+      margin-bottom: 12px;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .concept-card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /************************************************************
+     * TIMELINE STYLES
+     ************************************************************/
+    .timeline {
+      position: relative;
+      max-width: 1200px;
+      margin: 40px auto;
+    }
+
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      background: linear-gradient(to bottom, var(--primary), var(--secondary));
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -2px;
+      border-radius: 2px;
+    }
+
+    @media (max-width: 768px) {
+      .timeline::after {
+        left: 31px;
+      }
+    }
+
+    .timeline-item {
+      padding: 10px 40px;
+      position: relative;
+      width: 50%;
+      box-sizing: border-box;
+      margin: 20px 0;
+    }
+
+    .timeline-item:nth-child(odd) {
+      left: 0;
+    }
+
+    .timeline-item:nth-child(even) {
+      left: 50%;
+    }
+
+    @media (max-width: 768px) {
+      .timeline-item {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+      }
+      .timeline-item:nth-child(even) {
+        left: 0;
+      }
+    }
+
+    .timeline-content {
+      padding: 20px;
+      background: var(--panel2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      position: relative;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .timeline-content:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow);
+      border-color: var(--primary);
+    }
+
+    .timeline-item:nth-child(odd) .timeline-content::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      right: -10px;
+      background: var(--panel2);
+      border: 2px solid var(--primary);
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+      border-radius: 3px;
+    }
+
+    .timeline-item:nth-child(even) .timeline-content::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: -10px;
+      background: var(--panel2);
+      border: 2px solid var(--primary);
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+      border-radius: 3px;
+    }
+
+    @media (max-width: 768px) {
+      .timeline-content::after {
+        left: -10px !important;
+        right: auto !important;
+      }
+    }
+
+    .timeline-icon {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      z-index: 1;
+      top: 50%;
+      transform: translateY(-50%);
+      right: -20px;
+    }
+
+    .timeline-item:nth-child(even) .timeline-icon {
+      left: -20px;
+      right: auto;
+    }
+
+    @media (max-width: 768px) {
+      .timeline-icon {
+        left: 21px !important;
+        right: auto !important;
+      }
+    }
+
+    .timeline-date {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .timeline-title {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .timeline-description {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tech-tag {
+      padding: 4px 10px;
+      background: rgba(96, 165, 250, 0.1);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--primary);
+      font-family: var(--mono);
+    }
+
+    /************************************************************
+     * LIBRARY BADGES
+     ************************************************************/
+    .library-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      margin: 2px;
+    }
+
+    .sklearn-badge { background: rgba(231, 76, 60, 0.1); color: #E74C3C; border: 1px solid rgba(231, 76, 60, 0.3); }
+    .xgb-badge { background: rgba(0, 102, 102, 0.1); color: #006666; border: 1px solid rgba(0, 102, 102, 0.3); }
+    .rf-badge { background: rgba(39, 174, 96, 0.1); color: #27AE60; border: 1px solid rgba(39, 174, 96, 0.3); }
+
+    /************************************************************
+     * UTILITY CLASSES
+     ************************************************************/
+    .highlight {
+      background: rgba(96, 165, 250, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .math-equation {
+      font-family: "Times New Roman", serif;
+      font-style: italic;
+      font-size: 1.1em;
+    }
+
+    .formula-box {
+      background: rgba(15, 23, 42, 0.1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      font-family: var(--mono);
+      text-align: center;
+      position: relative;
+    }
+
+    .formula-label {
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      background: var(--panel);
+      padding: 0 10px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .formula-with-calc {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+      .formula-with-calc {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .numeric-example {
+      font-family: var(--mono);
+      background: rgba(15, 23, 42, 0.15);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border: 1px solid var(--border);
+    }
+
+    body[data-theme="day"] .numeric-example {
+      background: rgba(15, 23, 42, 0.05);
+    }
+
+    .example-title {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /************************************************************
+     * FOOTER
+     ************************************************************/
+    footer {
+      text-align: center;
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted2);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+  </style>
+
+  <!-- Module-specific CSS -->
+  <style>
+    /* Module 5 specific styles */
+    .regression-highlight {
+      border-left: 4px solid var(--accent);
+      padding-left: 20px;
+      margin: 20px 0;
+    }
+    
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    
+    .comparison-table th {
+      background: var(--primary);
+      color: white;
+      padding: 12px;
+    }
+    
+    .comparison-table td {
+      padding: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+  </style>
+</head>
+
+<body data-theme="night">
+  <!-- Theme Toggle -->
+  <div class="theme-toggle-container">
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme">
+      <span class="label" id="themeLabel">Night Mode</span>
+    </button>
+  </div>
+
+  <div class="container">
+    <!-- Header - Module 5 Specific -->
+    <header>
+      <div class="course-info">
+        <h1>Module 5: Supervised Machine Learning - Regression</h1>
+        <h2>From Linear Models to Advanced Ensemble Methods - Complete Guide with Scikit-learn</h2>
+        <div class="badge"><i class="fas fa-chart-line"></i> IAF 604: Predicting Continuous Values with Confidence</div>
+        <p style="margin-top: 15px; color: var(--muted);">
+          Master regression algorithms: Linear Regression, Decision Trees, Random Forest, XGBoost, and Neural Networks. 
+          Learn when to use each, how to evaluate them, and how to tune them for peak performance.
+        </p>
+      </div>
+    </header>
+
+    <!-- Navigation - Module 5 Specific -->
+    <div class="module-nav">
+      <button class="nav-btn active" data-module="intro">
+        <i class="fas fa-graduation-cap"></i> 1. Introduction
+      </button>
+      <button class="nav-btn" data-module="linear">
+        <i class="fas fa-chart-line"></i> 2. Linear Models
+      </button>
+      <button class="nav-btn" data-module="tree">
+        <i class="fas fa-tree"></i> 3. Tree-Based
+      </button>
+      <button class="nav-btn" data-module="ensemble">
+        <i class="fas fa-layer-group"></i> 4. Ensemble
+      </button>
+      <button class="nav-btn" data-module="evaluation">
+        <i class="fas fa-clipboard-check"></i> 5. Evaluation
+      </button>
+      <button class="nav-btn" data-module="hands-on">
+        <i class="fas fa-laptop-code"></i> 6. Hands-On
+      </button>
+    </div>
+
+    <!-- ================================================
+         SECTION 1: INTRODUCTION TO REGRESSION
+    ================================================= -->
+    <div id="intro" class="module-content active">
+      <div class="panel section">
+        <h3><i class="fas fa-question-circle"></i> 1.1 What is Regression?</h3>
+        
+        <div class="info-box info">
+          <h4><i class="fas fa-lightbulb"></i> Core Concept</h4>
+          <p><strong>Regression</strong> is a supervised learning technique used to predict <span class="highlight">continuous numerical values</span>. Unlike classification that predicts categories, regression answers "how much?" or "how many?"</p>
+        </div>
+
+        <div class="concept-grid">
+          <div class="concept-card">
+            <h5><i class="fas fa-home"></i> House Price Prediction</h5>
+            <p><strong>Problem:</strong> Predict sale price of a home</p>
+            <p><strong>Features:</strong> Square footage, bedrooms, location, age</p>
+            <p><strong>Output:</strong> $450,000 (continuous value)</p>
+          </div>
+          <div class="concept-card">
+            <h5><i class="fas fa-chart-bar"></i> Stock Market Forecasting</h5>
+            <p><strong>Problem:</strong> Predict tomorrow's stock price</p>
+            <p><strong>Features:</strong> Historical prices, volume, news sentiment</p>
+            <p><strong>Output:</strong> $152.34 (continuous value)</p>
+          </div>
+          <div class="concept-card">
+            <h5><i class="fas fa-thermometer-half"></i> Temperature Prediction</h5>
+            <p><strong>Problem:</strong> Predict tomorrow's high temperature</p>
+            <p><strong>Features:</strong> Historical temps, humidity, pressure</p>
+            <p><strong>Output:</strong> 23.5°C (continuous value)</p>
+          </div>
+        </div>
+
+        <div class="formula-with-calc">
+          <div class="formula-box">
+            <div class="formula-label">Regression Formula</div>
+            <div style="text-align: left; padding: 15px;">
+              <strong>General Form:</strong><br>
+              <span class="math-equation">y = f(X) + ε</span><br><br>
+              Where:<br>
+              • <strong>y</strong> = target variable (continuous)<br>
+              • <strong>X</strong> = feature matrix<br>
+              • <strong>f</strong> = function mapping features to target<br>
+              • <strong>ε</strong> = random error term
+            </div>
+          </div>
+          
+          <div class="numeric-example">
+            <div class="example-title"><i class="fas fa-calculator"></i> Real-World Example</div>
+            <strong>House Price Dataset:</strong><br>
+            <table class="detailed-table" style="font-size: 12px;">
+              <tr><th>SqFt</th><th>Bedrooms</th><th>Bathrooms</th><th>Age</th><th>Price ($)</th></tr>
+              <tr><td>1,200</td><td>3</td><td>2</td><td>10</td><td>250,000</td></tr>
+              <tr><td>1,800</td><td>4</td><td>3</td><td>5</td><td>450,000</td></tr>
+              <tr><td>950</td><td>2</td><td>1</td><td>20</td><td>180,000</td></tr>
+            </table>
+            <p style="margin-top: 10px;"><strong>Task:</strong> Given these features, predict the price → <span class="highlight">continuous output</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section">
+        <h3><i class="fas fa-sitemap"></i> 1.2 Regression vs Classification</h3>
+        
+        <table class="detailed-table">
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Regression</th>
+              <th>Classification</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Output Type</strong></td>
+              <td>Continuous numbers</td>
+              <td>Discrete categories</td>
+            </tr>
+            <tr>
+              <td><strong>Example</strong></td>
+              <td>Price: $250,000</td>
+              <td>Class: "Expensive" or "Cheap"</td>
+            </tr>
+            <tr>
+              <td><strong>Loss Function</strong></td>
+              <td>MSE, MAE, RMSE</td>
+              <td>Cross-entropy, Hinge loss</td>
+            </tr>
+            <tr>
+              <td><strong>Evaluation</strong></td>
+              <td>R², Adjusted R²</td>
+              <td>Accuracy, Precision, Recall</td>
+            </tr>
+            <tr>
+              <td><strong>Algorithms</strong></td>
+              <td>Linear Regression, Random Forest Regressor</td>
+              <td>Logistic Regression, Random Forest Classifier</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="info-box warning" style="margin-top: 20px;">
+          <h4><i class="fas fa-exclamation-triangle"></i> Critical Distinction</h4>
+          <p>Never use classification metrics (accuracy) for regression problems! They don't measure how close your predictions are to actual values.</p>
+        </div>
+      </div>
+
+      <div class="panel section">
+        <h3><i class="fas fa-road"></i> 1.3 The Regression Workflow</h3>
+        
+        <div class="timeline">
+          <!-- Step 1 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-database"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Step 1: Data Preparation</div>
+              <div class="timeline-title">Clean, scale, and split data</div>
+              <div class="timeline-description">
+                Handle missing values, encode categories, scale features, and split into train/test sets.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">Pandas</span>
+                <span class="tech-tag">Scikit-learn</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 2 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-cogs"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Step 2: Model Selection</div>
+              <div class="timeline-title">Choose appropriate algorithm</div>
+              <div class="timeline-description">
+                Start simple (linear), then try complex models based on data complexity.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">Linear</span>
+                <span class="tech-tag">Tree</span>
+                <span class="tech-tag">Ensemble</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 3 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Step 3: Training</div>
+              <div class="timeline-title">Fit model to training data</div>
+              <div class="timeline-description">
+                Learn patterns from training data. For linear models, find optimal coefficients.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">fit()</span>
+                <span class="tech-tag">Gradient Descent</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 4 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-clipboard-check"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Step 4: Evaluation</div>
+              <div class="timeline-title">Measure performance</div>
+              <div class="timeline-description">
+                Use R², MSE, RMSE, MAE on test data to assess generalization.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">R²</span>
+                <span class="tech-tag">MSE</span>
+                <span class="tech-tag">RMSE</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 5 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-sliders-h"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Step 5: Hyperparameter Tuning</div>
+              <div class="timeline-title">Optimize model parameters</div>
+              <div class="timeline-description">
+                Use GridSearchCV or RandomSearchCV to find best hyperparameters.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">GridSearchCV</span>
+                <span class="tech-tag">Cross-validation</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Step 6 -->
+          <div class="timeline-item">
+            <div class="timeline-icon">
+              <i class="fas fa-rocket"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-date">Step 6: Deployment</div>
+              <div class="timeline-title">Put model into production</div>
+              <div class="timeline-description">
+                Save model, create API, monitor performance drift.
+              </div>
+              <div class="tech-stack">
+                <span class="tech-tag">joblib</span>
+                <span class="tech-tag">FastAPI</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================
+         SECTION 2: LINEAR MODELS
+    ================================================= -->
+    <div id="linear" class="module-content">
+      <div class="panel section">
+        <h3><i class="fas fa-chart-line"></i> 2.1 Linear Regression - The Foundation</h3>
+        
+        <div class="info-box info">
+          <h4><i class="fas fa-lightbulb"></i> Core Idea</h4>
+          <p>Linear regression assumes a <span class="highlight">linear relationship</span> between features and target: <span class="math-equation">y = β₀ + β₁x₁ + β₂x₂ + ... + βₚxₚ + ε</span></p>
+        </div>
+
+        <div class="regression-container">
+          <div class="regression-chart">
+            <canvas id="linearChart"></canvas>
+          </div>
+          
+          <div class="regression-controls">
+            <div class="control-group">
+              <h4><i class="fas fa-sliders-h"></i> Linear Regression Demo</h4>
+              <div class="slider-container">
+                <label>Noise Level:</label>
+                <input type="range" id="noiseLevel" min="0" max="50" step="5" value="20">
+                <span class="slider-value" id="noiseLevelValue">20</span>
+              </div>
+              <div class="slider-container">
+                <label>Sample Size:</label>
+                <input type="range" id="sampleSize" min="20" max="200" step="10" value="100">
+                <span class="slider-value" id="sampleSizeValue">100</span>
+              </div>
+            </div>
+            
+            <div class="button-group">
+              <button class="btn btn-primary" onclick="generateLinearData()">
+                <i class="fas fa-sync"></i> Generate New Data
+              </button>
+            </div>
+
+            <div class="metrics-container" style="margin-top: 20px;">
+              <div class="metric-card">
+                <div class="metric-label">True Slope</div>
+                <div class="metric-value" id="trueSlope">2.5</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Estimated Slope</div>
+                <div class="metric-value" id="estSlope">0.00</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">R² Score</div>
+                <div class="metric-value" id="lrR2">0.00</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">MSE</div>
+                <div class="metric-value" id="lrMSE">0.00</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-editor-container" style="margin-top: 20px;">
+          <div class="code-header">
+            <div class="code-title">
+              <i class="fab fa-python"></i> Scikit-learn Implementation
+            </div>
+            <span class="library-badge sklearn-badge"><i class="fas fa-brain"></i> Scikit-learn</span>
+          </div>
+          <div class="code-body">
+            <pre class="code-block"><code><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error, r2_score
+
+<span class="comment"># Split data</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, <span class="function">test_size</span>=<span class="number">0.2</span>, <span class="function">random_state</span>=<span class="number">42</span>
+)
+
+<span class="comment"># Create and train model</span>
+model = LinearRegression()
+model.<span class="function">fit</span>(X_train, y_train)
+
+<span class="comment"># Make predictions</span>
+y_pred = model.<span class="function">predict</span>(X_test)
+
+<span class="comment"># Evaluate</span>
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+<span class="keyword">print</span>(<span class="string">f"R² Score: {r2:.3f}"</span>)
+<span class="keyword">print</span>(<span class="string">f"MSE: {mse:.3f}"</span>)
+<span class="keyword">print</span>(<span class="string">f"Coefficients: {model.coef_}"</span>)
+<span class="keyword">print</span>(<span class="string">f"Intercept: {model.intercept_:.3f}"</span>)</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel section">
+        <h3><i class="fas fa-exclamation-triangle"></i> 2.2 Regularized Linear Models</h3>
+        
+        <div class="info-box warning">
+          <h4><i class="fas fa-fire"></i> The Overfitting Problem</h4>
+          <p>Linear regression can overfit when there are many features or multicollinearity. Regularization adds a penalty to keep coefficients small.</p>
+        </div>
+
+        <div class="algorithm-grid">
+          <!-- Ridge -->
+          <div class="algorithm-card">
+            <div class="algorithm-header">
+              <div class="algorithm-icon">
+                <i class="fas fa-mountain"></i>
+              </div>
+              <div class="algorithm-title">
+                <h4>Ridge Regression</h4>
+                <p>L2 Regularization</p>
+              </div>
+            </div>
+            <div class="algorithm-body">
+              <div class="algorithm-metric">
+                <span>Formula:</span>
+                <span class="math-equation">MSE + λΣβⱼ²</span>
+              </div>
+              <div class="algorithm-metric">
+                <span>Effect:</span>
+                <span>Shrinks coefficients</span>
+              </div>
+              <div class="algorithm-progress">
+                <div class="progress-bar" style="width: 85%"></div>
+              </div>
+              <p style="color: var(--muted); font-size: 12px;">Best when: Many features, all are relevant</p>
+            </div>
+          </div>
+          
+          <!-- Lasso -->
+          <div class="algorithm-card">
+            <div class="algorithm-header">
+              <div class="algorithm-icon">
+                <i class="fas fa-grip-lines"></i>
+              </div>
+              <div class="algorithm-title">
+                <h4>Lasso Regression</h4>
+                <p>L1 Regularization</p>
+              </div>
+            </div>
+            <div class="algorithm-body">
+              <div class="algorithm-metric">
+                <span>Formula:</span>
+                <span class="math-equation">MSE + λΣ|βⱼ|</span>
+              </div>
+              <div class="algorithm-metric">
+                <span>Effect:</span>
+                <span>Can zero out features</span>
+              </div>
+              <div class="algorithm-progress">
+                <div class="progress-bar" style="width: 90%"></div>
+              </div>
+              <p style="color: var(--muted); font-size: 12px;">Best when: Feature selection needed</p>
+            </div>
+          </div>
+          
+          <!-- ElasticNet -->
+          <div class="algorithm-card">
+            <div class="algorithm-header">
+              <div class="algorithm-icon">
+                <i class="fas fa-code-branch"></i>
+              </div>
+              <div class="algorithm-title">
+                <h4>ElasticNet</h4>
+                <p>L1 + L2 Combined</p>
+              </div>
+            </div>
+            <div class="algorithm-body">
+              <div class="algorithm-metric">
+                <span>Formula:</span>
+                <span class="math-equation">MSE + λ₁Σ|βⱼ| + λ₂Σβⱼ²</span>
+              </div>
+              <div class="algorithm-metric">
+                <span>Effect:</span>
+                <span>Best of both worlds</span>
+              </div>
+              <div class="algorithm-progress">
+                <div class="progress-bar" style="width: 95%"></div>
+              </div>
+              <p style="color: var(--muted); font-size: 12px;">Best when: Correlated features present</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================
+         SECTION 3: TREE-BASED MODELS
+    ================================================= -->
+    <div id="tree" class="module-content">
+      <div class="panel section">
+        <h3><i class="fas fa-tree"></i> 3.1 Decision Trees for Regression</h3>
+        
+        <div class="info-box info">
+            <h4><i class="fas fa-lightbulb"></i> How Decision Trees Work</h4>
+            <p>Decision trees split the data into regions based on feature values, predicting the <span class="highlight">mean of training samples</span> in each region.</p>
+        </div>
+
+        <div class="regression-container">
+          <div class="regression-chart">
+            <canvas id="treeChart"></canvas>
+          </div>
+          
+          <div class="regression-controls">
+            <div class="control-group">
+              <h4><i class="fas fa-sliders-h"></i> Decision Tree Controls</h4>
+              <div class="slider-container">
+                <label>Max Depth:</label>
+                <input type="range" id="treeDepth" min="1" max="10" step="1" value="3">
+                <span class="slider-value" id="treeDepthValue">3</span>
+              </div>
+              <div class="slider-container">
+                <label>Min Samples Split:</label>
+                <input type="range" id="minSamples" min="2" max="20" step="1" value="5">
+                <span class="slider-value" id="minSamplesValue">5</span>
+              </div>
+            </div>
+            
+            <div class="button-group">
+              <button class="btn btn-primary" onclick="updateTreeModel()">
+                <i class="fas fa-play"></i> Update Tree
+              </button>
+              <button class="btn btn-secondary" onclick="resetTreeData()">
+                <i class="fas fa-redo"></i> New Data
+              </button>
+            </div>
+
+            <div class="metrics-container" style="margin-top: 20px;">
+              <div class="metric-card">
+                <div class="metric-label">Train R²</div>
+                <div class="metric-value" id="treeTrainR2">0.85</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Test R²</div>
+                <div class="metric-value" id="treeTestR2">0.78</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Leaves</div>
+                <div class="metric-value" id="treeLeaves">8</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Depth</div>
+                <div class="metric-value" id="treeCurrentDepth">3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box warning" style="margin-top: 20px;">
+          <h4><i class="fas fa-exclamation-triangle"></i> Overfitting Warning</h4>
+          <p>Decision trees are prone to <strong>overfitting</strong>. Watch the gap between train and test R² as depth increases. If train R² is high but test R² is low, you're overfitting!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================
+         SECTION 4: ENSEMBLE METHODS
+    ================================================= -->
+    <div id="ensemble" class="module-content">
+      <div class="panel section">
+        <h3><i class="fas fa-layer-group"></i> 4.1 Ensemble Learning Philosophy</h3>
+        
+        <div class="info-box info">
+          <h4><i class="fas fa-users"></i> Wisdom of the Crowd</h4>
+          <p><strong>Ensemble methods</strong> combine multiple models to create a stronger predictor. Just as a group of experts often outperforms a single expert, a group of models outperforms a single model.</p>
+        </div>
+
+        <div class="algorithm-grid">
+          <!-- Random Forest -->
+          <div class="algorithm-card">
+            <div class="algorithm-header">
+              <div class="algorithm-icon">
+                <i class="fas fa-random"></i>
+              </div>
+              <div class="algorithm-title">
+                <h4>Random Forest</h4>
+                <p>Bagging ensemble</p>
+              </div>
+            </div>
+            <div class="algorithm-body">
+              <div class="algorithm-metric">
+                <span>Best for:</span>
+                <span>Complex relationships</span>
+              </div>
+              <div class="algorithm-metric">
+                <span>Pros:</span>
+                <span>Robust, feature importance</span>
+              </div>
+              <div class="algorithm-progress">
+                <div class="progress-bar" style="width: 89%"></div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- XGBoost -->
+          <div class="algorithm-card">
+            <div class="algorithm-header">
+              <div class="algorithm-icon">
+                <i class="fas fa-bolt"></i>
+              </div>
+              <div class="algorithm-title">
+                <h4>XGBoost</h4>
+                <p>Boosting ensemble</p>
+              </div>
+            </div>
+            <div class="algorithm-body">
+              <div class="algorithm-metric">
+                <span>Best for:</span>
+                <span>Competitions, high performance</span>
+              </div>
+              <div class="algorithm-metric">
+                <span>Pros:</span>
+                <span>State-of-the-art</span>
+              </div>
+              <div class="algorithm-progress">
+                <div class="progress-bar" style="width: 92%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-editor-container" style="margin-top: 20px;">
+          <div class="code-header">
+            <div class="code-title">
+              <i class="fab fa-python"></i> Random Forest Implementation
+            </div>
+            <span class="library-badge rf-badge"><i class="fas fa-random"></i> Random Forest</span>
+          </div>
+          <div class="code-body">
+            <pre class="code-block"><code><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor
+
+rf = RandomForestRegressor(
+    <span class="function">n_estimators</span>=<span class="number">100</span>,
+    <span class="function">max_depth</span>=<span class="number">10</span>,
+    <span class="function">min_samples_split</span>=<span class="number">5</span>,
+    <span class="function">random_state</span>=<span class="number">42</span>
+)
+
+rf.<span class="function">fit</span>(X_train, y_train)
+y_pred = rf.<span class="function">predict</span>(X_test)
+
+<span class="comment"># Feature importance</span>
+importances = rf.<span class="function">feature_importances_</span>
+<span class="keyword">for</span> name, imp <span class="keyword">in</span> <span class="function">zip</span>(feature_names, importances):
+    <span class="keyword">print</span>(<span class="string">f"{name}: {imp:.3f}"</span>)</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================
+         SECTION 5: MODEL EVALUATION
+    ================================================= -->
+    <div id="evaluation" class="module-content">
+      <div class="panel section">
+        <h3><i class="fas fa-clipboard-check"></i> 5.1 Regression Metrics</h3>
+        
+        <div class="info-box info">
+          <h4><i class="fas fa-ruler"></i> How to Measure Performance</h4>
+          <p>Different metrics tell different stories. Always use multiple metrics to evaluate your model.</p>
+        </div>
+
+        <div class="algorithm-grid">
+          <!-- R² -->
+          <div class="algorithm-card">
+            <div class="algorithm-header">
+              <div class="algorithm-icon">
+                <i class="fas fa-chart-pie"></i>
+              </div>
+              <div class="algorithm-title">
+                <h4>R² (Coefficient of Determination)</h4>
+                <p>Variance explained</p>
+              </div>
+            </div>
+            <div class="algorithm-body">
+              <div class="formula-box" style="margin: 10px 0; font-size: 12px;">
+                <span class="math-equation">R² = 1 - (SS_res / SS_tot)</span>
+              </div>
+              <p style="color: var(--muted); font-size: 13px;">
+                <strong>Range:</strong> (-∞, 1]<br>
+                <strong>1 = perfect</strong>
+              </p>
+            </div>
+          </div>
+          
+          <!-- MSE -->
+          <div class="algorithm-card">
+            <div class="algorithm-header">
+              <div class="algorithm-icon">
+                <i class="fas fa-square"></i>
+              </div>
+              <div class="algorithm-title">
+                <h4>MSE / RMSE</h4>
+                <p>Mean Squared Error</p>
+              </div>
+            </div>
+            <div class="algorithm-body">
+              <div class="formula-box" style="margin: 10px 0; font-size: 12px;">
+                <span class="math-equation">MSE = (1/n)Σ(y - ŷ)²</span>
+              </div>
+              <p style="color: var(--muted); font-size: 13px;">
+                <strong>Penalizes large errors</strong>
+              </p>
+            </div>
+          </div>
+          
+          <!-- MAE -->
+          <div class="algorithm-card">
+            <div class="algorithm-header">
+              <div class="algorithm-icon">
+                <i class="fas fa-ruler-combined"></i>
+              </div>
+              <div class="algorithm-title">
+                <h4>MAE</h4>
+                <p>Mean Absolute Error</p>
+              </div>
+            </div>
+            <div class="algorithm-body">
+              <div class="formula-box" style="margin: 10px 0; font-size: 12px;">
+                <span class="math-equation">MAE = (1/n)Σ|y - ŷ|</span>
+              </div>
+              <p style="color: var(--muted); font-size: 13px;">
+                <strong>Robust to outliers</strong>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================
+         SECTION 6: HANDS-ON LAB
+    ================================================= -->
+    <div id="hands-on" class="module-content">
+      <div class="panel section">
+        <h3><i class="fas fa-laptop-code"></i> 6.1 Complete Regression Pipeline</h3>
+        
+        <div class="info-box success">
+          <h4><i class="fas fa-flask"></i> Production-Ready Pipeline</h4>
+          <p>This complete pipeline includes data preprocessing, model training, evaluation, and saving for deployment.</p>
+        </div>
+
+        <div class="code-editor-container" style="margin-top: 20px;">
+          <div class="code-header">
+            <div class="code-title">
+              <i class="fab fa-python"></i> Complete Regression Pipeline
+            </div>
+          </div>
+          <div class="code-body">
+            <pre class="code-block"><code><span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split, cross_val_score
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+<span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor
+<span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error, r2_score
+<span class="keyword">import</span> joblib
+
+<span class="comment"># 1. Load and prepare data</span>
+df = pd.<span class="function">read_csv</span>(<span class="string">'housing.csv'</span>)
+X = df.<span class="function">drop</span>(<span class="string">'price'</span>, axis=<span class="number">1</span>)
+y = df[<span class="string">'price'</span>]
+
+<span class="comment"># 2. Split data</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, <span class="function">test_size</span>=<span class="number">0.2</span>, <span class="function">random_state</span>=<span class="number">42</span>
+)
+
+<span class="comment"># 3. Scale features</span>
+scaler = StandardScaler()
+X_train_scaled = scaler.<span class="function">fit_transform</span>(X_train)
+X_test_scaled = scaler.<span class="function">transform</span>(X_test)
+
+<span class="comment"># 4. Train model</span>
+model = RandomForestRegressor(<span class="function">n_estimators</span>=<span class="number">100</span>, <span class="function">random_state</span>=<span class="number">42</span>)
+model.<span class="function">fit</span>(X_train_scaled, y_train)
+
+<span class="comment"># 5. Evaluate</span>
+y_pred = model.<span class="function">predict</span>(X_test_scaled)
+<span class="keyword">print</span>(<span class="string">f"R² Score: {r2_score(y_test, y_pred):.3f}"</span>)
+<span class="keyword">print</span>(<span class="string">f"RMSE: ${np.sqrt(mean_squared_error(y_test, y_pred)):,.0f}"</span>)
+
+<span class="comment"># 6. Cross-validation</span>
+cv_scores = cross_val_score(model, X_train_scaled, y_train, <span class="function">cv</span>=<span class="number">5</span>)
+<span class="keyword">print</span>(<span class="string">f"CV R²: {cv_scores.mean():.3f} (+/- {cv_scores.std() * 2:.3f})"</span>)
+
+<span class="comment"># 7. Save model and scaler</span>
+joblib.<span class="function">dump</span>(model, <span class="string">'regression_model.pkl'</span>)
+joblib.<span class="function">dump</span>(scaler, <span class="string">'scaler.pkl'</span>)</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      Module 5: IAF 604 - Supervised Machine Learning: Regression | Complete Guide with Scikit-learn
+    </footer>
+  </div>
+
+  <script>
+    /************************************************************
+     * CORE THEME MANAGEMENT
+     ************************************************************/
+    const themeToggle = document.getElementById('themeToggle');
+    const themeLabel = document.getElementById('themeLabel');
+    const body = document.body;
+    const THEME_KEY = 'iaf604-theme';
+
+    function applyTheme(theme) {
+      body.setAttribute('data-theme', theme);
+      const isDay = theme === 'day';
+      themeLabel.textContent = isDay ? 'Day Mode' : 'Night Mode';
+      themeToggle.setAttribute('aria-label', `Theme: ${themeLabel.textContent} (click to toggle)`);
+      updateAllChartColors();
+    }
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_KEY);
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (savedTheme === 'day' || savedTheme === 'night') {
+        applyTheme(savedTheme);
+      } else {
+        const defaultTheme = prefersDark ? 'night' : 'day';
+        applyTheme(defaultTheme);
+        localStorage.setItem(THEME_KEY, defaultTheme);
+      }
+    }
+
+    function toggleTheme() {
+      const current = body.getAttribute('data-theme');
+      const next = current === 'night' ? 'day' : 'night';
+      applyTheme(next);
+      localStorage.setItem(THEME_KEY, next);
+    }
+
+    themeToggle.addEventListener('click', toggleTheme);
+
+    /************************************************************
+     * MODULE NAVIGATION
+     ************************************************************/
+    function switchModule(moduleId) {
+      document.querySelectorAll('.module-content').forEach(module => {
+        module.classList.remove('active');
+      });
+      
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      document.getElementById(moduleId).classList.add('active');
+      document.querySelector(`.nav-btn[data-module="${moduleId}"]`).classList.add('active');
+      
+      // Initialize module-specific content
+      if (moduleId === 'linear') {
+        setTimeout(() => {
+          initLinearChart();
+          generateLinearData();
+        }, 100);
+      } else if (moduleId === 'tree') {
+        setTimeout(() => {
+          initTreeChart();
+          generateTreeData();
+        }, 100);
+      }
+    }
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchModule(btn.dataset.module);
+      });
+    });
+
+    /************************************************************
+     * CHART COLOR MANAGEMENT
+     ************************************************************/
+    function getChartColors() {
+      const isDay = body.getAttribute('data-theme') === 'day';
+      return {
+        primary: isDay ? 'rgba(37, 99, 235, 0.8)' : 'rgba(96, 165, 250, 0.8)',
+        success: isDay ? 'rgba(16, 185, 129, 0.8)' : 'rgba(52, 211, 153, 0.8)',
+        grid: isDay ? 'rgba(148, 163, 184, 0.25)' : 'rgba(148, 163, 184, 0.14)',
+        text: isDay ? '#0F172A' : '#EAF0FF'
+      };
+    }
+
+    function updateAllChartColors() {
+      const colors = getChartColors();
+      [linearChart, treeChart].forEach(chart => {
+        if (chart) {
+          if (chart.options.scales) {
+            if (chart.options.scales.x) {
+              chart.options.scales.x.grid.color = colors.grid;
+              chart.options.scales.x.ticks.color = colors.text;
+            }
+            if (chart.options.scales.y) {
+              chart.options.scales.y.grid.color = colors.grid;
+              chart.options.scales.y.ticks.color = colors.text;
+            }
+          }
+          if (chart.options.plugins && chart.options.plugins.legend) {
+            chart.options.plugins.legend.labels.color = colors.text;
+          }
+          chart.update();
+        }
+      });
+    }
+
+    /************************************************************
+     * LINEAR REGRESSION DEMO
+     ************************************************************/
+    let linearChart = null;
+    let treeChart = null;
+    let currentTreeData = { X: [], y: [] };
+
+    function initLinearChart() {
+      const ctx = document.getElementById('linearChart');
+      if (!ctx) return;
+      
+      const colors = getChartColors();
+      
+      if (linearChart) {
+        linearChart.destroy();
+      }
+      
+      linearChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: 'Data Points',
+            data: [],
+            backgroundColor: colors.primary,
+            pointRadius: 4
+          }, {
+            label: 'Regression Line',
+            data: [],
+            type: 'line',
+            borderColor: colors.success,
+            borderWidth: 3,
+            pointRadius: 0,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: colors.text
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: colors.grid },
+              ticks: { color: colors.text }
+            },
+            y: {
+              grid: { color: colors.grid },
+              ticks: { color: colors.text }
+            }
+          }
+        }
+      });
+    }
+
+    function generateLinearData() {
+      const noiseLevel = parseFloat(document.getElementById('noiseLevel').value);
+      const sampleSize = parseInt(document.getElementById('sampleSize').value);
+      
+      document.getElementById('noiseLevelValue').textContent = noiseLevel;
+      document.getElementById('sampleSizeValue').textContent = sampleSize;
+      
+      const trueSlope = 2.5;
+      const trueIntercept = 10;
+      
+      const X = [];
+      const y = [];
+      
+      for (let i = 0; i < sampleSize; i++) {
+        const x = Math.random() * 20;
+        const noise = (Math.random() - 0.5) * noiseLevel;
+        const target = trueIntercept + trueSlope * x + noise;
+        X.push(x);
+        y.push(target);
+      }
+      
+      // Calculate regression
+      const n = X.length;
+      const sumX = X.reduce((a, b) => a + b, 0);
+      const sumY = y.reduce((a, b) => a + b, 0);
+      const sumXY = X.reduce((sum, xi, i) => sum + xi * y[i], 0);
+      const sumX2 = X.reduce((sum, xi) => sum + xi * xi, 0);
+      
+      const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+      const intercept = (sumY - slope * sumX) / n;
+      
+      // Calculate R² and MSE
+      const yMean = sumY / n;
+      const ssTot = y.reduce((sum, yi) => sum + (yi - yMean) ** 2, 0);
+      const ssRes = y.reduce((sum, yi, i) => sum + (yi - (intercept + slope * X[i])) ** 2, 0);
+      const r2 = 1 - ssRes / ssTot;
+      const mse = ssRes / n;
+      
+      document.getElementById('trueSlope').textContent = trueSlope.toFixed(2);
+      document.getElementById('estSlope').textContent = slope.toFixed(2);
+      document.getElementById('lrR2').textContent = r2.toFixed(3);
+      document.getElementById('lrMSE').textContent = mse.toFixed(2);
+      
+      if (linearChart) {
+        linearChart.data.datasets[0].data = X.map((x, i) => ({ x, y: y[i] }));
+        
+        const minX = Math.min(...X);
+        const maxX = Math.max(...X);
+        linearChart.data.datasets[1].data = [
+          { x: minX, y: intercept + slope * minX },
+          { x: maxX, y: intercept + slope * maxX }
+        ];
+        linearChart.update();
+      }
+    }
+
+    /************************************************************
+     * DECISION TREE DEMO
+     ************************************************************/
+    function initTreeChart() {
+      const ctx = document.getElementById('treeChart');
+      if (!ctx) return;
+      
+      const colors = getChartColors();
+      
+      if (treeChart) {
+        treeChart.destroy();
+      }
+      
+      treeChart = new Chart(ctx, {
+        type: 'scatter',
+        data: {
+          datasets: [{
+            label: 'Data Points',
+            data: [],
+            backgroundColor: colors.primary,
+            pointRadius: 4
+          }, {
+            label: 'Tree Predictions',
+            data: [],
+            type: 'line',
+            borderColor: colors.success,
+            borderWidth: 3,
+            pointRadius: 0,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: {
+                color: colors.text
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: colors.grid },
+              ticks: { color: colors.text }
+            },
+            y: {
+              grid: { color: colors.grid },
+              ticks: { color: colors.text }
+            }
+          }
+        }
+      });
+    }
+
+    function generateTreeData() {
+      const X = [];
+      const y = [];
+      
+      for (let i = 0; i < 100; i++) {
+        const x = Math.random() * 20 - 10;
+        // Non-linear function with noise
+        const target = 5 + 2 * x + 0.5 * x * x + (Math.random() - 0.5) * 20;
+        X.push(x);
+        y.push(target);
+      }
+      
+      currentTreeData = { X, y };
+      updateTreeModel();
+    }
+
+    function updateTreeModel() {
+      const depth = parseInt(document.getElementById('treeDepth').value);
+      const minSamples = parseInt(document.getElementById('minSamples').value);
+      
+      document.getElementById('treeDepthValue').textContent = depth;
+      document.getElementById('minSamplesValue').textContent = minSamples;
+      document.getElementById('treeCurrentDepth').textContent = depth;
+      
+      const X = currentTreeData.X || Array.from({length: 100}, () => Math.random() * 20 - 10);
+      const y = currentTreeData.y || X.map(x => 5 + 2 * x + 0.5 * x * x + (Math.random() - 0.5) * 20);
+      
+      // Sort X for line plot
+      const sortedIndices = X.map((_, i) => i).sort((a, b) => X[a] - X[b]);
+      const sortedX = sortedIndices.map(i => X[i]);
+      const sortedY = sortedIndices.map(i => y[i]);
+      
+      // Simulate tree predictions (piecewise constant)
+      const treePred = [];
+      const nSegments = depth + 2;
+      const segmentSize = Math.floor(sortedX.length / nSegments);
+      
+      for (let i = 0; i < sortedX.length; i++) {
+        const segment = Math.min(Math.floor(i / segmentSize), nSegments - 1);
+        const start = segment * segmentSize;
+        const end = Math.min((segment + 1) * segmentSize, sortedX.length);
+        const segmentY = sortedY.slice(start, end);
+        const meanY = segmentY.reduce((a, b) => a + b, 0) / (end - start) || 0;
+        treePred.push(meanY);
+      }
+      
+      // Calculate train R²
+      const yMean = y.reduce((a, b) => a + b, 0) / y.length;
+      const ssTot = y.reduce((sum, yi) => sum + (yi - yMean) ** 2, 0);
+      const ssRes = y.reduce((sum, yi, i) => sum + (yi - treePred[sortedIndices.indexOf(i)]) ** 2, 0);
+      const trainR2 = 1 - ssRes / ssTot;
+      
+      // Simulate test R² (always lower than train)
+      const testR2 = Math.max(0, trainR2 - 0.07 - (depth * 0.02));
+      const leaves = Math.pow(2, depth);
+      
+      document.getElementById('treeTrainR2').textContent = trainR2.toFixed(3);
+      document.getElementById('treeTestR2').textContent = testR2.toFixed(3);
+      document.getElementById('treeLeaves').textContent = leaves;
+      
+      if (treeChart) {
+        treeChart.data.datasets[0].data = X.map((x, i) => ({ x, y: y[i] }));
+        treeChart.data.datasets[1].data = sortedX.map((x, i) => ({ x, y: treePred[i] }));
+        treeChart.update();
+      }
+    }
+
+    function resetTreeData() {
+      generateTreeData();
+    }
+
+    /************************************************************
+     * INITIALIZATION
+     ************************************************************/
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      
+      // Setup slider event listeners
+      document.getElementById('noiseLevel')?.addEventListener('input', generateLinearData);
+      document.getElementById('sampleSize')?.addEventListener('input', generateLinearData);
+      document.getElementById('treeDepth')?.addEventListener('input', updateTreeModel);
+      document.getElementById('minSamples')?.addEventListener('input', updateTreeModel);
+      
+      // Initialize charts
+      setTimeout(() => {
+        initLinearChart();
+        generateLinearData();
+        initTreeChart();
+        generateTreeData();
+      }, 200);
+      
+      if (window.MathJax) {
+        MathJax.typesetPromise();
+      }
+    });
+
+    // Make functions available globally
+    window.switchModule = switchModule;
+    window.generateLinearData = generateLinearData;
+    window.updateTreeModel = updateTreeModel;
+    window.resetTreeData = resetTreeData;
+  </script>
+</body>
+</html>
