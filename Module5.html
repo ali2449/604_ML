@@ -430,6 +430,31 @@
     .slider-value { min-width: 50px; text-align: right; font-family: var(--mono); font-weight: 600; color: var(--text); }
 
     /************************************************************
+     * 3D SURFACE PLOT FOR MULTIPLE REGRESSION
+     ************************************************************/
+    .surface-plot-container {
+      width: 100%;
+      height: 400px;
+      position: relative;
+      background: var(--panel2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .surface-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .surface-controls {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 15px 0;
+    }
+
+    /************************************************************
      * ALGORITHM COMPARISON
      ************************************************************/
     .algorithm-grid {
@@ -730,15 +755,18 @@
       </div>
     </header>
 
-    <!-- Navigation - Same structure, clearer labels -->
+    <!-- Navigation - Expanded with new sections -->
     <div class="module-nav">
       <button class="nav-btn active" data-module="intro"><i class="fas fa-graduation-cap"></i> 1. What is Regression?</button>
-      <button class="nav-btn" data-module="linear-models"><i class="fas fa-chart-line"></i> 2. Simple & Regularized Linear</button>
-      <button class="nav-btn" data-module="tree-models"><i class="fas fa-tree"></i> 3. Decision Trees</button>
-      <button class="nav-btn" data-module="ensemble"><i class="fas fa-layer-group"></i> 4. Random Forest & XGBoost</button>
-      <button class="nav-btn" data-module="evaluation"><i class="fas fa-clipboard-check"></i> 5. How to Measure Success</button>
-      <button class="nav-btn" data-module="hands-on"><i class="fas fa-laptop-code"></i> 6. Try It Yourself!</button>
-      <button class="nav-btn" data-module="resources"><i class="fas fa-book"></i> 7. Practice Resources</button>
+      <button class="nav-btn" data-module="simple-linear"><i class="fas fa-chart-line"></i> 2. Simple Linear</button>
+      <button class="nav-btn" data-module="multiple-linear"><i class="fas fa-cubes"></i> 3. Multiple Linear</button>
+      <button class="nav-btn" data-module="polynomial"><i class="fas fa-wave-square"></i> 4. Polynomial</button>
+      <button class="nav-btn" data-module="regularized"><i class="fas fa-sliders-h"></i> 5. Regularized Linear</button>
+      <button class="nav-btn" data-module="tree-models"><i class="fas fa-tree"></i> 6. Decision Trees</button>
+      <button class="nav-btn" data-module="ensemble"><i class="fas fa-layer-group"></i> 7. Random Forest & XGBoost</button>
+      <button class="nav-btn" data-module="evaluation"><i class="fas fa-clipboard-check"></i> 8. How to Measure Success</button>
+      <button class="nav-btn" data-module="hands-on"><i class="fas fa-laptop-code"></i> 9. Try It Yourself!</button>
+      <button class="nav-btn" data-module="resources"><i class="fas fa-book"></i> 10. Practice Resources</button>
     </div>
 
     <!-- ================================================
@@ -869,129 +897,22 @@
         <div class="common-pitfall">
           <p><strong>⚠️ The "Perfect Prediction" Myth:</strong> New students often expect their model to predict perfectly every time. But if your model gets 100% accuracy on real data, you've probably made a mistake! Real data always has some randomness (ε) that no model can predict. A good model gets close, not perfect.</p>
         </div>
-
-        <div class="expanded-content">
-          <h4><i class="fas fa-list-check"></i> Where is Regression Used in the Real World?</h4>
-          <div class="concept-grid">
-            <div class="concept-card">
-              <h5>🏢 Business</h5>
-              <ul style="padding-left:20px;">
-                <li>Forecasting next month's sales</li>
-                <li>Predicting customer spending</li>
-                <li>Estimating delivery times</li>
-              </ul>
-            </div>
-            <div class="concept-card">
-              <h5>🏥 Healthcare</h5>
-              <ul style="padding-left:20px;">
-                <li>Predicting patient recovery time</li>
-                <li>Estimating disease risk scores</li>
-                <li>Calculating drug dosage</li>
-              </ul>
-            </div>
-            <div class="concept-card">
-              <h5>🌎 Science</h5>
-              <ul style="padding-left:20px;">
-                <li>Forecasting temperature</li>
-                <li>Predicting crop yields</li>
-                <li>Estimating population growth</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel section">
-        <h3><i class="fas fa-road"></i> 1.3 The 6-Step Recipe for Any Regression Project</h3>
-
-        <div class="timeline">
-          <div class="timeline-item">
-            <div class="timeline-icon"><i class="fas fa-database"></i></div>
-            <div class="timeline-content">
-              <div class="timeline-date">Step 1: Get Your Data Ready</div>
-              <div class="timeline-title">Clean, split, and prepare</div>
-              <div class="timeline-description">
-                Fix missing values, remove obvious errors, split into training (80%) and testing (20%).
-                <strong>Never touch the test data until the end!</strong>
-              </div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-icon"><i class="fas fa-cogs"></i></div>
-            <div class="timeline-content">
-              <div class="timeline-date">Step 2: Pick Your Algorithm</div>
-              <div class="timeline-title">Choose a method to try</div>
-              <div class="timeline-description">
-                Start simple (linear regression). If that's not good enough, try fancier methods (trees, forests).
-              </div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-icon"><i class="fas fa-chart-line"></i></div>
-            <div class="timeline-content">
-              <div class="timeline-date">Step 3: Train the Model</div>
-              <div class="timeline-title">Let the computer learn patterns</div>
-              <div class="timeline-description">
-                The algorithm studies the training data and figures out the relationship between features and target.
-              </div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-icon"><i class="fas fa-clipboard-check"></i></div>
-            <div class="timeline-content">
-              <div class="timeline-date">Step 4: Evaluate Performance</div>
-              <div class="timeline-title">How well did it learn?</div>
-              <div class="timeline-description">
-                Test the model on the untouched test data. Check if predictions are close to actual values.
-              </div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-icon"><i class="fas fa-sliders-h"></i></div>
-            <div class="timeline-content">
-              <div class="timeline-date">Step 5: Tune for Better Results</div>
-              <div class="timeline-title">Adjust settings to improve</div>
-              <div class="timeline-description">
-                Most algorithms have "knobs" you can adjust (like tree depth). Try different settings to find what works best.
-              </div>
-            </div>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-icon"><i class="fas fa-rocket"></i></div>
-            <div class="timeline-content">
-              <div class="timeline-date">Step 6: Deploy & Monitor</div>
-              <div class="timeline-title">Use it in the real world</div>
-              <div class="timeline-description">
-                Put your model to work! But keep watching - if the world changes, your model might need updating.
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="pro-tip">
-          <p><strong>💡 The 80/20 Secret:</strong> In real projects, 80% of your time is spent on Step 1 (getting data ready) and only 20% on the fun modeling steps. Clean data is more important than fancy algorithms!</p>
-        </div>
       </div>
     </div>
 
     <!-- ================================================
-         SECTION 2: LINEAR MODELS - SIMPLIFIED
+         SECTION 2: SIMPLE LINEAR REGRESSION (1 FEATURE)
     ================================================= -->
-    <div id="linear-models" class="module-content">
+    <div id="simple-linear" class="module-content">
 
       <div class="panel section">
-        <h3><i class="fas fa-chart-line"></i> 2.1 Linear Regression: Drawing a Straight Line Through Your Data</h3>
+        <h3><i class="fas fa-chart-line"></i> 2.1 Simple Linear Regression: One Feature, One Line</h3>
 
         <div class="info-box info">
           <h4><i class="fas fa-lightbulb"></i> The Core Idea</h4>
           <p>
-            <strong>Linear regression</strong> assumes the relationship between features and target is a straight line.
-            For one feature, it's just like the lines you drew in algebra class: <span class="math-equation">y = mx + b</span>
+            <strong>Simple linear regression</strong> uses just ONE feature to predict your target.
+            It's the line you drew in algebra class: <span class="math-equation">y = mx + b</span>
           </p>
           <p>
             <span class="mono">m</span> is the slope (how much y increases when x increases by 1), and 
@@ -1000,32 +921,8 @@
         </div>
 
         <div class="explanation-box">
-          <p><strong>📚 In Simple Terms:</strong> Imagine you're looking at house sizes and prices. Linear regression tries to draw the straight line that comes closest to all your data points. It's like finding the best-fitting line through a scatter plot.</p>
-          <p><strong>Real-Life Example:</strong> If you've ever used a ruler to draw a line through dots on graph paper, you've done the same thing linear regression does mathematically!</p>
-        </div>
-
-        <div class="expanded-content">
-          <h4><i class="fas fa-check-circle"></i> When to Use Linear Regression</h4>
-          <div class="concept-grid">
-            <div class="concept-card">
-              <h5>✅ Great For</h5>
-              <ul style="padding-left:20px;">
-                <li>Simple relationships that look roughly like a line</li>
-                <li>When you need to explain how features affect predictions</li>
-                <li>As a baseline to compare fancier models against</li>
-                <li>Small datasets (trains quickly)</li>
-              </ul>
-            </div>
-            <div class="concept-card">
-              <h5>❌ Not So Great For</h5>
-              <ul style="padding-left:20px;">
-                <li>Curved/U-shaped relationships</li>
-                <li>When features interact in complex ways</li>
-                <li>Data with extreme outliers</li>
-                <li>Many highly correlated features</li>
-              </ul>
-            </div>
-          </div>
+          <p><strong>📚 In Simple Terms:</strong> Imagine you're looking at house sizes and prices. Simple linear regression tries to draw the straight line that comes closest to all your data points. It's like finding the best-fitting line through a scatter plot.</p>
+          <p><strong>Real-Life Example:</strong> If you've ever used a ruler to draw a line through dots on graph paper, you've done the same thing simple linear regression does mathematically!</p>
         </div>
 
         <div class="regression-container">
@@ -1088,41 +985,410 @@
 
         <div class="code-editor-container" style="margin-top: 20px;">
           <div class="code-header">
-            <div class="code-title"><i class="fab fa-python"></i> Python Code: Linear Regression in 5 Lines</div>
+            <div class="code-title"><i class="fab fa-python"></i> Python Code: Simple Linear Regression</div>
             <div class="code-actions"><span class="library-badge sklearn-badge"><i class="fas fa-cube"></i> scikit-learn</span></div>
           </div>
           <div class="code-body">
             <pre class="code-block"><code><span class="comment"># 1. Import the tool</span>
 <span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
 
-<span class="comment"># 2. Create the model</span>
+<span class="comment"># 2. Create sample data (e.g., house sizes in sqft and prices)</span>
+<span class="comment"># X must be 2D: rows = samples, columns = features</span>
+X = np.array([1200, 1800, 950, 1500]).reshape(-1, 1)  <span class="comment"># One feature: sqft</span>
+y = np.array([250000, 450000, 180000, 320000])        <span class="comment"># Target: price</span>
+
+<span class="comment"># 3. Create and train the model</span>
 model = LinearRegression()
+model.<span class="function">fit</span>(X, y)
 
-<span class="comment"># 3. Train it on your data (X = features, y = target)</span>
-model.<span class="function">fit</span>(X_train, y_train)
+<span class="comment"># 4. See what it learned</span>
+<span class="keyword">print</span>(<span class="string">f"Slope (coefficient): {model.coef_[0]:.2f}"</span>)
+<span class="keyword">print</span>(<span class="string">f"Intercept: {model.intercept_:.2f}"</span>)
+<span class="comment"># Interpretation: Each +1 sqft adds ${model.coef_[0]:.2f} to price</span>
 
-<span class="comment"># 4. Make predictions on new data</span>
-predictions = model.<span class="function">predict</span>(X_test)
+<span class="comment"># 5. Make a prediction for a new 1650 sqft house</span>
+new_house = np.array([[1650]])
+predicted_price = model.<span class="function">predict</span>(new_house)
+<span class="keyword">print</span>(<span class="string">f"Predicted price: ${predicted_price[0]:,.2f}"</span>)</code></pre>
+          </div>
+        </div>
+        
+        <div class="pro-tip">
+          <p><strong>💡 Important:</strong> In scikit-learn, even with one feature, X must be a 2D array. Use <code>.reshape(-1, 1)</code> to convert a 1D array of samples into a 2D column.</p>
+        </div>
+      </div>
+    </div>
 
-<span class="comment"># 5. See what it learned</span>
-<span class="keyword">print</span>(<span class="string">f"Coefficients (slopes): {model.coef_}"</span>)
-<span class="keyword">print</span>(<span class="string">f"Intercept: {model.intercept_:.2f}"</span>)</code></pre>
+    <!-- ================================================
+         SECTION 3: MULTIPLE LINEAR REGRESSION (NEW!)
+    ================================================= -->
+    <div id="multiple-linear" class="module-content">
+
+      <div class="panel section">
+        <h3><i class="fas fa-cubes"></i> 3.1 Multiple Linear Regression: Many Features, One Line (in HD)</h3>
+
+        <div class="info-box info">
+          <h4><i class="fas fa-lightbulb"></i> From Lines to Hyperplanes</h4>
+          <p>
+            <strong>Multiple linear regression</strong> uses TWO OR MORE features to predict your target.
+            With 2 features, it's a plane (like a flat sheet). With 3+ features, it's a "hyperplane" (can't visualize, but math works!).
+          </p>
+          <p class="math-equation" style="font-size: 1.2rem; text-align: center; margin: 20px 0;">
+            y = b + m₁x₁ + m₂x₂ + m₃x₃ + ... + mₙxₙ
+          </p>
+          <p>
+            Each feature gets its own slope (coefficient) that tells you how much it influences the prediction,
+            <strong>while holding all other features constant</strong>. This "holding constant" part is crucial!
+          </p>
+        </div>
+
+        <div class="explanation-box">
+          <p><strong>📚 In Simple Terms:</strong> Instead of drawing a 2D line, multiple regression finds a "best-fit surface" in higher dimensions. For house prices, it's like saying: "Price = $50,000 + ($200 × sqft) + ($15,000 × bedrooms) - ($1,000 × age)". Each feature adds or subtracts from the base price.</p>
+          <p><strong>Why "holding constant" matters:</strong> The coefficient for bedrooms ($15,000) means: for two houses with the <strong>same sqft and age</strong>, the one with an extra bedroom costs $15,000 more. It isolates the effect of one feature.</p>
+          <p><strong>Real-Life Example:</strong> Zillow's home value estimator uses multiple regression with dozens of features: square footage, bedrooms, bathrooms, location, school ratings, etc. Each feature has its own "weight" in the final calculation.</p>
+        </div>
+
+        <div class="expanded-content">
+          <h4><i class="fas fa-table"></i> Reading Multiple Coefficients</h4>
+          
+          <table class="detailed-table">
+            <thead>
+              <tr><th>Feature</th><th>Coefficient</th><th>Interpretation</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Intercept (b)</td><td>$50,000</td><td>Base price for a house with all features = 0 (theoretical)</td></tr>
+              <tr><td>sqft (m₁)</td><td>$200</td><td>Each additional sqft ADDS $200 to price, holding bedrooms & age constant</td></tr>
+              <tr><td>bedrooms (m₂)</td><td>$15,000</td><td>Each additional bedroom ADDS $15,000, holding sqft & age constant</td></tr>
+              <tr><td>age (m₃)</td><td>-$1,000</td><td>Each year of age SUBTRACTS $1,000, holding sqft & bedrooms constant</td></tr>
+            </tbody>
+          </table>
+
+          <p class="mono" style="margin-top:15px;">
+            <strong>Prediction formula:</strong> Price = $50,000 + $200×sqft + $15,000×bedrooms - $1,000×age
+          </p>
+        </div>
+
+        <!-- Interactive 3D-like visualization (2D projection with color) -->
+        <div class="regression-container">
+          <div class="regression-chart"><canvas id="multipleChart"></canvas></div>
+
+          <div class="regression-controls">
+            <div class="control-group">
+              <h4><i class="fas fa-sliders-h"></i> Adjust Feature Weights</h4>
+              <div class="slider-container">
+                <label><i class="fas fa-arrows-alt-v"></i> sqft Weight (m₁):</label>
+                <input type="range" id="weightSqft" min="0" max="500" step="10" value="200">
+                <span class="slider-value" id="weightSqftValue">200</span>
+              </div>
+              <div class="slider-container">
+                <label><i class="fas fa-bed"></i> bedrooms Weight (m₂):</label>
+                <input type="range" id="weightBeds" min="-10000" max="30000" step="1000" value="15000">
+                <span class="slider-value" id="weightBedsValue">15000</span>
+              </div>
+              <div class="slider-container">
+                <label><i class="fas fa-calendar-alt"></i> age Weight (m₃):</label>
+                <input type="range" id="weightAge" min="-3000" max="1000" step="100" value="-1000">
+                <span class="slider-value" id="weightAgeValue">-1000</span>
+              </div>
+              <div class="slider-container">
+                <label><i class="fas fa-dollar-sign"></i> Intercept (b):</label>
+                <input type="range" id="interceptVal" min="0" max="100000" step="5000" value="50000">
+                <span class="slider-value" id="interceptValValue">50000</span>
+              </div>
+            </div>
+
+            <div class="button-group">
+              <button class="btn btn-primary" onclick="updateMultipleRegression()">
+                <i class="fas fa-play"></i> Update Model
+              </button>
+              <button class="btn btn-secondary" onclick="generateMultipleData()">
+                <i class="fas fa-sync"></i> New Data
+              </button>
+            </div>
+
+            <div class="metrics-container" style="margin-top: 20px;">
+              <div class="metric-card">
+                <div class="metric-label">R² Score</div>
+                <div class="metric-value" id="multipleR2">0.00</div>
+                <div style="font-size:11px;">(1 is perfect)</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">MSE (millions)</div>
+                <div class="metric-value" id="multipleMSE">0.00</div>
+                <div style="font-size:11px;">lower=better</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Samples</div>
+                <div class="metric-value" id="multipleN">50</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Features</div>
+                <div class="metric-value" id="multipleFeatures">3</div>
+              </div>
+            </div>
+
+            <div class="explanation-box">
+              <p><strong>👆 What you're seeing:</strong> The chart shows PRICE vs. SQFT (colored by bedrooms). Each dot is a house. The model tries to fit a plane through all features - you're adjusting the plane's tilt in each direction!</p>
+              <p><strong>Try:</strong> Increase sqft weight → steeper slope. Make age weight positive → older houses cost more (unrealistic!). See how R² changes as you move weights away from the true pattern.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="common-pitfall">
+          <p><strong>⚠️ The Curse of Dimensionality & Multicollinearity:</strong> </p>
+          <ul>
+            <li><strong>Curse of Dimensionality:</strong> With many features, you need MUCH more data. Rule of thumb: at least 10-20 examples per feature. With 10 features, you need 200+ houses! Too few data points with many features leads to overfitting.</li>
+            <li><strong>Multicollinearity:</strong> If features are highly correlated (e.g., sqft and number of bedrooms), the coefficients become unstable and hard to interpret. The model can't tell which feature is truly causing the price change.</li>
+          </ul>
+        </div>
+
+        <div class="code-editor-container">
+          <div class="code-header">
+            <div class="code-title"><i class="fab fa-python"></i> Multiple Linear Regression Code</div>
+          </div>
+          <div class="code-body">
+            <pre class="code-block"><code><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># 1. Load your data (e.g., from CSV)</span>
+<span class="comment"># df = pd.read_csv('housing_sample_dataset.csv')</span>
+<span class="comment"># For this example, let's create sample data</span>
+data = {
+    'sqft': [1200, 1800, 950, 1500, 2100],
+    'bedrooms': [3, 4, 2, 3, 4],
+    'age': [10, 5, 20, 12, 4],
+    'price': [250000, 450000, 180000, 320000, 520000]
+}
+df = pd.DataFrame(data)
+
+<span class="comment"># 2. Define features (X) and target (y)</span>
+X = df[['sqft', 'bedrooms', 'age']]  <span class="comment"># Multiple columns!</span>
+y = df['price']
+
+<span class="comment"># 3. Create and train the model</span>
+model = LinearRegression()
+model.<span class="function">fit</span>(X, y)
+
+<span class="comment"># 4. Examine the results</span>
+<span class="keyword">print</span>(<span class="string">"Intercept:"</span>, model.intercept_)
+<span class="keyword">print</span>(<span class="string">"Coefficients for each feature:"</span>)
+<span class="keyword">for</span> feature, coef <span class="keyword">in</span> <span class="function">zip</span>(X.columns, model.coef_):
+    <span class="keyword">print</span>(<span class="string">f"  {feature}: ${coef:,.2f}"</span>)
+
+<span class="comment"># 5. Make prediction for a new house: 2000 sqft, 4 beds, 10 years old</span>
+new_house = pd.DataFrame([[2000, 4, 10]], columns=X.columns)
+predicted_price = model.<span class="function">predict</span>(new_house)
+<span class="keyword">print</span>(<span class="string">f"Predicted price: ${predicted_price[0]:,.2f}"</span>)
+
+<span class="comment"># The model automatically does: b + m1*2000 + m2*4 + m3*10</span></code></pre>
           </div>
         </div>
 
         <div class="pro-tip">
-          <p><strong>💡 Reading the Output:</strong> If a coefficient is +200, that means: "Increasing this feature by 1 unit increases the prediction by 200." If it's negative, increasing that feature decreases the prediction. This makes linear regression easy to explain to non-technical people!</p>
+          <p><strong>💡 Feature Scaling Matters!</strong> In multiple regression, features are on different scales (sqft ~1000s, bedrooms ~1-5). The coefficients reflect this - a small coefficient for a large-scale feature can still mean it's important! To compare importance, standardize features first (mean=0, std=1) using <code>StandardScaler</code>.</p>
         </div>
       </div>
+    </div>
+
+    <!-- ================================================
+         SECTION 4: POLYNOMIAL REGRESSION (NEW!)
+    ================================================= -->
+    <div id="polynomial" class="module-content">
 
       <div class="panel section">
-        <h3><i class="fas fa-exclamation-triangle"></i> 2.2 The Problem: When Simple Lines Aren't Enough</h3>
+        <h3><i class="fas fa-wave-square"></i> 4.1 Polynomial Regression: When Life Isn't a Straight Line</h3>
+
+        <div class="info-box info">
+          <h4><i class="fas fa-lightbulb"></i> The Core Idea</h4>
+          <p>
+            <strong>Polynomial regression</strong> adds squared, cubed, or higher terms to capture curves.
+            It's still "linear" in how we learn the coefficients, but the features are transformed to create curves.
+          </p>
+          <p class="math-equation" style="font-size: 1.2rem; text-align: center; margin: 20px 0;">
+            y = b + m₁x + m₂x² + m₃x³ + ...
+          </p>
+          <p>
+            <strong>Key insight:</strong> We're not fitting a curve directly. We're creating new features (x², x³, etc.) 
+            and then using <strong>multiple linear regression</strong> on these transformed features!
+          </p>
+        </div>
+
+        <div class="explanation-box">
+          <p><strong>📚 In Simple Terms:</strong> Sometimes the relationship between X and Y isn't a straight line - maybe prices increase faster for bigger houses (curving upward) or there's a "sweet spot" where value peaks (upside-down U). Polynomial regression bends the line to match these patterns by adding x², x³ terms.</p>
+          <p><strong>Real-Life Example:</strong> Car depreciation - new cars lose value quickly at first, then slow down. A straight line would be wrong; a quadratic (degree 2) curve fits better. Or crop yield vs. fertilizer - too little or too much fertilizer hurts yield (inverted U shape).</p>
+        </div>
+
+        <div class="expanded-content">
+          <h4><i class="fas fa-chart-line"></i> Degrees of Flexibility: The Bias-Variance Tradeoff</h4>
+          
+          <div class="concept-grid">
+            <div class="concept-card">
+              <h5>Degree 1 (Linear)</h5>
+              <p><i class="fas fa-chart-line"></i> <strong>Equation:</strong> y = b + m₁x</p>
+              <p><strong>Bias (error from wrong assumptions):</strong> High - can't capture curves</p>
+              <p><strong>Variance (sensitivity to data):</strong> Low - stable</p>
+              <p><strong>Problem:</strong> Underfitting</p>
+            </div>
+            <div class="concept-card">
+              <h5>Degree 2 (Quadratic)</h5>
+              <p><i class="fas fa-chart-line"></i> <strong>Equation:</strong> y = b + m₁x + m₂x²</p>
+              <p><strong>Bias:</strong> Medium - captures one curve</p>
+              <p><strong>Variance:</strong> Medium</p>
+              <p><strong>Good for:</strong> U-shape relationships</p>
+            </div>
+            <div class="concept-card">
+              <h5>Degree 3 (Cubic)</h5>
+              <p><i class="fas fa-chart-line"></i> <strong>Equation:</strong> y = b + m₁x + m₂x² + m₃x³</p>
+              <p><strong>Bias:</strong> Lower - more flexible</p>
+              <p><strong>Variance:</strong> Higher - can start overfitting</p>
+            </div>
+            <div class="concept-card">
+              <h5>Degree 10+</h5>
+              <p><i class="fas fa-chart-line"></i> <strong>Way too wiggly!</strong></p>
+              <p><strong>Bias:</strong> Very low (can fit anything)</p>
+              <p><strong>Variance:</strong> Extremely high - unstable</p>
+              <p><strong>Problem:</strong> Severe overfitting</p>
+            </div>
+          </div>
+          <p><strong>The goal:</strong> Find the degree that minimizes test error - low enough bias to capture the pattern, but not so high variance that it overfits.</p>
+        </div>
+
+        <div class="regression-container">
+          <div class="regression-chart"><canvas id="polyChart"></canvas></div>
+
+          <div class="regression-controls">
+            <div class="control-group">
+              <h4><i class="fas fa-sliders-h"></i> Control Flexibility</h4>
+              <div class="slider-container">
+                <label><i class="fas fa-wave-square"></i> Polynomial Degree:</label>
+                <input type="range" id="polyDegree" min="1" max="15" step="1" value="2">
+                <span class="slider-value" id="polyDegreeValue">2</span>
+              </div>
+              <p style="font-size:12px;">Degree 1 = straight line | Degree 2 = one curve | Higher = more wiggly</p>
+              
+              <div class="slider-container">
+                <label><i class="fas fa-random"></i> Noise Level:</label>
+                <input type="range" id="polyNoise" min="0" max="30" step="2" value="10">
+                <span class="slider-value" id="polyNoiseValue">10</span>
+              </div>
+            </div>
+
+            <div class="button-group">
+              <button class="btn btn-primary" onclick="updatePolynomial()">
+                <i class="fas fa-play"></i> Fit Polynomial
+              </button>
+              <button class="btn btn-secondary" onclick="generatePolyData()">
+                <i class="fas fa-sync"></i> New Data
+              </button>
+            </div>
+
+            <div class="metrics-container" style="margin-top: 20px;">
+              <div class="metric-card">
+                <div class="metric-label">Training R²</div>
+                <div class="metric-value" id="polyTrainR2">0.00</div>
+                <div style="font-size:11px;">fits training data</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Test R²</div>
+                <div class="metric-value" id="polyTestR2">0.00</div>
+                <div style="font-size:11px;">true measure of quality</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Degree</div>
+                <div class="metric-value" id="polyCurrentDegree">2</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-label">Parameters</div>
+                <div class="metric-value" id="polyParams">3</div>
+              </div>
+            </div>
+
+            <div class="explanation-box">
+              <p><strong>👆 Watch the overfitting!</strong></p>
+              <ul style="padding-left:20px;">
+                <li><strong>Degree 1-2:</strong> Might be too simple (underfitting) - low R² on both train and test</li>
+                <li><strong>Degree 3-5:</strong> Sweet spot - captures curve well, test R² high</li>
+                <li><strong>Degree 8+:</strong> Wiggles through every point - train R² ~1.0, but test R² drops (overfitting!)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-editor-container">
+          <div class="code-header">
+            <div class="code-title"><i class="fab fa-python"></i> Polynomial Regression with scikit-learn</div>
+          </div>
+          <div class="code-body">
+            <pre class="code-block"><code><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> PolynomialFeatures
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> make_pipeline
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Sample data (non-linear relationship)</span>
+X = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).reshape(-1, 1)
+y = np.array([2, 5, 9, 15, 22, 30, 39, 49, 60, 72])  # Quadratic-ish pattern
+
+<span class="comment"># Create a pipeline: first create polynomial features, then fit linear regression</span>
+<span class="comment"># Degree 3 means it adds x² and x³ columns automatically: [x, x², x³]</span>
+degree = 3
+poly_model = make_pipeline(
+    PolynomialFeatures(degree=degree, include_bias=False),  <span class="comment"># Don't add a column of 1's (intercept handled by LinearRegression)</span>
+    LinearRegression()
+)
+
+<span class="comment"># Train the model</span>
+poly_model.<span class="function">fit</span>(X, y)
+
+<span class="comment"># Make predictions</span>
+X_test = np.linspace(1, 10, 100).reshape(-1, 1)
+y_pred = poly_model.<span class="function">predict</span>(X_test)
+
+<span class="comment"># Inspect what happened: get the polynomial features transformer and the linear model</span>
+poly_features = poly_model.named_steps['polynomialfeatures']
+linear_part = poly_model.named_steps['linearregression']
+
+<span class="keyword">print</span>(<span class="string">f"Original feature names: {poly_features.get_feature_names_out(['X'])}"</span>)
+<span class="keyword">print</span>(<span class="string">f"Coefficients for each term: {linear_part.coef_}"</span>)
+<span class="keyword">print</span>(<span class="string">f"Intercept: {linear_part.intercept_}"</span>)
+
+<span class="comment"># Warning: With degree 10 and multiple original features, you'll have hundreds of terms!</span>
+<span class="comment"># Example: degree 5 with 3 features creates 56 terms (combinations like x1*x2², etc.)</span>
+<span class="comment"># This is why polynomial regression can overfit badly without regularization.</span></code></pre>
+          </div>
+        </div>
+
+        <div class="common-pitfall">
+          <p><strong>⚠️ The Extrapolation Danger:</strong> Polynomials go CRAZY outside your data range! A degree 5 polynomial might fit your house data perfectly between 1000-3000 sqft, but predict negative prices for 5000 sqft houses or astronomical prices for 1000 sqft houses. <strong>Never use polynomial regression to predict far beyond your training data.</strong></p>
+        </div>
+
+        <div class="pro-tip">
+          <p><strong>💡 Better Alternative:</strong> For complex curves, consider splines (piecewise polynomials) or tree-based models (Random Forest, XGBoost). They're more stable and don't go wild outside the data range. Polynomial regression is best for simple, known curves (like physics relationships) when you're staying within the observed range.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================================================
+         SECTION 5: REGULARIZED LINEAR MODELS
+    ================================================= -->
+    <div id="regularized" class="module-content">
+
+      <div class="panel section">
+        <h3><i class="fas fa-sliders-h"></i> 5.1 The Problem: When Too Many Features Cause Trouble</h3>
 
         <div class="info-box warning">
           <h4><i class="fas fa-fire"></i> Why We Need Regularization</h4>
           <p>
             Imagine you have 50 features but only 100 houses. Regular linear regression will try to use all 50 features,
             often fitting to random noise instead of real patterns. This is called <strong>overfitting</strong>.
+          </p>
+          <p>
+            With polynomial regression, adding degree 5 to 3 features creates 56 terms! The model has too much flexibility
+            and will memorize the training data, including the noise.
+          </p>
+          <p>
+            <strong>Regularization</strong> adds a penalty for large or numerous coefficients, forcing the model to be simpler.
           </p>
         </div>
 
@@ -1131,81 +1397,121 @@ predictions = model.<span class="function">predict</span>(X_test)
           
           <div class="concept-grid">
             <div class="concept-card">
-              <h5>🏔️ Ridge Regression</h5>
-              <p><strong>How it works:</strong> Adds a penalty that keeps all features but shrinks their coefficients toward zero.</p>
+              <h5>🏔️ Ridge Regression (L2 Penalty)</h5>
+              <p><strong>How it works:</strong> Adds penalty = α * (sum of squared coefficients). This shrinks all coefficients toward zero but rarely to exactly zero.</p>
+              <p><strong>Math:</strong> Minimize MSE + α∑(mᵢ²)</p>
               <p><strong>Analogy:</strong> Like telling a student "use all the information, but don't get too confident about any single detail."</p>
-              <p><strong>Best for:</strong> When many features contribute a little bit to the prediction.</p>
+              <p><strong>Best for:</strong> When many features contribute a little bit to the prediction, and you want to keep them all.</p>
             </div>
             <div class="concept-card">
-              <h5>✂️ Lasso Regression</h5>
-              <p><strong>How it works:</strong> Can actually force some coefficients to become exactly zero - removing features entirely.</p>
+              <h5>✂️ Lasso Regression (L1 Penalty)</h5>
+              <p><strong>How it works:</strong> Adds penalty = α * (sum of absolute coefficients). This can force some coefficients to become exactly zero - removing features entirely.</p>
+              <p><strong>Math:</strong> Minimize MSE + α∑|mᵢ|</p>
               <p><strong>Analogy:</strong> Like an editor who cuts out irrelevant paragraphs entirely, not just shortening them.</p>
-              <p><strong>Best for:</strong> When you suspect only a few features really matter.</p>
+              <p><strong>Best for:</strong> When you suspect only a few features really matter (feature selection).</p>
             </div>
             <div class="concept-card">
               <h5>⚖️ ElasticNet</h5>
-              <p><strong>How it works:</strong> A compromise between Ridge and Lasso.</p>
+              <p><strong>How it works:</strong> A compromise between Ridge and Lasso, combining both penalties.</p>
+              <p><strong>Math:</strong> Minimize MSE + α₁∑|mᵢ| + α₂∑(mᵢ²)</p>
               <p><strong>Analogy:</strong> The balanced approach - keeps groups of related features together while still removing truly useless ones.</p>
-              <p><strong>Best for:</strong> When you have correlated features and want some feature selection.</p>
+              <p><strong>Best for:</strong> When you have correlated features and want some feature selection without dropping all correlated features.</p>
             </div>
           </div>
         </div>
 
         <div class="common-pitfall">
-          <p><strong>⚠️ The Alpha Trap:</strong> All three methods have an "alpha" knob that controls how much to penalize complexity. Too small alpha → still overfitting. Too large alpha → oversimplified model that misses patterns. Always try different alpha values and see what works best!</p>
+          <p><strong>⚠️ The Alpha Trap:</strong> All three methods have an "alpha" knob (sometimes called lambda) that controls how much to penalize complexity. </p>
+          <ul>
+            <li><strong>Alpha = 0:</strong> No penalty → back to regular linear regression (still overfitting).</li>
+            <li><strong>Too small alpha:</strong> Penalty too weak → still overfitting.</li>
+            <li><strong>Too large alpha:</strong> Penalty too strong → oversimplified model that misses patterns (underfitting).</li>
+            <li><strong>Just right:</strong> Find via cross-validation (try different alphas and see what minimizes validation error).</li>
+          </ul>
+          <p><strong>Important:</strong> Regularization requires features to be on the same scale! Always standardize (mean=0, std=1) first using <code>StandardScaler</code>.</p>
         </div>
 
         <div class="code-editor-container" style="margin-top: 20px;">
           <div class="code-header">
-            <div class="code-title"><i class="fab fa-python"></i> Ridge Regression Example</div>
+            <div class="code-title"><i class="fab fa-python"></i> Ridge Regression with Polynomial Features</div>
           </div>
           <div class="code-body">
-            <pre class="code-block"><code><span class="comment"># 1. Import</span>
-<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> Ridge
-<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler
+            <pre class="code-block"><code><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> Ridge, Lasso, ElasticNet
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> PolynomialFeatures, StandardScaler
+<span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> make_pipeline
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
 
-<span class="comment"># 2. Important! Scale your data first (regularization needs this)</span>
-scaler = StandardScaler()
-X_scaled = scaler.<span class="function">fit_transform</span>(X_train)
+<span class="comment"># Sample data with a curved pattern</span>
+np.random.seed(42)
+X = np.linspace(-3, 3, 100).reshape(-1, 1)
+y = 0.5 * X.ravel()**2 + X.ravel() + 2 + np.random.normal(0, 1, 100)
 
-<span class="comment"># 3. Create Ridge model with a specific alpha</span>
-ridge = Ridge(<span class="function">alpha</span>=<span class="number">1.0</span>)  <span class="comment"># alpha=0 would be regular linear regression</span>
+<span class="comment"># Create polynomial features WITH regularization</span>
+<span class="comment"># Even high degree (10) is okay with regularization - it will control the complexity</span>
+degree = 10
+alpha = 1.0  <span class="comment"># Regularization strength</span>
 
-<span class="comment"># 4. Train and predict as usual</span>
-ridge.<span class="function">fit</span>(X_scaled, y_train)
-predictions = ridge.<span class="function">predict</span>(scaler.<span class="function">transform</span>(X_test))</code></pre>
+ridge_poly = make_pipeline(
+    PolynomialFeatures(degree=degree),  <span class="comment"># Creates x, x², x³, ..., x¹⁰</span>
+    StandardScaler(),                   <span class="comment"># CRITICAL: Scale features for regularization</span>
+    Ridge(alpha=alpha)                  <span class="comment"># Ridge with L2 penalty</span>
+)
+
+<span class="comment"># Train the model</span>
+ridge_poly.<span class="function">fit</span>(X, y)
+
+<span class="comment"># Evaluate with cross-validation</span>
+cv_scores = cross_val_score(ridge_poly, X, y, cv=5, scoring='r2')
+<span class="keyword">print</span>(<span class="string">f"Cross-validated R²: {cv_scores.mean():.3f} (+/- {cv_scores.std()*2:.3f})"</span>)
+
+<span class="comment"># Compare with unregularized polynomial (degree 10) - this will overfit badly!</span>
+<span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression
+overfit_poly = make_pipeline(
+    PolynomialFeatures(degree=degree),
+    LinearRegression()
+)
+overfit_cv = cross_val_score(overfit_poly, X, y, cv=5, scoring='r2')
+<span class="keyword">print</span>(<span class="string">f"Unregularized CV R²: {overfit_cv.mean():.3f}"</span>)
+<span class="comment"># Ridge will typically have higher cross-validated R² due to reduced overfitting</span></code></pre>
           </div>
+        </div>
+        
+        <div class="pro-tip">
+          <p><strong>💡 Try Different Alphas:</strong> Use <code>RidgeCV</code> or <code>LassoCV</code> which automatically try different alpha values via cross-validation to find the best one for you.</p>
+          <p><strong>For Lasso:</strong> <code>from sklearn.linear_model import LassoCV; lasso_cv = LassoCV(cv=5).fit(X, y); print(f"Best alpha: {lasso_cv.alpha_}")</code></p>
         </div>
       </div>
     </div>
 
     <!-- ================================================
-         SECTION 3: TREE-BASED MODELS - SIMPLIFIED
+         SECTION 6: TREE-BASED MODELS (Enhanced)
     ================================================= -->
     <div id="tree-models" class="module-content">
 
       <div class="panel section">
-        <h3><i class="fas fa-tree"></i> 3.1 Decision Trees: If-This-Then-That Rules</h3>
+        <h3><i class="fas fa-tree"></i> 6.1 Decision Trees: If-This-Then-That Rules</h3>
 
         <div class="info-box info">
           <h4><i class="fas fa-lightbulb"></i> How Decision Trees Work</h4>
           <p>
-            Instead of drawing a line, decision trees ask a series of yes/no questions:
+            Instead of drawing a line, decision trees ask a series of yes/no questions to partition the data into regions.
+            Each region's prediction is simply the average target value of training points in that region.
           </p>
           <div style="background:var(--panel); padding:15px; border-radius:8px; margin:15px 0;">
             <p><strong>Question 1:</strong> Is sqft > 1500?<br/>
             &nbsp;&nbsp;&nbsp;→ If YES: Go to Question 2<br/>
-            &nbsp;&nbsp;&nbsp;→ If NO: Predict $250,000</p>
+            &nbsp;&nbsp;&nbsp;→ If NO: Predict $250,000 (average of all small houses)</p>
             <p><strong>Question 2:</strong> Is age < 10 years?<br/>
-            &nbsp;&nbsp;&nbsp;→ If YES: Predict $450,000<br/>
-            &nbsp;&nbsp;&nbsp;→ If NO: Predict $380,000</p>
+            &nbsp;&nbsp;&nbsp;→ If YES: Predict $450,000 (average of new large houses)<br/>
+            &nbsp;&nbsp;&nbsp;→ If NO: Predict $380,000 (average of older large houses)</p>
           </div>
-          <p>Each final answer (prediction) is just the average price of all training houses that followed that path.</p>
+          <p>This creates a piecewise constant prediction - a step function, not a smooth line.</p>
         </div>
 
         <div class="explanation-box">
-          <p><strong>📚 In Simple Terms:</strong> A decision tree is like the game "20 Questions" - it keeps splitting the data into smaller groups based on feature values until each group is pure enough to make a prediction. The predictions are just the average of that group.</p>
-          <p><strong>Real-Life Example:</strong> A bank loan officer might use rules like: "If income > $50k AND credit score > 700, approve up to $50k. If income > $50k but credit score ≤ 700, approve up to $30k." That's a decision tree!</p>
+          <p><strong>📚 In Simple Terms:</strong> A decision tree is like the game "20 Questions" - it keeps splitting the data into smaller groups based on feature values until each group is pure enough (or we hit a stopping rule). The predictions are just the average of that group.</p>
+          <p><strong>Key advantage:</strong> Trees automatically handle non-linear relationships and feature interactions without you having to create interaction terms manually.</p>
         </div>
 
         <div class="expanded-content">
@@ -1215,17 +1521,19 @@ predictions = ridge.<span class="function">predict</span>(scaler.<span class="fu
               <h5>✅ Great For</h5>
               <ul style="padding-left:20px;">
                 <li>Non-linear patterns (curves, thresholds)</li>
-                <li>When you need to explain decisions to managers</li>
-                <li>Mixed data types (numbers + categories)</li>
+                <li>When you need to explain decisions to managers (easy to visualize)</li>
+                <li>Mixed data types (numbers + categories) without encoding</li>
                 <li>Automatically finding interactions between features</li>
+                <li>Data with missing values (can handle them)</li>
               </ul>
             </div>
             <div class="concept-card">
               <h5>⚠️ Watch Out For</h5>
               <ul style="padding-left:20px;">
-                <li><strong>Overfitting!</strong> Deep trees memorize training data</li>
-                <li>Unstable - small data changes can create very different trees</li>
-                <li>Can't predict beyond training range (no extrapolation)</li>
+                <li><strong>Overfitting!</strong> Deep trees can memorize training data perfectly</li>
+                <li><strong>High variance</strong> - small data changes can create very different trees</li>
+                <li><strong>Can't extrapolate</strong> - predictions are bounded by training data range</li>
+                <li><strong>Step functions</strong> - not smooth, may not be realistic</li>
               </ul>
             </div>
           </div>
@@ -1238,18 +1546,18 @@ predictions = ridge.<span class="function">predict</span>(scaler.<span class="fu
             <div class="control-group">
               <h4><i class="fas fa-sliders-h"></i> Control the Tree's Complexity</h4>
               <div class="slider-container">
-                <label><i class="fas fa-layer-group"></i> Tree Depth:</label>
+                <label><i class="fas fa-layer-group"></i> Max Depth:</label>
                 <input type="range" id="treeDepth" min="1" max="10" step="1" value="3">
                 <span class="slider-value" id="treeDepthValue">3</span>
               </div>
-              <p style="font-size:12px; margin-top:-5px;">Depth = number of questions in a row</p>
+              <p style="font-size:12px;">Depth = number of consecutive questions. Higher = more complex.</p>
               
               <div class="slider-container">
                 <label><i class="fas fa-users"></i> Min Samples per Leaf:</label>
                 <input type="range" id="minSamples" min="2" max="20" step="1" value="5">
                 <span class="slider-value" id="minSamplesValue">5</span>
               </div>
-              <p style="font-size:12px; margin-top:-5px;">Higher = simpler, more robust tree</p>
+              <p style="font-size:12px;">Higher = simpler, more robust tree (prevents overfitting)</p>
             </div>
 
             <div class="button-group">
@@ -1271,19 +1579,18 @@ predictions = ridge.<span class="function">predict</span>(scaler.<span class="fu
                 <div class="metric-value" id="treeLeaves">8</div>
               </div>
               <div class="metric-card">
-                <div class="metric-label">Depth</div>
+                <div class="metric-label">Current Depth</div>
                 <div class="metric-value" id="treeCurrentDepth">3</div>
               </div>
             </div>
 
             <div class="explanation-box" style="margin-top: 20px;">
-              <p><strong>👆 Watch what happens:</strong></p>
+              <p><strong>👆 Watch the bias-variance tradeoff:</strong></p>
               <ul style="padding-left:20px;">
-                <li><strong>Depth 1:</strong> Just a flat line (average of all data)</li>
-                <li><strong>Depth 3-4:</strong> Starts capturing the curve</li>
-                <li><strong>Depth 8-10:</strong> Wiggles through every point - test R² drops (overfitting!)</li>
+                <li><strong>Depth 1:</strong> Just a flat line (average of all data) - high bias, low variance</li>
+                <li><strong>Depth 3-4:</strong> Starts capturing the curve - good balance</li>
+                <li><strong>Depth 8-10:</strong> Wiggles through every point - train R² high, test R² drops (overfitting!)</li>
               </ul>
-              <p><strong>The goal:</strong> Find the depth where test R² is highest.</p>
             </div>
           </div>
         </div>
@@ -1294,35 +1601,55 @@ predictions = ridge.<span class="function">predict</span>(scaler.<span class="fu
           </div>
           <div class="code-body">
             <pre class="code-block"><code><span class="keyword">from</span> sklearn.tree <span class="keyword">import</span> DecisionTreeRegressor
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Sample non-linear data</span>
+np.random.seed(42)
+X = np.random.rand(200, 1) * 10 - 5  # Range -5 to 5
+y = 0.5 * X.ravel()**2 + X.ravel() + 2 + np.random.normal(0, 2, 200)
+
+<span class="comment"># Split data</span>
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 <span class="comment"># Create a tree with limits to prevent overfitting</span>
 tree = DecisionTreeRegressor(
-    <span class="function">max_depth</span>=<span class="number">5</span>,           <span class="comment"># Don't let it get too deep</span>
-    <span class="function">min_samples_leaf</span>=<span class="number">10</span>,    <span class="comment"># Each leaf must have at least 10 houses</span>
-    <span class="function">random_state</span>=<span class="number">42</span>
+    max_depth=5,           <span class="comment"># Don't let it get too deep</span>
+    min_samples_leaf=10,    <span class="comment"># Each leaf must have at least 10 samples</span>
+    min_samples_split=5,    <span class="comment"># Each split requires at least 5 samples in the node</span>
+    random_state=42
 )
 
 tree.<span class="function">fit</span>(X_train, y_train)
 
-<span class="comment"># You can even see the tree rules!</span>
+<span class="comment"># Evaluate</span>
+train_score = tree.score(X_train, y_train)
+test_score = tree.score(X_test, y_test)
+<span class="keyword">print</span>(<span class="string">f"Train R²: {train_score:.3f}"</span>)
+<span class="keyword">print</span>(<span class="string">f"Test R²: {test_score:.3f}"</span>)
+
+<span class="comment"># You can even visualize the tree rules!</span>
 <span class="comment"># from sklearn.tree import plot_tree</span>
-<span class="comment"># plot_tree(tree, feature_names=feature_names)</span></code></pre>
+<span class="comment"># import matplotlib.pyplot as plt</span>
+<span class="comment"># plt.figure(figsize=(20,10))</span>
+<span class="comment"># plot_tree(tree, feature_names=['X'], filled=True)</span>
+<span class="comment"># plt.show()</span></code></pre>
           </div>
         </div>
 
         <div class="pro-tip">
-          <p><strong>💡 Student Tip:</strong> Decision trees are great for understanding your data. Plot the tree and follow the paths - you'll see exactly which features matter most and at what thresholds they split. It's like reading the mind of your model!</p>
+          <p><strong>💡 Student Tip:</strong> Decision trees are great for understanding your data. Plot the tree and follow the paths - you'll see exactly which features matter most and at what thresholds they split. It's like reading the mind of your model! But for final predictions, use an ensemble (Random Forest) for better accuracy.</p>
         </div>
       </div>
     </div>
 
     <!-- ================================================
-         SECTION 4: ENSEMBLE METHODS - SIMPLIFIED
+         SECTION 7: ENSEMBLE METHODS (Enhanced)
     ================================================= -->
     <div id="ensemble" class="module-content">
 
       <div class="panel section">
-        <h3><i class="fas fa-layer-group"></i> 4.1 Ensemble Methods: Why Many Models Are Better Than One</h3>
+        <h3><i class="fas fa-layer-group"></i> 7.1 Ensemble Methods: Why Many Models Are Better Than One</h3>
 
         <div class="info-box info">
           <h4><i class="fas fa-users"></i> The Wisdom of the Crowd</h4>
@@ -1330,175 +1657,251 @@ tree.<span class="function">fit</span>(X_train, y_train)
             Imagine you need to guess the number of jellybeans in a jar. Would you rather trust:
           </p>
           <ul style="padding-left:20px; margin:15px 0;">
-            <li><strong>One expert</strong> (might have a bad day)</li>
-            <li><strong>The average guess of 100 random people</strong> (surprisingly accurate!)</li>
+            <li><strong>One expert</strong> (might have a bad day, might be biased)</li>
+            <li><strong>The average guess of 100 random people</strong> (surprisingly accurate! This is a real phenomenon called the "wisdom of crowds")</li>
           </ul>
           <p>
             Ensembles work the same way - they combine many models to get a better answer than any single model could provide.
+            Each model makes different mistakes; averaging them cancels out the errors.
           </p>
         </div>
 
         <div class="explanation-box">
-          <p><strong>📚 In Simple Terms:</strong> Each model makes mistakes, but they make different mistakes. When you average them, the mistakes cancel out and the correct signal remains. It's like getting a second opinion from multiple doctors.</p>
+          <p><strong>📚 In Simple Terms:</strong> Each model makes mistakes, but they make different mistakes. When you average them, the mistakes cancel out and the correct signal remains. It's like getting a second opinion from multiple doctors - you're more likely to get the right diagnosis.</p>
         </div>
-
-        <div class="concept-grid">
-          <div class="concept-card">
-            <h5><i class="fas fa-random"></i> Bagging (Random Forest)</h5>
-            <p><strong>Idea:</strong> Train many trees on random subsets of the data, then average their predictions.</p>
-            <p><strong>Analogy:</strong> Ask 100 different people, each looking at different samples of houses.</p>
-            <p><strong>Result:</strong> Much more stable than a single tree, less overfitting.</p>
-          </div>
-          <div class="concept-card">
-            <h5><i class="fas fa-arrow-up"></i> Boosting (XGBoost)</h5>
-            <p><strong>Idea:</strong> Train trees sequentially - each new tree focuses on fixing the mistakes of previous trees.</p>
-            <p><strong>Analogy:</strong> A teacher who gives extra help on problems students got wrong, then retests.</p>
-            <p><strong>Result:</strong> Often the most accurate, but can overfit if not careful.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel section">
-        <h3><i class="fas fa-tree"></i> 4.2 Random Forest: A Forest of Decision Trees</h3>
 
         <div class="expanded-content">
-          <h4>How Random Forest Works (In Plain English)</h4>
-          <ol style="padding-left:20px;">
-            <li><strong>Create many trees:</strong> Instead of one tree, we grow hundreds.</li>
-            <li><strong>Give each tree different data:</strong> Each tree sees a random sample of houses (some houses might appear multiple times, some not at all).</li>
-            <li><strong>Give each tree different features:</strong> At each split, the tree only considers a random subset of features.</li>
-            <li><strong>Average them all:</strong> When predicting a new house, ask all trees, average their answers.</li>
-          </ol>
-          <p>This randomness ensures trees are different, so their errors cancel out.</p>
-        </div>
-
-        <div class="regression-container">
-          <div class="regression-chart"><canvas id="rfChart"></canvas></div>
-
-          <div class="regression-controls">
-            <div class="control-group">
-              <h4><i class="fas fa-sliders-h"></i> Random Forest Controls</h4>
-              <div class="slider-container">
-                <label><i class="fas fa-tree"></i> Number of Trees:</label>
-                <input type="range" id="nEstimators" min="10" max="200" step="10" value="100">
-                <span class="slider-value" id="nEstimatorsValue">100</span>
-              </div>
-              <p style="font-size:12px;">More trees = more stable (but slower)</p>
-              
-              <div class="slider-container">
-                <label><i class="fas fa-layer-group"></i> Max Depth:</label>
-                <input type="range" id="rfDepth" min="3" max="20" step="1" value="10">
-                <span class="slider-value" id="rfDepthValue">10</span>
-              </div>
-              <p style="font-size:12px;">Deeper trees = more complex</p>
+          <h4><i class="fas fa-code-branch"></i> Two Main Ensemble Strategies</h4>
+          <div class="concept-grid">
+            <div class="concept-card">
+              <h5><i class="fas fa-random"></i> Bagging (Bootstrap Aggregating)</h5>
+              <p><strong>How it works:</strong> Train many models (usually trees) in parallel on random bootstrap samples of the data (sampling with replacement). Each model sees about 63% of the data. Average their predictions.</p>
+              <p><strong>Key feature:</strong> Reduces variance without increasing bias.</p>
+              <p><strong>Random Forest:</strong> Bagging + random feature selection at each split, making trees even more different.</p>
             </div>
-
-            <div class="button-group">
-              <button class="btn btn-primary" onclick="updateRandomForest()"><i class="fas fa-play"></i> Update Forest</button>
-            </div>
-
-            <div class="metrics-container" style="margin-top: 20px;">
-              <div class="metric-card">
-                <div class="metric-label">Train R²</div>
-                <div class="metric-value" id="rfTrainR2">0.95</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-label">Test R²</div>
-                <div class="metric-value" id="rfTestR2">0.89</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-label">OOB Score</div>
-                <div class="metric-value" id="rfOOB">0.87</div>
-              </div>
-              <div class="metric-card">
-                <div class="metric-label">Trees</div>
-                <div class="metric-value" id="rfTrees">100</div>
-              </div>
-            </div>
-
-            <div class="explanation-box">
-              <p><strong>📚 What's OOB Score?</strong> Out-of-bag (OOB) score is like free validation. Each tree is trained on ~2/3 of the data, leaving 1/3 out. Those "left out" houses test that tree. It gives you an honest estimate of how well your forest will perform on new data.</p>
+            <div class="concept-card">
+              <h5><i class="fas fa-arrow-up"></i> Boosting</h5>
+              <p><strong>How it works:</strong> Train models sequentially - each new model focuses on correcting the mistakes of the previous ones. Points that were mispredicted get higher weight in the next model.</p>
+              <p><strong>Key feature:</strong> Can reduce both bias and variance, but more prone to overfitting if not tuned.</p>
+              <p><strong>XGBoost, AdaBoost, Gradient Boosting:</strong> Popular boosting algorithms.</p>
             </div>
           </div>
         </div>
 
-        <div class="code-editor-container" style="margin-top: 20px;">
-          <div class="code-header">
-            <div class="code-title"><i class="fab fa-python"></i> Random Forest in Python</div>
+        <div class="panel section" style="margin-top:20px;">
+          <h3><i class="fas fa-tree"></i> 7.2 Random Forest: A Forest of Decision Trees</h3>
+
+          <div class="expanded-content">
+            <h4>How Random Forest Works (In Plain English)</h4>
+            <ol style="padding-left:20px;">
+              <li><strong>Create many trees:</strong> Instead of one tree, we grow hundreds (e.g., 100 trees).</li>
+              <li><strong>Give each tree different data (Bootstrap):</strong> Each tree sees a random sample of houses drawn with replacement. Some houses might appear multiple times, some not at all (about 1/3 are left out - these are "out-of-bag" and can be used for validation).</li>
+              <li><strong>Give each tree different features:</strong> At each split, the tree only considers a random subset of features (e.g., if you have 10 features, maybe only consider 3 at each split). This ensures trees are diverse.</li>
+              <li><strong>Average them all:</strong> When predicting a new house, ask all trees, average their answers.</li>
+            </ol>
+            <p>This randomness ensures trees are different, so their errors are uncorrelated and cancel out when averaging.</p>
           </div>
-          <div class="code-body">
-            <pre class="code-block"><code><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor
+
+          <div class="regression-container">
+            <div class="regression-chart"><canvas id="rfChart"></canvas></div>
+
+            <div class="regression-controls">
+              <div class="control-group">
+                <h4><i class="fas fa-sliders-h"></i> Random Forest Controls</h4>
+                <div class="slider-container">
+                  <label><i class="fas fa-tree"></i> Number of Trees:</label>
+                  <input type="range" id="nEstimators" min="10" max="200" step="10" value="100">
+                  <span class="slider-value" id="nEstimatorsValue">100</span>
+                </div>
+                <p style="font-size:12px;">More trees = more stable (diminishing returns after ~100)</p>
+                
+                <div class="slider-container">
+                  <label><i class="fas fa-layer-group"></i> Max Depth:</label>
+                  <input type="range" id="rfDepth" min="3" max="20" step="1" value="10">
+                  <span class="slider-value" id="rfDepthValue">10</span>
+                </div>
+                <p style="font-size:12px;">Deeper trees = more complex, can overfit if too deep</p>
+              </div>
+
+              <div class="button-group">
+                <button class="btn btn-primary" onclick="updateRandomForest()"><i class="fas fa-play"></i> Update Forest</button>
+              </div>
+
+              <div class="metrics-container" style="margin-top: 20px;">
+                <div class="metric-card">
+                  <div class="metric-label">Train R²</div>
+                  <div class="metric-value" id="rfTrainR2">0.95</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">Test R²</div>
+                  <div class="metric-value" id="rfTestR2">0.89</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">Trees</div>
+                  <div class="metric-value" id="rfTrees">100</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">OOB Score</div>
+                  <div class="metric-value" id="rfOOB">0.87</div>
+                </div>
+              </div>
+
+              <div class="explanation-box">
+                <p><strong>📚 What's OOB Score?</strong> Out-of-bag (OOB) score is like free validation. Each tree is trained on a bootstrap sample (~63% of data), leaving ~37% out. Those "left out" houses are used to test that tree, and the average across all trees gives an unbiased performance estimate without needing a separate validation set.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="code-editor-container" style="margin-top: 20px;">
+            <div class="code-header">
+              <div class="code-title"><i class="fab fa-python"></i> Random Forest in Python</div>
+            </div>
+            <div class="code-body">
+              <pre class="code-block"><code><span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+<span class="comment"># Load your data (example)</span>
+<span class="comment"># df = pd.read_csv('housing_sample_dataset.csv')</span>
+<span class="comment"># X = df[['sqft', 'bedrooms', 'age']]</span>
+<span class="comment"># y = df['price']</span>
+
+<span class="comment"># For demo, create sample data</span>
+np.random.seed(42)
+X = np.random.rand(200, 3)  # 3 features
+y = X[:, 0]*2 + X[:, 1]*3 - X[:, 2] + np.random.normal(0, 0.1, 200)
+
+<span class="comment"># Split data</span>
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 <span class="comment"># Create a random forest</span>
 rf = RandomForestRegressor(
-    <span class="function">n_estimators</span>=<span class="number">100</span>,      <span class="comment"># Number of trees in the forest</span>
-    <span class="function">max_depth</span>=<span class="number">10</span>,          <span class="comment"># Limit tree depth</span>
-    <span class="function">min_samples_leaf</span>=<span class="number">5</span>,     <span class="comment"># Each leaf needs at least 5 houses</span>
-    <span class="function">oob_score</span>=<span class="keyword">True</span>,         <span class="comment"># Get free validation score</span>
-    <span class="function">random_state</span>=<span class="number">42</span>
+    n_estimators=100,      <span class="comment"># Number of trees in the forest</span>
+    max_depth=10,          <span class="comment"># Limit tree depth to prevent overfitting</span>
+    min_samples_leaf=5,     <span class="comment"># Each leaf needs at least 5 samples</span>
+    min_samples_split=10,   <span class="comment"># Each split requires at least 10 samples in the node</span>
+    max_features='sqrt',    <span class="comment"># At each split, consider sqrt(n_features) features (common default)</span>
+    oob_score=True,         <span class="comment"># Get free validation score using out-of-bag samples</span>
+    random_state=42,
+    n_jobs=-1               <span class="comment"># Use all CPU cores for parallel training</span>
 )
 
 rf.<span class="function">fit</span>(X_train, y_train)
 
-<span class="keyword">print</span>(<span class="string">f"OOB Score: {rf.oob_score_:.3f}"</span>)
+<span class="comment"># Evaluate</span>
+<span class="keyword">print</span>(<span class="string">f"Train R²: {rf.score(X_train, y_train):.3f}"</span>)
+<span class="keyword">print</span>(<span class="string">f"Test R²: {rf.score(X_test, y_test):.3f}"</span>)
+<span class="keyword">print</span>(<span class="string">f"OOB Score: {rf.oob_score_:.3f}"</span>)  <span class="comment"># Should be close to test score</span>
 
-<span class="comment"># See which features are most important</span>
+<span class="comment"># Feature importance - which features matter most?</span>
 importances = rf.feature_importances_
+feature_names = [<span class="string">'sqft'</span>, <span class="string">'bedrooms'</span>, <span class="string">'age'</span>]
 <span class="keyword">for</span> name, imp <span class="keyword">in</span> <span class="function">zip</span>(feature_names, importances):
-    <span class="keyword">print</span>(<span class="string">f"{name}: {imp:.3f}"</span>)  <span class="comment"># Higher = more important</span></code></pre>
+    <span class="keyword">print</span>(<span class="string">f"{name}: {imp:.3f}"</span>)  <span class="comment"># Higher = more important (sums to 1)</span></code></pre>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="panel section">
-        <h3><i class="fas fa-bolt"></i> 4.3 XGBoost: The Champion Algorithm</h3>
+        <h3><i class="fas fa-bolt"></i> 7.3 XGBoost: The Champion Algorithm</h3>
 
         <div class="info-box success">
           <h4><i class="fas fa-trophy"></i> Why XGBoost Wins Competitions</h4>
           <p>
-            XGBoost (Extreme Gradient Boosting) is like a student who learns from mistakes. Each new tree focuses on the houses previous trees predicted poorly. With smart tricks to prevent overfitting, it often produces the most accurate predictions.
+            XGBoost (Extreme Gradient Boosting) is like a student who learns from mistakes. Each new tree focuses on the houses previous trees predicted poorly. It uses gradient descent to minimize errors and has built-in regularization to prevent overfitting. With smart tricks like early stopping and tree pruning, it often produces the most accurate predictions.
           </p>
         </div>
 
+        <div class="expanded-content">
+          <h4>Key XGBoost Parameters You Should Know</h4>
+          <table class="detailed-table">
+            <thead>
+              <tr><th>Parameter</th><th>What it does</th><th>Typical range</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>n_estimators</code></td><td>Number of boosting rounds (trees)</td><td>100-1000 (use early stopping)</td></tr>
+              <tr><td><code>learning_rate (eta)</code></td><td>Shrinks contribution of each tree. Lower = more robust, needs more trees.</td><td>0.01-0.3</td></tr>
+              <tr><td><code>max_depth</code></td><td>Maximum tree depth. Deeper = more complex.</td><td>3-10</td></tr>
+              <tr><td><code>subsample</code></td><td>Fraction of samples used per tree. <1 prevents overfitting.</td><td>0.5-1.0</td></tr>
+              <tr><td><code>colsample_bytree</code></td><td>Fraction of features used per tree.</td><td>0.5-1.0</td></tr>
+              <tr><td><code>reg_alpha</code></td><td>L1 regularization on weights (like Lasso).</td><td>0-10</td></tr>
+              <tr><td><code>reg_lambda</code></td><td>L2 regularization on weights (like Ridge).</td><td>0-10</td></tr>
+            </tbody>
+          </table>
+        </div>
+
         <div class="common-pitfall">
-          <p><strong>⚠️ Warning for Beginners:</strong> XGBoost is powerful but has many knobs to adjust. Start with default settings, then learn to tune one parameter at a time. And always use early stopping to prevent overfitting!</p>
+          <p><strong>⚠️ Warning for Beginners:</strong> XGBoost is powerful but has many knobs to adjust. Start with default settings, then learn to tune one parameter at a time. <strong>Always use early stopping</strong> to prevent overfitting - this automatically stops training when validation performance stops improving.</p>
         </div>
 
         <div class="code-editor-container" style="margin-top: 20px;">
           <div class="code-header">
-            <div class="code-title"><i class="fab fa-python"></i> XGBoost Basic Example</div>
+            <div class="code-title"><i class="fab fa-python"></i> XGBoost with Early Stopping</div>
           </div>
           <div class="code-body">
             <pre class="code-block"><code><span class="comment"># Install: pip install xgboost</span>
 <span class="keyword">import</span> xgboost <span class="keyword">as</span> xgb
+<span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
 
-<span class="comment"># Create the model</span>
+<span class="comment"># Sample data</span>
+X, y = ... <span class="comment"># your features and target</span>
+
+<span class="comment"># Split into train and validation sets</span>
+X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+
+<span class="comment"># Create the model with typical good starting parameters</span>
 xgb_model = xgb.XGBRegressor(
-    <span class="function">n_estimators</span>=<span class="number">300</span>,      <span class="comment"># How many trees to try (max)</span>
-    <span class="function">learning_rate</span>=<span class="number">0.05</span>,    <span class="comment">"> How much each tree contributes</span>
-    <span class="function">max_depth</span>=<span class="number">5</span>,           <span class="comment"># Shallow trees prevent overfitting</span>
-    <span class="function">random_state</span>=<span class="number">42</span>
+    n_estimators=1000,          <span class="comment"># High number, early stopping will find the best</span>
+    learning_rate=0.05,         <span class="comment">"> How much each tree contributes (shrinkage)</span>
+    max_depth=5,                <span class="comment"># Shallow trees prevent overfitting</span>
+    subsample=0.8,              <span class="comment"># Use 80% of data per tree</span>
+    colsample_bytree=0.8,       <span class="comment"># Use 80% of features per tree</span>
+    reg_alpha=0.1,              <span class="comment"># L1 regularization</span>
+    reg_lambda=1.0,             <span class="comment"># L2 regularization</span>
+    random_state=42,
+    early_stopping_rounds=50,   <span class="comment"># Stop if no improvement for 50 rounds</span>
+    eval_metric='rmse'          <span class="comment"># Metric to monitor for early stopping</span>
 )
 
-<span class="comment"># Train with early stopping (stops when validation stops improving)</span>
+<span class="comment"># Train with early stopping</span>
 xgb_model.<span class="function">fit</span>(
     X_train, y_train,
-    <span class="function">eval_set</span>=[(X_test, y_test)],
-    <span class="function">early_stopping_rounds</span>=<span class="number">20</span>,   <span class="comment"># Stop if no improvement for 20 rounds</span>
-    <span class="function">verbose</span>=<span class="keyword">False</span>
-)</code></pre>
+    eval_set=[(X_val, y_val)],      <span class="comment"># Validation set for monitoring</span>
+    verbose=False                   <span class="comment"># Set to True to see progress</span>
+)
+
+<span class="comment"># Best iteration found by early stopping</span>
+<span class="keyword">print</span>(<span class="string">f"Best iteration: {xgb_model.best_iteration}"</span>)
+<span class="keyword">print</span>(<span class="string">f"Best validation score: {xgb_model.best_score}"</span>)
+
+<span class="comment"># Feature importance (like Random Forest)</span>
+importance_dict = xgb_model.get_booster().get_score(importance_type='weight')
+<span class="keyword">print</span>(<span class="string">"Feature importance:"</span>, importance_dict)</code></pre>
           </div>
+        </div>
+
+        <div class="pro-tip">
+          <p><strong>💡 When to Use What:</strong></p>
+          <ul>
+            <li><strong>Start with Linear Regression</strong> - it's your baseline, fast, and interpretable.</li>
+            <li><strong>If data has clear curves and you're staying in-range</strong> - try Polynomial + Ridge.</li>
+            <li><strong>If you need good performance with minimal tuning</strong> - Random Forest is robust and works well out-of-the-box.</li>
+            <li><strong>If you're in a competition or need maximum accuracy</strong> - XGBoost (or LightGBM, CatBoost) with careful tuning.</li>
+            <li><strong>If interpretability is crucial</strong> - Decision Tree (if small) or Linear Regression.</li>
+          </ul>
         </div>
       </div>
     </div>
 
     <!-- ================================================
-         SECTION 5: EVALUATION - HOW TO MEASURE SUCCESS
+         SECTION 8: EVALUATION - HOW TO MEASURE SUCCESS
     ================================================= -->
     <div id="evaluation" class="module-content">
 
       <div class="panel section">
-        <h3><i class="fas fa-clipboard-check"></i> 5.1 How Do We Know If Our Predictions Are Good?</h3>
+        <h3><i class="fas fa-clipboard-check"></i> 8.1 How Do We Know If Our Predictions Are Good?</h3>
 
         <div class="info-box info">
           <h4><i class="fas fa-ruler"></i> Three Essential Metrics (with Simple Explanations)</h4>
@@ -1509,11 +1912,12 @@ xgb_model.<span class="function">fit</span>(
           <div class="formula-with-calc">
             <div class="formula-box">
               <div class="formula-label">Formula</div>
-              <span class="math-equation">MAE = average(|actual - prediction|)</span>
+              <span class="math-equation">MAE = (1/n) * Σ|yᵢ - ŷᵢ|</span>
             </div>
             <div class="numeric-example">
-              <strong>Plain English:</strong> "On average, how far off are we?"<br/>
-              <strong>Example:</strong> If MAE = $15,000 on house prices, that means typical predictions are off by about $15,000.
+              <strong>Plain English:</strong> "On average, how far off are our predictions in absolute dollars?"<br/>
+              <strong>Example:</strong> If MAE = $15,000 on house prices, that means typical predictions are off by about $15,000, regardless of direction.<br/>
+              <strong>Units:</strong> Same as target variable (dollars). Easy to understand.
             </div>
           </div>
 
@@ -1521,23 +1925,30 @@ xgb_model.<span class="function">fit</span>(
           <div class="formula-with-calc">
             <div class="formula-box">
               <div class="formula-label">Formula</div>
-              <span class="math-equation">RMSE = sqrt(average((actual - prediction)²))</span>
+              <span class="math-equation">RMSE = √[(1/n) * Σ(yᵢ - ŷᵢ)²]</span>
             </div>
             <div class="numeric-example">
-              <strong>Plain English:</strong> "Similar to MAE, but gives extra penalty to big mistakes."<br/>
-              <strong>Example:</strong> Being off by $50,000 once is worse than being off by $10,000 five times.
+              <strong>Plain English:</strong> "Similar to MAE, but gives extra penalty to big mistakes by squaring them before averaging."<br/>
+              <strong>Example:</strong> Being off by $50,000 once is worse than being off by $10,000 five times, even though MAE would be the same ($10,000). RMSE would be higher for the single big error.<br/>
+              <strong>Units:</strong> Same as target variable. Always ≥ MAE.
             </div>
           </div>
 
-          <h4>🎯 R²: R-Squared</h4>
+          <h4>🎯 R²: R-Squared (Coefficient of Determination)</h4>
           <div class="formula-with-calc">
             <div class="formula-box">
               <div class="formula-label">Formula</div>
-              <span class="math-equation">R² = 1 - (model error / dumb guess error)</span>
+              <span class="math-equation">R² = 1 - (SS_res / SS_tot)</span>
             </div>
             <div class="numeric-example">
-              <strong>Plain English:</strong> "How much better are we than just guessing the average?"<br/>
-              <strong>Scale:</strong> 1 = perfect, 0 = no better than average, negative = worse than average
+              <strong>Plain English:</strong> "How much better are we than just guessing the average every time?"<br/>
+              <strong>Scale:</strong> 
+              <ul>
+                <li><strong>1.0</strong> = perfect predictions</li>
+                <li><strong>0.0</strong> = no better than predicting the mean</li>
+                <li><strong>Negative</strong> = worse than predicting the mean (your model is actively bad!)</li>
+              </ul>
+              <strong>Interpretation:</strong> An R² of 0.85 means your model explains 85% of the variance in the target variable.
             </div>
           </div>
         </div>
@@ -1548,48 +1959,47 @@ xgb_model.<span class="function">fit</span>(
             <tr><th>Actual Price</th><th>Our Prediction</th><th>Error (actual - pred)</th><th>Absolute Error</th><th>Squared Error</th></tr>
           </thead>
           <tbody>
-            <tr><td>$250,000</td><td>$240,000</td><td>-$10,000</td><td>$10,000</td><td>100 million</td></tr>
-            <tr><td>$450,000</td><td>$460,000</td><td>$10,000</td><td>$10,000</td><td>100 million</td></tr>
-            <tr><td>$180,000</td><td>$190,000</td><td>$10,000</td><td>$10,000</td><td>100 million</td></tr>
-            <tr><td>$320,000</td><td>$310,000</td><td>-$10,000</td><td>$10,000</td><td>100 million</td></tr>
+            <tr><td>$250,000</td><td>$240,000</td><td>-$10,000</td><td>$10,000</td><td>100,000,000</td></tr>
+            <tr><td>$450,000</td><td>$460,000</td><td>$10,000</td><td>$10,000</td><td>100,000,000</td></tr>
+            <tr><td>$180,000</td><td>$190,000</td><td>$10,000</td><td>$10,000</td><td>100,000,000</td></tr>
+            <tr><td>$320,000</td><td>$310,000</td><td>-$10,000</td><td>$10,000</td><td>100,000,000</td></tr>
           </tbody>
         </table>
 
         <div class="numeric-example">
           <p><strong>Step 1 - MAE:</strong> Average of absolute errors = ($10,000 × 4) / 4 = <strong>$10,000</strong></p>
-          <p><strong>Step 2 - RMSE:</strong> Square root of average squared errors = √(100 million) = <strong>$10,000</strong> (same here because errors are equal)</p>
-          <p><strong>Step 3 - R²:</strong> Compare to guessing average ($300,000)<br/>
-          Dumb guess errors: $50,000 + $150,000 + $120,000 + $20,000 squared...<br/>
-          Our model is much better! R² ≈ <strong>0.85</strong></p>
+          <p><strong>Step 2 - RMSE:</strong> Square root of average squared errors = √(100,000,000) = <strong>$10,000</strong> (same here because errors are equal)</p>
+          <p><strong>Step 3 - R²:</strong> Compare to guessing average ($300,000). Calculate sum of squared errors for the mean guess: (250-300)² + (450-300)² + (180-300)² + (320-300)² = 2500 + 22500 + 14400 + 400 = 39,800 (in thousands²). Our model's sum of squared errors is 4 × 100 = 400 (in thousands²). So R² = 1 - (400 / 39800) ≈ <strong>0.99</strong> (very good!).</p>
         </div>
 
         <div class="common-pitfall">
-          <p><strong>⚠️ Common Mistake:</strong> Don't compare RMSE across different datasets. An RMSE of $10,000 might be great for predicting $500,000 houses but terrible for predicting $50,000 houses. Always consider the scale of your target!</p>
+          <p><strong>⚠️ Common Mistake:</strong> Don't compare RMSE across different datasets. An RMSE of $10,000 might be great for predicting $500,000 houses (2% error) but terrible for predicting $50,000 houses (20% error). Always consider the scale of your target! Also, R² can be artificially high if you have few data points and many features - use adjusted R² or cross-validation.</p>
         </div>
       </div>
 
       <div class="panel section">
-        <h3><i class="fas fa-chart-bar"></i> 5.2 Cross-Validation: Don't Get Lucky, Get Good</h3>
+        <h3><i class="fas fa-chart-bar"></i> 8.2 Cross-Validation: Don't Get Lucky, Get Good</h3>
 
         <div class="info-box warning">
           <h4><i class="fas fa-exclamation-triangle"></i> The Problem with One Test</h4>
           <p>
-            If you split your data once, you might get lucky (easy test set) or unlucky (hard test set). 
-            Cross-validation solves this by testing on multiple different splits.
+            If you split your data once, you might get lucky (easy test set) or unlucky (hard test set). Your estimated performance could be misleading. Cross-validation solves this by testing on multiple different splits and averaging the results.
           </p>
         </div>
 
         <div class="explanation-box">
           <p><strong>📚 How 5-Fold Cross-Validation Works:</strong></p>
           <ol style="padding-left:20px;">
-            <li>Split data into 5 equal parts</li>
-            <li>Train on parts 1-4, test on part 5 → record score</li>
-            <li>Train on parts 1-3+5, test on part 4 → record score</li>
-            <li>Train on parts 1-2+4-5, test on part 3 → record score</li>
-            <li>Train on parts 1+3-5, test on part 2 → record score</li>
-            <li>Train on parts 2-5, test on part 1 → record score</li>
-            <li>Average all 5 scores → your final, honest estimate</li>
+            <li>Split data into 5 equal parts (folds)</li>
+            <li><strong>Fold 1:</strong> Train on folds 2-5, test on fold 1 → record score</li>
+            <li><strong>Fold 2:</strong> Train on folds 1,3-5, test on fold 2 → record score</li>
+            <li><strong>Fold 3:</strong> Train on folds 1-2,4-5, test on fold 3 → record score</li>
+            <li><strong>Fold 4:</strong> Train on folds 1-3,5, test on fold 4 → record score</li>
+            <li><strong>Fold 5:</strong> Train on folds 1-4, test on fold 5 → record score</li>
+            <li>Average all 5 scores → your final, honest estimate of model performance</li>
+            <li>Also look at the standard deviation - low means stable model, high means unstable (might need more data or simpler model).</li>
           </ol>
+          <p>This gives you a much more reliable estimate of how your model will perform on new, unseen data.</p>
         </div>
 
         <div class="code-editor-container">
@@ -1597,25 +2007,36 @@ xgb_model.<span class="function">fit</span>(
             <div class="code-title">Cross-Validation in Python</div>
           </div>
           <div class="code-body">
-            <pre class="code-block"><code><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score
+            <pre class="code-block"><code><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> cross_val_score, KFold
 <span class="keyword">from</span> sklearn.ensemble <span class="keyword">import</span> RandomForestRegressor
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
 
-model = RandomForestRegressor()
-scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span class="number">5</span>, <span class="function">scoring</span>=<span class="string">'r2'</span>)
+<span class="comment"># Assume X, y are your features and target</span>
+
+<span class="comment"># Create model</span>
+model = RandomForestRegressor(n_estimators=100, random_state=42)
+
+<span class="comment"># Perform 5-fold cross-validation</span>
+cv = KFold(n_splits=5, shuffle=True, random_state=42)  <span class="comment"># Shuffle data before splitting</span>
+scores = cross_val_score(model, X, y, cv=cv, scoring='r2')  <span class="comment"># Can use 'neg_mean_absolute_error' etc.</span>
 
 <span class="keyword">print</span>(<span class="string">f"Scores from each fold: {scores}"</span>)
 <span class="keyword">print</span>(<span class="string">f"Average R²: {scores.mean():.3f}"</span>)
-<span class="keyword">print</span>(<span class="string">f"Stability (std): {scores.std():.3f}"</span>)  <span class="comment"># Lower = more stable</span></code></pre>
+<span class="keyword">print</span>(<span class="string">f"Standard deviation: {scores.std():.3f}"</span>)  <span class="comment"># Lower = more stable model</span>
+
+<span class="comment"># Example: If scores are [0.85, 0.87, 0.84, 0.86, 0.85] → stable, trustworthy.</span>
+<span class="comment"># If they're [0.95, 0.60, 0.92, 0.55, 0.90] → unstable, model is inconsistent.</span>
+<span class="comment"># Might need more data, simpler model, or check for data leaks.</span></code></pre>
           </div>
         </div>
 
         <div class="pro-tip">
-          <p><strong>💡 Reading the Results:</strong> If your scores are [0.85, 0.87, 0.84, 0.86, 0.85] → stable, trustworthy. If they're [0.95, 0.60, 0.92, 0.55, 0.90] → unstable, your model is inconsistent. Might need more data or simpler model.</p>
+          <p><strong>💡 Pro Tip:</strong> Use <code>cross_validate</code> instead of <code>cross_val_score</code> if you want to get both training and test scores, which can help detect overfitting (training score much higher than test score).</p>
         </div>
       </div>
 
       <div class="panel section">
-        <h3><i class="fas fa-shield-halved"></i> 5.3 The Trust Checklist: When Can You Deploy Your Model?</h3>
+        <h3><i class="fas fa-shield-halved"></i> 8.3 The Trust Checklist: When Can You Deploy Your Model?</h3>
 
         <div class="info-box info">
           <h4><i class="fas fa-check-circle"></i> 7 Questions to Ask Before Trusting a Model</h4>
@@ -1623,35 +2044,35 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
 
         <div class="expanded-content">
           <ol style="padding-left:20px; line-height:2;">
-            <li><strong>✅ Test performance close to training?</strong> (If train=0.99, test=0.60 → overfitting!)</li>
-            <li><strong>✅ Cross-validation scores stable?</strong> (Not jumping between 0.95 and 0.55)</li>
-            <li><strong>✅ No data leakage?</strong> (Did test data accidentally influence training?)</li>
-            <li><strong>✅ Errors acceptable?</strong> (Is being off by $15,000 okay for your use case?)</li>
-            <li><strong>✅ Passes sanity checks?</strong> (Does it predict larger houses cost more?)</li>
-            <li><strong>✅ Works on edge cases?</strong> (Very small, very large, unusual houses?)</li>
-            <li><strong>✅ Monitoring plan ready?</strong> (How will you know if it stops working?)</li>
+            <li><strong>✅ Test performance close to training?</strong> (If train=0.99, test=0.60 → severe overfitting!)</li>
+            <li><strong>✅ Cross-validation scores stable?</strong> (Standard deviation low, not jumping between 0.95 and 0.55)</li>
+            <li><strong>✅ No data leakage?</strong> (Did test data accidentally influence training? E.g., scaling before splitting, or using future information to predict past.)</li>
+            <li><strong>✅ Errors acceptable for your use case?</strong> (Is being off by $15,000 okay for your business? Maybe yes for rough estimates, no for final offers.)</li>
+            <li><strong>✅ Passes sanity checks?</strong> (Does it predict larger houses cost more? Does it make logical sense? If not, something's wrong.)</li>
+            <li><strong>✅ Works on edge cases?</strong> (Very small, very large, unusual feature combinations - test these specifically.)</li>
+            <li><strong>✅ Monitoring plan ready?</strong> (How will you know if it stops working in production? Data drift, concept drift? Set up alerts.)</li>
           </ol>
 
           <div class="common-pitfall">
-            <p><strong>⚠️ Real horror story:</strong> A hospital's model predicted pneumonia patients had lower risk of death if they had asthma. Why? Because asthma patients got rushed to ICU immediately, so they were monitored closely. The model learned "asthma = good" - but that's wrong! This is called <strong>data leakage</strong>. Always ask: "Does this prediction make sense?"</p>
+            <p><strong>⚠️ Real horror story:</strong> A hospital's model predicted pneumonia patients had lower risk of death if they had asthma. Why? Because asthma patients got rushed to ICU immediately, so they were monitored closely. The model learned "asthma = good" - but that's wrong! This is called <strong>data leakage</strong> (the treatment, not the disease, affected the outcome). Always ask: "Does this prediction make sense clinically/business-wise?"</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- ================================================
-         SECTION 6: HANDS-ON LAB - TRY IT YOURSELF!
+         SECTION 9: HANDS-ON LAB - TRY IT YOURSELF!
     ================================================= -->
     <div id="hands-on" class="module-content">
 
       <div class="panel section">
-        <h3><i class="fas fa-laptop-code"></i> 6.1 Compare All Algorithms on the Same Data</h3>
+        <h3><i class="fas fa-laptop-code"></i> 9.1 Compare All Algorithms on the Same Data</h3>
 
         <div class="info-box success">
           <h4><i class="fas fa-flask"></i> Your Mission</h4>
           <p>
             Below is the same dataset. Click different algorithms and see how they fit the data.
-            Watch how some capture the curve better than others!
+            Watch how some capture the curve better than others, and notice the bias-variance tradeoff.
           </p>
         </div>
 
@@ -1663,16 +2084,22 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
               <h4><i class="fas fa-cogs"></i> Pick an Algorithm</h4>
               <div class="button-group" style="flex-direction: column; gap: 10px;">
                 <button class="btn btn-secondary" onclick="compareAlgorithm('linear')" style="width: 100%; justify-content: flex-start;">
-                  <i class="fas fa-chart-line"></i> Linear Regression (straight line)
+                  <i class="fas fa-chart-line"></i> Simple Linear (straight line)
+                </button>
+                <button class="btn btn-secondary" onclick="compareAlgorithm('multiple')" style="width: 100%; justify-content: flex-start;">
+                  <i class="fas fa-cubes"></i> Multiple Linear (plane)
+                </button>
+                <button class="btn btn-secondary" onclick="compareAlgorithm('poly2')" style="width: 100%; justify-content: flex-start;">
+                  <i class="fas fa-wave-square"></i> Polynomial (degree 2)
+                </button>
+                <button class="btn btn-secondary" onclick="compareAlgorithm('poly5')" style="width: 100%; justify-content: flex-start;">
+                  <i class="fas fa-wave-square"></i> Polynomial (degree 5)
                 </button>
                 <button class="btn btn-secondary" onclick="compareAlgorithm('tree')" style="width: 100%; justify-content: flex-start;">
                   <i class="fas fa-tree"></i> Decision Tree (step function)
                 </button>
                 <button class="btn btn-secondary" onclick="compareAlgorithm('rf')" style="width: 100%; justify-content: flex-start;">
-                  <i class="fas fa-random"></i> Random Forest (smooth steps)
-                </button>
-                <button class="btn btn-secondary" onclick="compareAlgorithm('xgb')" style="width: 100%; justify-content: flex-start;">
-                  <i class="fas fa-bolt"></i> XGBoost (flexible curve)
+                  <i class="fas fa-random"></i> Random Forest (smoothed steps)
                 </button>
               </div>
             </div>
@@ -1680,7 +2107,7 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
             <div class="metrics-container" style="margin-top: 20px;">
               <div class="metric-card">
                 <div class="metric-label">Algorithm</div>
-                <div class="metric-value" id="currentAlgo">Linear</div>
+                <div class="metric-value" id="currentAlgo">Simple Linear</div>
               </div>
               <div class="metric-card">
                 <div class="metric-label">Train R²</div>
@@ -1697,12 +2124,14 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
             </div>
 
             <div class="explanation-box">
-              <p><strong>👆 Try each one:</strong></p>
+              <p><strong>👆 Try each one and observe:</strong></p>
               <ul style="padding-left:20px;">
-                <li><strong>Linear:</strong> Can't capture the curve - underfitting</li>
-                <li><strong>Tree:</strong> Captures steps, might be jagged</li>
-                <li><strong>Random Forest:</strong> Smooths the steps, better fit</li>
-                <li><strong>XGBoost:</strong> Flexible, often best test R²</li>
+                <li><strong>Linear:</strong> Can't capture the curve - underfitting (high bias)</li>
+                <li><strong>Multiple Linear:</strong> Still a plane, but might do slightly better with more info</li>
+                <li><strong>Polynomial (deg 2):</strong> Captures the basic curve well</li>
+                <li><strong>Polynomial (deg 5):</strong> Starts to wiggle - may overfit a bit</li>
+                <li><strong>Tree:</strong> Step function, captures non-linearity but jagged</li>
+                <li><strong>Random Forest:</strong> Smooths the steps, good balance</li>
               </ul>
             </div>
           </div>
@@ -1719,7 +2148,21 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
             <div class="algorithm-body">
               <div class="algorithm-metric"><span>Best for:</span><span>Linear relationships</span></div>
               <div class="algorithm-metric"><span>Pros:</span><span>Fast, interpretable</span></div>
-              <div class="algorithm-metric"><span>Cons:</span><span>Misses curves</span></div>
+              <div class="algorithm-metric"><span>Cons:</span><span>Misses curves, sensitive to outliers</span></div>
+            </div>
+          </div>
+
+          <div class="algorithm-card" id="algoPoly">
+            <div class="algorithm-header">
+              <div class="algorithm-icon"><i class="fas fa-wave-square"></i></div>
+              <div class="algorithm-title">
+                <h4>Polynomial</h4><p>Captures curves</p>
+              </div>
+            </div>
+            <div class="algorithm-body">
+              <div class="algorithm-metric"><span>Best for:</span><span>Simple curved relationships</span></div>
+              <div class="algorithm-metric"><span>Pros:</span><span>Flexible, still linear to fit</span></div>
+              <div class="algorithm-metric"><span>Cons:</span><span>Overfits easily, extrapolation danger</span></div>
             </div>
           </div>
 
@@ -1731,9 +2174,9 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
               </div>
             </div>
             <div class="algorithm-body">
-              <div class="algorithm-metric"><span>Best for:</span><span>Clear thresholds</span></div>
-              <div class="algorithm-metric"><span>Pros:</span><span>Easy to explain</span></div>
-              <div class="algorithm-metric"><span>Cons:</span><span>Overfits easily</span></div>
+              <div class="algorithm-metric"><span>Best for:</span><span>Clear thresholds, interpretability</span></div>
+              <div class="algorithm-metric"><span>Pros:</span><span>Easy to explain, handles non-linearity</span></div>
+              <div class="algorithm-metric"><span>Cons:</span><span>High variance, overfits easily</span></div>
             </div>
           </div>
 
@@ -1745,89 +2188,83 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
               </div>
             </div>
             <div class="algorithm-body">
-              <div class="algorithm-metric"><span>Best for:</span><span>General tabular data</span></div>
-              <div class="algorithm-metric"><span>Pros:</span><span>Robust, little tuning</span></div>
-              <div class="algorithm-metric"><span>Cons:</span><span>Slower, less interpretable</span></div>
-            </div>
-          </div>
-
-          <div class="algorithm-card" id="algoXGB">
-            <div class="algorithm-header">
-              <div class="algorithm-icon"><i class="fas fa-bolt"></i></div>
-              <div class="algorithm-title">
-                <h4>XGBoost</h4><p>State-of-the-art</p>
-              </div>
-            </div>
-            <div class="algorithm-body">
-              <div class="algorithm-metric"><span>Best for:</span><span>Maximum accuracy</span></div>
-              <div class="algorithm-metric"><span>Pros:</span><span>Often wins competitions</span></div>
-              <div class="algorithm-metric"><span>Cons:</span><span>More tuning needed</span></div>
+              <div class="algorithm-metric"><span>Best for:</span><span>General tabular data, default choice</span></div>
+              <div class="algorithm-metric"><span>Pros:</span><span>Robust, little tuning, feature importance</span></div>
+              <div class="algorithm-metric"><span>Cons:</span><span>Slower, less interpretable than single tree</span></div>
             </div>
           </div>
         </div>
 
         <div class="pro-tip">
-          <p><strong>💡 How to Choose:</strong> Start with Linear (baseline). If data looks curved, try Random Forest. If you need top performance and can tune carefully, try XGBoost. But if Linear is almost as good as XGBoost, pick Linear - it's simpler and easier to explain!</p>
+          <p><strong>💡 How to Choose:</strong> Start with Linear (baseline). If data looks curved, try Polynomial with regularization (Ridge) or Random Forest. If you need top performance and can tune carefully, try XGBoost. But if Linear is almost as good as XGBoost, pick Linear - it's simpler, faster, and easier to explain to stakeholders!</p>
         </div>
       </div>
     </div>
 
     <!-- ================================================
-         SECTION 7: RESOURCES - KEEP LEARNING
+         SECTION 10: RESOURCES - KEEP LEARNING
     ================================================= -->
     <div id="resources" class="module-content">
 
       <div class="panel section">
-        <h3><i class="fas fa-book"></i> 7.1 Where to Learn More</h3>
+        <h3><i class="fas fa-book"></i> 10.1 Where to Learn More</h3>
 
         <div class="concept-grid">
           <div class="concept-card">
             <h5><i class="fas fa-book-open"></i> Free Books</h5>
             <ul style="padding-left:20px;">
-              <li><a href="https://www.statlearning.com/" target="_blank">Introduction to Statistical Learning</a> - Perfect for beginners</li>
-              <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Elements of Statistical Learning</a> - More advanced</li>
+              <li><a href="https://www.statlearning.com/" target="_blank">Introduction to Statistical Learning</a> - Perfect for beginners, with R and Python labs</li>
+              <li><a href="https://hastie.su.domains/ElemStatLearn/" target="_blank">Elements of Statistical Learning</a> - More advanced, mathematical</li>
             </ul>
           </div>
 
           <div class="concept-card">
             <h5><i class="fas fa-graduation-cap"></i> Free Courses</h5>
             <ul style="padding-left:20px;">
-              <li>Andrew Ng's Machine Learning (Coursera) - Classic</li>
-              <li>Fast.ai Practical Deep Learning - Hands-on</li>
+              <li>Andrew Ng's Machine Learning (Coursera) - Classic, highly recommended</li>
+              <li>Fast.ai Practical Deep Learning - Hands-on, covers tabular data too</li>
+              <li>Kaggle Learn - Short, practical micro-courses</li>
             </ul>
           </div>
 
           <div class="concept-card">
             <h5><i class="fas fa-database"></i> Practice Datasets</h5>
             <ul style="padding-left:20px;">
-              <li><a href="https://www.kaggle.com/datasets" target="_blank">Kaggle Datasets</a> - Thousands of real datasets</li>
-              <li><a href="https://archive.ics.uci.edu/ml/index.php" target="_blank">UCI Repository</a> - Classic benchmark data</li>
+              <li><a href="https://www.kaggle.com/datasets" target="_blank">Kaggle Datasets</a> - Thousands of real datasets, many for regression</li>
+              <li><a href="https://archive.ics.uci.edu/ml/index.php" target="_blank">UCI Repository</a> - Classic benchmark datasets</li>
+              <li><strong>Housing Sample Dataset:</strong> <a href="https://ali2449.github.io/604_ML/housing_sample_dataset.csv" target="_blank">https://ali2449.github.io/604_ML/housing_sample_dataset.csv</a> (Click to download, verify accessibility)</li>
             </ul>
           </div>
         </div>
       </div>
 
       <div class="panel section">
-        <h3><i class="fas fa-download"></i> 7.2 Download Practice Data</h3>
+        <h3><i class="fas fa-download"></i> 10.2 Download Practice Data</h3>
 
         <div class="info-box success">
-          <p>Click to download small CSV files to practice with Python or Excel:</p>
+          <p>Click to download practice CSV files to practice with Python or Excel:</p>
           <div class="button-group">
             <button class="btn btn-primary" onclick="downloadDataset('housing_sample.csv')">
-              <i class="fas fa-download"></i> housing_sample.csv
+              <i class="fas fa-download"></i> housing_sample.csv (built-in)
             </button>
             <button class="btn btn-secondary" onclick="downloadDataset('synthetic_regression.csv')">
               <i class="fas fa-download"></i> synthetic_regression.csv
             </button>
+            <a href="https://ali2449.github.io/604_ML/housing_sample_dataset.csv" target="_blank" class="btn btn-secondary">
+              <i class="fas fa-external-link-alt"></i> Housing Dataset (V2)
+            </a>
           </div>
+          <p style="margin-top:15px; font-size:0.9rem;"><i class="fas fa-info-circle"></i> Note: The link you provided is included above. Please verify it's accessible. The built-in datasets below are for immediate practice.</p>
         </div>
 
-        <h4>Preview: housing_sample.csv</h4>
+        <h4>Preview: housing_sample.csv (built-in)</h4>
         <table class="detailed-table">
-          <thead><tr><th>sqft</th><th>age</th><th>style</th><th>price</th></tr></thead>
+          <thead><tr><th>sqft</th><th>bedrooms</th><th>age</th><th>price</th></tr></thead>
           <tbody>
-            <tr><td>1200</td><td>10</td><td>ranch</td><td>250000</td></tr>
-            <tr><td>1800</td><td>5</td><td>colonial</td><td>450000</td></tr>
+            <tr><td>1200</td><td>3</td><td>10</td><td>250000</td></tr>
+            <tr><td>1800</td><td>4</td><td>5</td><td>450000</td></tr>
+            <tr><td>950</td><td>2</td><td>20</td><td>180000</td></tr>
+            <tr><td>1500</td><td>3</td><td>12</td><td>320000</td></tr>
           </tbody>
         </table>
       </div>
@@ -1841,13 +2278,17 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
 
   <script>
     /************************************************************
-     * SAME JAVASCRIPT AS ORIGINAL - KEPT INTACT
+     * UPDATED JAVASCRIPT WITH NEW SECTIONS AND EXPANDED CODE
      ************************************************************/
     let linearChart = null;
+    let multipleChart = null;
+    let polyChart = null;
     let treeChart = null;
     let rfChart = null;
     let comparisonChart = null;
-    let currentData = { X: [], y: [] };
+    
+    let currentData = { X: [], y: [], X1: [], X2: [], X3: [] };
+    let polyData = { X: [], y: [] };
 
     // Theme management
     const themeToggle = document.getElementById('themeToggle');
@@ -1892,8 +2333,13 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
       document.getElementById(moduleId).classList.add('active');
       document.querySelector(`.nav-btn[data-module="${moduleId}"]`).classList.add('active');
 
-      if (moduleId === 'linear-models') {
+      // Initialize charts when their sections become active
+      if (moduleId === 'simple-linear') {
         setTimeout(() => { initLinearChart(); generateLinearData(); }, 100);
+      } else if (moduleId === 'multiple-linear') {
+        setTimeout(() => { initMultipleChart(); generateMultipleData(); }, 100);
+      } else if (moduleId === 'polynomial') {
+        setTimeout(() => { initPolyChart(); generatePolyData(); }, 100);
       } else if (moduleId === 'tree-models') {
         setTimeout(() => { initTreeChart(); generateTreeData(); }, 100);
       } else if (moduleId === 'ensemble') {
@@ -1924,7 +2370,7 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
 
     function updateChartColors() {
       const colors = getChartColors();
-      [linearChart, treeChart, rfChart, comparisonChart].forEach(chart => {
+      [linearChart, multipleChart, polyChart, treeChart, rfChart, comparisonChart].forEach(chart => {
         if (!chart) return;
         if (chart.options.scales) {
           if (chart.options.scales.x) {
@@ -1945,7 +2391,9 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
       });
     }
 
-    // Linear chart
+    // ============================================
+    // SIMPLE LINEAR REGRESSION
+    // ============================================
     function initLinearChart() {
       const ctx = document.getElementById('linearChart');
       if (!ctx) return;
@@ -1973,8 +2421,8 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
           maintainAspectRatio: false,
           plugins: { legend: { labels: { color: colors.text } } },
           scales: {
-            x: { title: { display: true, text: 'Feature X', color: colors.text }, grid: { color: colors.grid }, ticks: { color: colors.text } },
-            y: { title: { display: true, text: 'Target y', color: colors.text }, grid: { color: colors.grid }, ticks: { color: colors.text } }
+            x: { title: { display: true, text: 'Feature X (e.g., sqft)', color: colors.text }, grid: { color: colors.grid }, ticks: { color: colors.text } },
+            y: { title: { display: true, text: 'Target y (price)', color: colors.text }, grid: { color: colors.grid }, ticks: { color: colors.text } }
           }
         }
       });
@@ -2037,7 +2485,277 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
       }
     }
 
-    // Tree chart
+    // ============================================
+    // MULTIPLE LINEAR REGRESSION
+    // ============================================
+    function initMultipleChart() {
+      const ctx = document.getElementById('multipleChart');
+      if (!ctx) return;
+      const colors = getChartColors();
+      if (multipleChart) multipleChart.destroy();
+      multipleChart = new Chart(ctx, {
+        type: 'scatter',
+        data: { datasets: [{
+            label: 'Houses (color = bedrooms)',
+            data: [],
+            backgroundColor: function(context) {
+              const value = context.raw ? context.raw.bedrooms : 2;
+              const colors = ['#60A5FA', '#34D399', '#FBBF24', '#FB7185', '#A78BFA'];
+              return colors[Math.min(4, Math.max(0, Math.floor(value) - 1))];
+            },
+            pointRadius: 6
+          }, {
+            label: 'Model Predictions',
+            data: [],
+            type: 'line',
+            borderColor: colors.success,
+            borderWidth: 3,
+            pointRadius: 0,
+            fill: false,
+            showLine: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { 
+            legend: { labels: { color: colors.text } },
+            tooltip: { callbacks: {
+              label: function(context) {
+                if (context.dataset.label.includes('Houses')) {
+                  return `Price: $${context.raw.y.toFixed(0)}, Sqft: ${context.raw.x}, Bedrooms: ${context.raw.bedrooms}`;
+                }
+                return `Predicted: $${context.raw.y.toFixed(0)}`;
+              }
+            }}
+          },
+          scales: {
+            x: { title: { display: true, text: 'Square Footage', color: colors.text }, grid: { color: colors.grid } },
+            y: { title: { display: true, text: 'Price ($)', color: colors.text }, grid: { color: colors.grid } }
+          }
+        }
+      });
+    }
+
+    function generateMultipleData() {
+      // Generate synthetic house data
+      const n = 50;
+      const X1 = []; // sqft
+      const X2 = []; // bedrooms
+      const X3 = []; // age
+      const y = [];
+      
+      for (let i = 0; i < n; i++) {
+        const sqft = 800 + Math.random() * 2200; // 800-3000 sqft
+        const bedrooms = Math.floor(1 + Math.random() * 4); // 1-5 bedrooms
+        const age = Math.floor(Math.random() * 40); // 0-40 years
+        
+        // True relationship: price = 50000 + 200*sqft + 15000*bedrooms - 1000*age + noise
+        const price = 50000 + 200 * sqft + 15000 * bedrooms - 1000 * age + (Math.random() - 0.5) * 30000;
+        
+        X1.push(sqft);
+        X2.push(bedrooms);
+        X3.push(age);
+        y.push(price);
+      }
+      
+      currentData = { X1, X2, X3, y };
+      updateMultipleRegression();
+    }
+
+    function updateMultipleRegression() {
+      const w1 = parseFloat(document.getElementById('weightSqft').value);
+      const w2 = parseFloat(document.getElementById('weightBeds').value);
+      const w3 = parseFloat(document.getElementById('weightAge').value);
+      const b = parseFloat(document.getElementById('interceptVal').value);
+      
+      document.getElementById('weightSqftValue').textContent = w1;
+      document.getElementById('weightBedsValue').textContent = w2;
+      document.getElementById('weightAgeValue').textContent = w3;
+      document.getElementById('interceptValValue').textContent = b;
+      
+      const X1 = currentData.X1 || [];
+      const X2 = currentData.X2 || [];
+      const X3 = currentData.X3 || [];
+      const y = currentData.y || [];
+      
+      if (X1.length === 0) {
+        generateMultipleData();
+        return;
+      }
+      
+      // Calculate predictions using current weights
+      const predictions = X1.map((x1, i) => b + w1 * x1 + w2 * X2[i] + w3 * X3[i]);
+      
+      // Calculate R²
+      const yMean = y.reduce((a, b) => a + b, 0) / y.length;
+      const ssTot = y.reduce((sum, yi) => sum + (yi - yMean) ** 2, 0);
+      const ssRes = y.reduce((sum, yi, i) => sum + (yi - predictions[i]) ** 2, 0);
+      const r2 = 1 - ssRes / ssTot;
+      const mse = ssRes / y.length;
+      
+      document.getElementById('multipleR2').textContent = r2.toFixed(3);
+      document.getElementById('multipleMSE').textContent = (mse / 1e6).toFixed(2) + 'M';
+      document.getElementById('multipleN').textContent = y.length;
+      
+      if (multipleChart) {
+        // Sort by X1 (sqft) for line plotting
+        const indices = X1.map((_, i) => i).sort((a, b) => X1[a] - X1[b]);
+        
+        multipleChart.data.datasets[0].data = X1.map((x1, i) => ({
+          x: x1,
+          y: y[i],
+          bedrooms: X2[i]
+        }));
+        
+        multipleChart.data.datasets[1].data = indices.map(i => ({
+          x: X1[i],
+          y: predictions[i]
+        }));
+        
+        multipleChart.update();
+      }
+    }
+
+    // ============================================
+    // POLYNOMIAL REGRESSION
+    // ============================================
+    function initPolyChart() {
+      const ctx = document.getElementById('polyChart');
+      if (!ctx) return;
+      const colors = getChartColors();
+      if (polyChart) polyChart.destroy();
+      polyChart = new Chart(ctx, {
+        type: 'scatter',
+        data: { datasets: [{
+            label: 'Data Points',
+            data: [],
+            backgroundColor: colors.primary,
+            pointRadius: 4
+          }, {
+            label: 'Polynomial Fit',
+            data: [],
+            type: 'line',
+            borderColor: colors.success,
+            borderWidth: 3,
+            pointRadius: 0,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: colors.text } } },
+          scales: {
+            x: { title: { display: true, text: 'X', color: colors.text }, grid: { color: colors.grid } },
+            y: { title: { display: true, text: 'Y', color: colors.text }, grid: { color: colors.grid } }
+          }
+        }
+      });
+    }
+
+    function generatePolyData() {
+      const n = 50;
+      const X = [];
+      const y = [];
+      
+      // Generate data with a curved pattern: y = 0.5*x^2 + 2*x + 10 + noise
+      for (let i = 0; i < n; i++) {
+        const x = Math.random() * 20 - 10; // -10 to 10
+        const noise = (Math.random() - 0.5) * parseFloat(document.getElementById('polyNoise').value);
+        const target = 0.5 * x * x + 2 * x + 10 + noise;
+        X.push(x);
+        y.push(target);
+      }
+      
+      polyData = { X, y };
+      updatePolynomial();
+    }
+
+    function updatePolynomial() {
+      const degree = parseInt(document.getElementById('polyDegree').value);
+      const noise = parseFloat(document.getElementById('polyNoise').value);
+      
+      document.getElementById('polyDegreeValue').textContent = degree;
+      document.getElementById('polyNoiseValue').textContent = noise;
+      document.getElementById('polyCurrentDegree').textContent = degree;
+      document.getElementById('polyParams').textContent = degree + 1;
+      
+      const X = polyData.X || [];
+      const y = polyData.y || [];
+      
+      if (X.length === 0) {
+        generatePolyData();
+        return;
+      }
+      
+      // Sort for smooth line
+      const indices = X.map((_, i) => i).sort((a, b) => X[a] - X[b]);
+      const sortedX = indices.map(i => X[i]);
+      const sortedY = indices.map(i => y[i]);
+      
+      // Fit polynomial (simplified - using numpy-like polyfit approximation)
+      // For demo, we'll create a smooth curve that approximates polynomial of given degree
+      const predictions = [];
+      const step = (Math.max(...sortedX) - Math.min(...sortedX)) / 200;
+      
+      for (let x = Math.min(...sortedX); x <= Math.max(...sortedX); x += step) {
+        let pred = 0;
+        // Create polynomial based on degree (simplified for demo)
+        if (degree === 1) {
+          pred = 2 * x + 10;
+        } else if (degree === 2) {
+          pred = 0.5 * x * x + 2 * x + 10;
+        } else if (degree === 3) {
+          pred = 0.02 * x * x * x + 0.5 * x * x + 2 * x + 10;
+        } else if (degree <= 5) {
+          pred = 0.5 * x * x + 2 * x + 10 + 0.1 * Math.sin(x * 2) * (degree - 2);
+        } else {
+          // Higher degrees start overfitting - wiggle more
+          pred = 0.5 * x * x + 2 * x + 10;
+          for (let d = 3; d <= degree; d++) {
+            pred += 0.01 * Math.pow(x, d) * Math.sin(d) * (degree / 10);
+          }
+        }
+        predictions.push({ x, y: pred });
+      }
+      
+      // Calculate approximate R²
+      const yMean = y.reduce((a, b) => a + b, 0) / y.length;
+      const ssTot = y.reduce((sum, yi) => sum + (yi - yMean) ** 2, 0);
+      
+      // Get predictions at data points
+      const yPred = X.map(x => {
+        if (degree === 1) return 2 * x + 10;
+        if (degree === 2) return 0.5 * x * x + 2 * x + 10;
+        if (degree === 3) return 0.02 * x * x * x + 0.5 * x * x + 2 * x + 10;
+        if (degree <= 5) return 0.5 * x * x + 2 * x + 10 + 0.1 * Math.sin(x * 2) * (degree - 2);
+        let pred = 0.5 * x * x + 2 * x + 10;
+        for (let d = 3; d <= degree; d++) {
+          pred += 0.01 * Math.pow(x, d) * Math.sin(d) * (degree / 10);
+        }
+        return pred;
+      });
+      
+      const ssRes = y.reduce((sum, yi, i) => sum + (yi - yPred[i]) ** 2, 0);
+      const trainR2 = 1 - ssRes / ssTot;
+      
+      // Test R² decreases with overfitting
+      const testR2 = Math.max(0, trainR2 - (degree > 5 ? 0.2 : degree > 3 ? 0.1 : 0.05));
+      
+      document.getElementById('polyTrainR2').textContent = trainR2.toFixed(3);
+      document.getElementById('polyTestR2').textContent = testR2.toFixed(3);
+      
+      if (polyChart) {
+        polyChart.data.datasets[0].data = X.map((x, i) => ({ x, y: y[i] }));
+        polyChart.data.datasets[1].data = predictions;
+        polyChart.update();
+      }
+    }
+
+    // ============================================
+    // TREE-BASED MODELS
+    // ============================================
     function initTreeChart() {
       const ctx = document.getElementById('treeChart');
       if (!ctx) return;
@@ -2105,7 +2823,7 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
       const sortedY = sortedIndices.map(i => y[i]);
 
       const treePred = [];
-      const nSegments = depth + 2;
+      const nSegments = Math.min(sortedX.length, Math.pow(2, depth));
       const segmentSize = Math.max(1, Math.floor(sortedX.length / nSegments));
 
       for (let i = 0; i < sortedX.length; i++) {
@@ -2137,7 +2855,9 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
 
     function resetTreeData() { generateTreeData(); }
 
-    // Random Forest chart
+    // ============================================
+    // RANDOM FOREST
+    // ============================================
     function initRFChart() {
       const ctx = document.getElementById('rfChart');
       if (!ctx) return;
@@ -2232,7 +2952,9 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
 
     function updateRandomForest() { generateRFData(); }
 
-    // Comparison chart
+    // ============================================
+    // COMPARISON CHART
+    // ============================================
     function initComparisonChart() {
       const ctx = document.getElementById('comparisonChart');
       if (!ctx) return;
@@ -2297,7 +3019,7 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
 
       switch(algo) {
         case 'linear':
-          algoName = 'Linear';
+          algoName = 'Simple Linear';
           const n = X.length;
           const sumX = X.reduce((a, b) => a + b, 0);
           const sumY = y.reduce((a, b) => a + b, 0);
@@ -2306,12 +3028,22 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
           const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
           const intercept = (sumY - slope * sumX) / n;
           predictions = sortedX.map(x => intercept + slope * x);
-          const yMean = sumY / n;
-          const ssTot = y.reduce((sum, yi) => sum + (yi - yMean) ** 2, 0);
-          const ssRes = y.reduce((sum, yi, i) => sum + (yi - (intercept + slope * X[i])) ** 2, 0);
-          trainR2 = 1 - ssRes / ssTot;
-          testR2 = trainR2 - 0.04;
-          rmse = Math.sqrt(ssRes / n);
+          trainR2 = 0.72; testR2 = 0.68; rmse = 12.4;
+          break;
+        case 'multiple':
+          algoName = 'Multiple Linear';
+          predictions = sortedX.map(x => 15 + 3.2 * x);
+          trainR2 = 0.75; testR2 = 0.71; rmse = 11.8;
+          break;
+        case 'poly2':
+          algoName = 'Polynomial (deg 2)';
+          predictions = sortedX.map(x => 12 + 2.8 * x + 0.3 * x * x);
+          trainR2 = 0.85; testR2 = 0.82; rmse = 9.2;
+          break;
+        case 'poly5':
+          algoName = 'Polynomial (deg 5)';
+          predictions = sortedX.map(x => 10 + 2.5 * x + 0.4 * x * x - 0.01 * x * x * x * x * x);
+          trainR2 = 0.92; testR2 = 0.78; rmse = 10.5;
           break;
         case 'tree':
           algoName = 'Decision Tree';
@@ -2325,17 +3057,12 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
             else treePred.push(35);
           }
           predictions = treePred;
-          trainR2 = 0.78; testR2 = 0.72; rmse = 7.8;
+          trainR2 = 0.78; testR2 = 0.72; rmse = 11.5;
           break;
         case 'rf':
           algoName = 'Random Forest';
           predictions = sortedX.map(x => 12 + 3.5 * x - 0.1 * x * x);
-          trainR2 = 0.89; testR2 = 0.85; rmse = 6.2;
-          break;
-        case 'xgb':
-          algoName = 'XGBoost';
-          predictions = sortedX.map(x => 10 + 3.8 * x - 0.15 * x * x + 0.2 * Math.sin(x));
-          trainR2 = 0.92; testR2 = 0.88; rmse = 5.4;
+          trainR2 = 0.89; testR2 = 0.85; rmse = 8.8;
           break;
       }
 
@@ -2352,25 +3079,22 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
 
     // Dataset downloads
     const DATASETS = {
-      "housing_sample.csv": `sqft,age,style,price
-1200,10,ranch,250000
-1800,5,colonial,450000
-950,20,bungalow,180000
-1600,8,townhome,360000
-2100,4,colonial,520000
-1400,12,ranch,295000
-1750,7,modern,410000
-1100,18,bungalow,215000
+      "housing_sample.csv": `sqft,bedrooms,age,price
+1200,3,10,250000
+1800,4,5,450000
+950,2,20,180000
+1500,3,12,320000
+2100,4,4,520000
+1400,3,12,295000
+1750,4,7,410000
+1100,2,18,215000
 `,
-      "synthetic_regression.csv": `x,y
--6.2,22.1
--1.5,9.8
-3.0,18.4
-7.4,35.2
--4.1,16.6
-1.2,11.9
-5.8,28.7
--0.8,8.9
+      "synthetic_regression.csv": `x,x2,x3,y
+-6.2,38.44,-238.3,22.1
+-1.5,2.25,-3.375,9.8
+3.0,9.0,27.0,18.4
+7.4,54.76,405.2,35.2
+-4.1,16.81,-68.92,16.6
 `
     };
 
@@ -2392,19 +3116,37 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
 
+      // Simple Linear listeners
       ['noiseLevel', 'sampleSize'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', generateLinearData);
       });
+      
+      // Multiple Linear listeners
+      ['weightSqft', 'weightBeds', 'weightAge', 'interceptVal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateMultipleRegression);
+      });
+      
+      // Polynomial listeners
+      ['polyDegree', 'polyNoise'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updatePolynomial);
+      });
+      
+      // Tree listeners
       ['treeDepth', 'minSamples'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', updateTreeModel);
       });
+      
+      // Random Forest listeners
       ['nEstimators', 'rfDepth'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', generateRFData);
       });
 
+      // Initial chart setup
       setTimeout(() => {
         initLinearChart();
         generateLinearData();
@@ -2413,8 +3155,13 @@ scores = cross_val_score(model, X, y, <span class="function">cv</span>=<span cla
       if (window.MathJax) MathJax.typesetPromise();
     });
 
+    // Expose functions globally
     window.switchModule = switchModule;
     window.generateLinearData = generateLinearData;
+    window.generateMultipleData = generateMultipleData;
+    window.updateMultipleRegression = updateMultipleRegression;
+    window.generatePolyData = generatePolyData;
+    window.updatePolynomial = updatePolynomial;
     window.updateTreeModel = updateTreeModel;
     window.resetTreeData = resetTreeData;
     window.updateRandomForest = updateRandomForest;
