@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IAF 604: Final Project | Random Forest & XGBoost</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: #f5f9ff;
+            color: #0a2b3e;
+            padding: 30px 20px;
+            line-height: 1.5;
+        }
+
+        .project-container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #1a4d6b 0%, #0f3b54 100%);
+            border-radius: 32px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        .hero h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .hero-badge {
+            background: #ffb347;
+            color: #1e3a4d;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .points-summary {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .point-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 0.8rem 1.5rem;
+            backdrop-filter: blur(5px);
+        }
+
+        .card {
+            background: white;
+            border-radius: 28px;
+            border: 1px solid #e2e8f0;
+            padding: 1.8rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03);
+        }
+        .section-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-left: 6px solid #ff8c42;
+            padding-left: 1rem;
+            color: #1e4a6b;
+        }
+        .subsection-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 1.2rem 0 0.8rem;
+            color: #2c5a7a;
+        }
+        .info-note {
+            background: #ecfdf5;
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            border-left: 5px solid #10b981;
+            margin: 1rem 0;
+        }
+        .warning-note {
+            background: #fffbeb;
+            border-left-color: #f59e0b;
+        }
+        .video-requirement {
+            background: #fef2f2;
+            border-left-color: #dc2626;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            border: 1px solid #e2edf7;
+            padding: 12px;
+            text-align: left;
+            background: white;
+        }
+        th {
+            background: #f1f8fe;
+        }
+        .task {
+            background: #fefefe;
+            border: 1px solid #e2eaf2;
+            border-radius: 20px;
+            padding: 1.2rem 1.5rem;
+            margin: 1rem 0;
+        }
+        .task-header {
+            font-weight: 800;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            border-bottom: 1px dashed #cbdde9;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        .points {
+            background: #ffedd5;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #b45309;
+        }
+        .rubric-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .rubric-item {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        pre {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 18px;
+            overflow-x: auto;
+            font-size: 13px;
+            margin: 1rem 0;
+        }
+        button {
+            background: #2c5a7a;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px 0 0;
+            transition: 0.2s;
+        }
+        button:hover {
+            background: #1e405b;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            color: #5b6e8c;
+            border-top: 1px solid #e2e8f0;
+        }
+        @media (max-width: 750px) {
+            .card, .hero { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="project-container">
+    <!-- HERO SECTION -->
+    <div class="hero">
+        <h1>🌲 IAF 604: Final Project #1</h1>
+        <p style="font-size:1.2rem;">Random Forest & XGBoost — Healthcare Classification</p>
+        <div class="points-summary">
+            <div class="point-card">📊 <strong>Code & Analysis:</strong> 70 points</div>
+            <div class="point-card">🎥 <strong>Video Explanation:</strong> 30 points</div>
+            <div class="point-card">🏆 <strong>Total:</strong> 100 points</div>
+        </div>
+        <div class="hero-badge">🎬 No final exam — this project + second project replace exam</div>
+    </div>
+
+    <!-- DATASET INFO -->
+    <div class="card">
+        <div class="section-title">📊 Healthcare Dataset</div>
+        <p><strong>Source:</strong> Synthetic healthcare dataset (Kaggle-style) with <strong>~55,000 rows</strong>, 15 columns. Target variable: <strong>Test Results</strong> (Normal, Abnormal, Inconclusive). Features include patient demographics, admission details, medical condition, billing amount, etc.</p>
+        <div class="info-note">
+            📁 <strong>Download:</strong> <a href="https://www.kaggle.com/datasets/prasad22/healthcare-dataset/" target="_blank">Kaggle Healthcare Dataset</a> (healthcare_dataset.csv, ~55,000 rows)<br>
+            💾 Or use the download button below to generate a local copy with 55,000 rows.
+        </div>
+        <button id="downloadDatasetBtn">⬇️ Generate & Download healthcare_dataset.csv (55,000 rows)</button>
+        <div id="downloadMsg" style="margin-top: 12px; font-size:0.9rem;"></div>
+    </div>
+
+    <!-- PROJECT TASKS (70 POINTS) -->
+    <div class="card">
+        <div class="section-title">📋 Core Tasks — Random Forest & XGBoost (70 pts)</div>
+        
+        <div class="task">
+            <div class="task-header"><span>🔍 Task 1: EDA & Preprocessing</span><span class="points">12 pts</span></div>
+            <ul style="margin-left: 1.5rem;">
+                <li>Load dataset, display shape, info, missing values (2 pts)</li>
+                <li>Target distribution (<strong>Test Results</strong>) visualization (2 pts)</li>
+                <li>Summary statistics for numerical features (Age, Billing Amount) (2 pts)</li>
+                <li>Create <strong>Length of Stay</strong> feature (Discharge Date - Admission Date) (2 pts)</li>
+                <li>One-hot encode categorical variables (Gender, Blood Type, Medical Condition, Admission Type, Medication, Insurance Provider) (2 pts)</li>
+                <li>Scale numerical features with StandardScaler (2 pts)</li>
+            </ul>
+        </div>
+
+        <div class="task">
+            <div class="task-header"><span>🌲 Task 2: Random Forest — Tune & Evaluate</span><span class="points">20 pts</span></div>
+            <ul style="margin-left: 1.5rem;">
+                <li>Stratified train/test split (70/30) (2 pts)</li>
+                <li>Baseline Random Forest (n_estimators=100) — report accuracy, precision, recall, F1 (3 pts)</li>
+                <li>Hyperparameter tuning with GridSearchCV/RandomizedSearchCV on <code>n_estimators</code>, <code>max_depth</code>, <code>min_samples_split</code> (5 pts)</li>
+                <li>Evaluate tuned RF metrics (3 pts)</li>
+                <li>Plot feature importance (top 10) (3 pts)</li>
+                <li>Confusion matrix & ROC-AUC (one-vs-rest) (4 pts)</li>
+            </ul>
+        </div>
+
+        <div class="task">
+            <div class="task-header"><span>⚡ Task 3: XGBoost — Tune & Evaluate</span><span class="points">22 pts</span></div>
+            <ul style="margin-left: 1.5rem;">
+                <li>Baseline XGBoost (default) with <code>eval_metric='mlogloss'</code> (3 pts)</li>
+                <li>Hyperparameter tuning: <code>learning_rate</code>, <code>n_estimators</code>, <code>max_depth</code>, <code>subsample</code>, <code>colsample_bytree</code> (7 pts)</li>
+                <li>Apply <strong>early stopping</strong> with validation set (3 pts)</li>
+                <li>Report best parameters and test metrics (accuracy, F1-macro) (3 pts)</li>
+                <li>Plot XGBoost feature importance (3 pts)</li>
+                <li>ROC curves & ROC-AUC (3 pts)</li>
+            </ul>
+        </div>
+
+        <div class="task">
+            <div class="task-header"><span>📊 Task 4: Comparison & Insights</span><span class="points">10 pts</span></div>
+            <ul style="margin-left: 1.5rem;">
+                <li>Comparison table: baseline RF, tuned RF, baseline XGBoost, tuned XGBoost (Accuracy, F1-macro, ROC-AUC, training time) (4 pts)</li>
+                <li>Written analysis (200-300 words): which model performed best? Why? Impact of tuning? (4 pts)</li>
+                <li>Business interpretation: how could predicting test results help healthcare? (2 pts)</li>
+            </ul>
+        </div>
+        <div class="info-note">💡 Use <code>StratifiedKFold</code> for cross-validation. XGBoost early stopping: <code>early_stopping_rounds=10</code> with <code>eval_set</code>.</div>
+    </div>
+
+    <!-- VIDEO REQUIREMENT (30 POINTS) -->
+    <div class="card video-requirement">
+        <div class="section-title" style="border-left-color: #dc2626;">🎥 VIDEO EXPLANATION — 30 POINTS (No Time Limit)</div>
+        <p>Record a comprehensive video walking through your entire project. No time limit — cover all aspects clearly.</p>
+        <div class="rubric-grid">
+            <div class="rubric-item"><strong>📹 Content (12 pts)</strong><br>Dataset overview, EDA, preprocessing, feature engineering.</div>
+            <div class="rubric-item"><strong>🌲 Random Forest (8 pts)</strong><br>Code walkthrough, tuning choices, feature importance, evaluation.</div>
+            <div class="rubric-item"><strong>⚡ XGBoost (8 pts)</strong><br>Boosting intuition, parameter tuning, early stopping, performance.</div>
+            <div class="rubric-item"><strong>🎯 Reflection (2 pts)</strong><br>Model comparison, real-world impact, lessons learned.</div>
+        </div>
+        <div class="warning-note">⚠️ Upload video to YouTube (unlisted) or Google Drive. Share link in your submission. Ensure code is visible and you explain each step.</div>
+    </div>
+
+    <!-- CODE SNIPPET (SMALL, NOT FULL) -->
+    <div class="card">
+        <div class="section-title">🐍 Code Snippets — Key Steps</div>
+        <p>Use these as starting points. Expand with proper preprocessing and evaluation.</p>
+        
+        <div class="subsection-title">📥 Data Loading & Preprocessing</div>
+        <pre><code>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+
+df = pd.read_csv('healthcare_dataset.csv')
+
+# Feature engineering
+df['Date of Admission'] = pd.to_datetime(df['Date of Admission'])
+df['Discharge Date'] = pd.to_datetime(df['Discharge Date'])
+df['Length of Stay'] = (df['Discharge Date'] - df['Date of Admission']).dt.days
+
+# Define target
+target = 'Test Results'
+X = df.drop(columns=[target, 'Name', 'Doctor', 'Hospital', 'Date of Admission', 'Discharge Date'])
+y = df[target]
+
+# Preprocessing pipeline
+categorical_cols = ['Gender', 'Blood Type', 'Medical Condition', 'Admission Type', 'Medication', 'Insurance Provider']
+numerical_cols = ['Age', 'Billing Amount', 'Room Number', 'Length of Stay']
+
+preprocessor = ColumnTransformer([
+    ('num', StandardScaler(), numerical_cols),
+    ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_cols)
+])
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=42)
+X_train_proc = preprocessor.fit_transform(X_train)
+X_test_proc = preprocessor.transform(X_test)</code></pre>
+
+        <div class="subsection-title">🌲 Random Forest with GridSearch</div>
+        <pre><code>from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+
+rf = RandomForestClassifier(random_state=42)
+param_grid = {
+    'n_estimators': [100, 200],
+    'max_depth': [10, 20, None],
+    'min_samples_split': [2, 5]
+}
+grid_rf = GridSearchCV(rf, param_grid, cv=3, scoring='accuracy', n_jobs=-1)
+grid_rf.fit(X_train_proc, y_train)
+best_rf = grid_rf.best_estimator_
+print("Best params:", grid_rf.best_params_)</code></pre>
+
+        <div class="subsection-title">⚡ XGBoost with Early Stopping</div>
+        <pre><code>import xgboost as xgb
+from sklearn.model_selection import train_test_split
+
+# Split train into train/val for early stopping
+X_train_part, X_val, y_train_part, y_val = train_test_split(X_train_proc, y_train, test_size=0.2, random_state=42)
+
+xgb_model = xgb.XGBClassifier(eval_metric='mlogloss', random_state=42)
+param_grid = {
+    'learning_rate': [0.05, 0.1],
+    'n_estimators': [100, 200],
+    'max_depth': [3, 6],
+    'subsample': [0.8, 1.0]
+}
+grid_xgb = GridSearchCV(xgb_model, param_grid, cv=3, scoring='accuracy')
+grid_xgb.fit(X_train_part, y_train_part)
+best_params = grid_xgb.best_params_
+
+# Refit with early stopping
+final_xgb = xgb.XGBClassifier(**best_params, eval_metric='mlogloss', early_stopping_rounds=10)
+final_xgb.fit(X_train_part, y_train_part, eval_set=[(X_val, y_val)], verbose=False)</code></pre>
+
+        <div class="subsection-title">📈 Evaluation Metrics</div>
+        <pre><code>from sklearn.metrics import accuracy_score, classification_report, roc_auc_score, confusion_matrix
+
+y_pred = final_xgb.predict(X_test_proc)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
+
+# ROC-AUC for multi-class
+y_proba = final_xgb.predict_proba(X_test_proc)
+roc_auc = roc_auc_score(y_test, y_proba, multi_class='ovr')
+print("ROC-AUC:", roc_auc)</code></pre>
+    </div>
+
+    <!-- THEORY REFRESHER -->
+    <div class="card">
+        <div class="section-title">📚 Quick Theory: Random Forest vs XGBoost</div>
+        <div class="rubric-grid">
+            <div class="rubric-item">
+                <strong>🌲 Random Forest (Bagging)</strong><br>
+                • Parallel trees on bootstrapped data<br>
+                • Random feature subsets per split<br>
+                • Reduces <strong>variance</strong><br>
+                • OOB score for validation<br>
+                • Robust to outliers
+            </div>
+            <div class="rubric-item">
+                <strong>⚡ XGBoost (Boosting)</strong><br>
+                • Sequential trees correcting residuals<br>
+                • Regularization (L1/L2)<br>
+                • Reduces <strong>bias</strong><br>
+                • Early stopping, handles missing values<br>
+                • Often higher accuracy with tuning
+            </div>
+        </div>
+        <div class="info-note">🔑 <strong>Key Insight:</strong> Random Forest is great out-of-the-box; XGBoost usually wins after careful hyperparameter tuning. Use both and compare!</div>
+    </div>
+
+    <!-- DELIVERABLES -->
+    <div class="card">
+        <div class="section-title">📦 Submission Checklist</div>
+        <ul style="margin-left: 1.5rem;">
+            <li>✅ Jupyter Notebook (.ipynb) with all code, outputs, visualizations</li>
+            <li>✅ Video recording link (YouTube unlisted / Google Drive) — 30 points</li>
+            <li>✅ Short summary (PDF or markdown) with comparison table and business insights</li>
+        </ul>
+        <div class="warning-note" style="margin-top: 15px;">
+            📅 This is <strong>Project #1</strong>. There will be a second project later. No final exam — both projects determine your final grade.
+        </div>
+    </div>
+
+    <footer>
+        🌟 IAF 604 — Random Forest & XGBoost Mastery | First Final Project | Total: 100 Points<br>
+        🎬 Video explanation required (30 pts) | No time limit | Good luck!
+    </footer>
+</div>
+
+<script>
+    // Generate dataset with 55,000 rows
+    function generateLargeHealthcareDataset(rows = 55000) {
+        const medicalConditions = ['Diabetes', 'Hypertension', 'Asthma', 'Cancer', 'Obesity', 'Arthritis'];
+        const testResults = ['Normal', 'Abnormal', 'Inconclusive'];
+        const genders = ['Male', 'Female'];
+        const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+        const admissionTypes = ['Emergency', 'Elective', 'Urgent'];
+        const medications = ['Aspirin', 'Ibuprofen', 'Penicillin', 'Paracetamol', 'Lipitor'];
+        const insuranceProviders = ['Aetna', 'Blue Cross', 'Cigna', 'UnitedHealthcare', 'Medicare'];
+        const doctors = ['Matthew Smith', 'Samantha Davies', 'Tiffany Mitchell', 'Kevin Wells', 'Kathleen Hanna', 'Taylor Newton', 'Kelly Olson', 'Suzanne Thomas', 'Daniel Ferguson', 'Heather Day'];
+        const hospitals = ['Sons and Miller', 'Kim Inc', 'Cook PLC', 'White-White', 'Nunez-Humphrey', 'Group Middleton', 'Padilla-Walker', 'Schaefer-Porter', 'Lyons-Blair', 'Cline-Williams'];
+        
+        const data = [];
+        for (let i = 1; i <= rows; i++) {
+            const name = `Patient_${i}`;
+            const age = Math.floor(Math.random() * (85 - 18 + 1) + 18);
+            const gender = genders[Math.floor(Math.random() * genders.length)];
+            const bloodType = bloodTypes[Math.floor(Math.random() * bloodTypes.length)];
+            const medicalCondition = medicalConditions[Math.floor(Math.random() * medicalConditions.length)];
+            const year = Math.floor(Math.random() * (2024 - 2019 + 1) + 2019);
+            const month = Math.floor(Math.random() * 12) + 1;
+            const day = Math.floor(Math.random() * 28) + 1;
+            const admissionDate = `${year}-${month.toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
+            const doctor = doctors[Math.floor(Math.random() * doctors.length)];
+            const hospital = hospitals[Math.floor(Math.random() * hospitals.length)];
+            const insurance = insuranceProviders[Math.floor(Math.random() * insuranceProviders.length)];
+            const billingAmount = Math.floor(Math.random() * 50000) + 1000 + Math.random() * 10000;
+            const roomNumber = Math.floor(Math.random() * 500) + 100;
+            const admissionType = admissionTypes[Math.floor(Math.random() * admissionTypes.length)];
+            const dischargeOffset = Math.floor(Math.random() * 20) + 2;
+            const dischargeDateObj = new Date(`${admissionDate}`);
+            dischargeDateObj.setDate(dischargeDateObj.getDate() + dischargeOffset);
+            const dischargeDate = dischargeDateObj.toISOString().slice(0,10);
+            const medication = medications[Math.floor(Math.random() * medications.length)];
+            
+            let testResult;
+            const rand = Math.random();
+            if (medicalCondition === 'Cancer' || medicalCondition === 'Diabetes') {
+                testResult = rand < 0.5 ? 'Abnormal' : (rand < 0.8 ? 'Normal' : 'Inconclusive');
+            } else {
+                testResult = testResults[Math.floor(Math.random() * testResults.length)];
+            }
+            
+            data.push({
+                Name: name,
+                Age: age,
+                Gender: gender,
+                "Blood Type": bloodType,
+                "Medical Condition": medicalCondition,
+                "Date of Admission": admissionDate,
+                Doctor: doctor,
+                Hospital: hospital,
+                "Insurance Provider": insurance,
+                "Billing Amount": billingAmount,
+                "Room Number": roomNumber,
+                "Admission Type": admissionType,
+                "Discharge Date": dischargeDate,
+                Medication: medication,
+                "Test Results": testResult
+            });
+        }
+        return data;
+    }
+
+    function arrayToCSV(dataArray) {
+        const headers = Object.keys(dataArray[0]);
+        const rows = [headers.join(',')];
+        for (const row of dataArray) {
+            const values = headers.map(h => {
+                let val = row[h];
+                if (typeof val === 'string' && (val.includes(',') || val.includes('"'))) val = `"${val.replace(/"/g, '""')}"`;
+                return val;
+            });
+            rows.push(values.join(','));
+        }
+        return rows.join('\n');
+    }
+
+    document.getElementById('downloadDatasetBtn').addEventListener('click', () => {
+        const rows = 55000;
+        const dataset = generateLargeHealthcareDataset(rows);
+        const csv = arrayToCSV(dataset);
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'healthcare_dataset.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        document.getElementById('downloadMsg').innerHTML = `✅ Downloaded! ${rows} rows, 15 columns. Ready for analysis.`;
+    });
+</script>
+</body>
+</html>
