@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Module 7: Unsupervised Learning - Clustering (Revised)</title>
+  <title>Module 7: Unsupervised Learning - Clustering (Detailed)</title>
 
   <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -108,14 +107,13 @@
     }
 
     header {
-      background: linear-gradient(135deg, color-mix(in srgb, var(--panel) 94%, var(--primary) 6%), color-mix(in srgb, var(--panel2) 92%, var(--secondary) 8%));
+      background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(16,27,52,0.92));
       border: 1px solid var(--border);
       padding: 28px;
       border-radius: var(--radius2);
       margin-bottom: 24px;
       backdrop-filter: blur(10px);
     }
-    .course-info h2 { color: var(--text); margin-bottom: 6px; }
     .course-info h1 {
       font-size: clamp(24px, 2.8vw, 38px);
       background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -130,15 +128,11 @@
       gap: 10px;
       padding: 10px 18px;
       border-radius: 50px;
-      background: color-mix(in srgb, var(--panel2) 84%, transparent);
-      color: var(--text);
+      background: rgba(255,255,255,0.08);
       border: 1px solid var(--border);
       width: fit-content;
       margin-top: 10px;
     }
-    [data-theme="day"] .badge { background: color-mix(in srgb, var(--panel2) 96%, white 4%); }
-    [data-theme="day"] svg text { fill: var(--text) !important; }
-    [data-theme="day"] canvas { background: transparent !important; }
 
     .module-nav {
       display: flex;
@@ -328,10 +322,6 @@
     }
     .highlight { background: rgba(96,165,250,0.2); padding: 2px 6px; border-radius: 4px; color: var(--primary); font-weight: 600; }
     .math-equation { font-family: "Times New Roman", serif; font-style: italic; font-size: 1.1em; text-align: center; margin: 15px 0; }
-
-    .theme-toggle .label { color: var(--text); }
-    .metric-interpretation { color: var(--muted); }
-
   </style>
 </head>
 <body data-theme="night">
@@ -350,16 +340,6 @@
         </p>
       </div>
     </header>
-
-
-<div class="panel section" aria-label="Quick start guide">
-  <h3><i class="fas fa-compass"></i> Quick Start Guide</h3>
-  <ul style="padding-left: 20px; color: var(--muted);">
-    <li>Start with <strong>Section 1</strong> for intuition and real-world context.</li>
-    <li>Use the interactive demos in <strong>K-Means</strong>, <strong>Hierarchical</strong>, and <strong>DBSCAN</strong>.</li>
-    <li>Wrap up with <strong>Evaluation Metrics</strong> and <strong>Try It Yourself</strong> for application.</li>
-  </ul>
-</div>
 
     <div class="module-nav">
       <button class="nav-btn active" data-module="intro"><i class="fas fa-question-circle"></i> 1. What is Clustering?</button>
@@ -541,7 +521,7 @@ plt.show()</code></pre>
       </div>
     </div>
 
-  <!-- ==================== SECTION 2: K-MEANS CLUSTERING (COMPLETELY FIXED) ==================== -->
+   <!-- ==================== SECTION 2: K-MEANS CLUSTERING (ENHANCED) ==================== -->
 <div id="kmeans" class="module-content">
   <!-- 2.1 Introduction to K-Means -->
   <div class="panel section">
@@ -645,14 +625,46 @@ plt.show()</code></pre>
       <p>Calculate Euclidean distance from each point to both centroids:</p>
       
       <table class="detailed-table">
-        <thead><tr><th>Point</th><th>Distance to C₁ (1,2)</th><th>Distance to C₂ (5,4)</th><th>Assignment</th></tr></thead>
+        <thead>
+          <tr><th>Point</th><th>Distance to C₁ (1,2)</th><th>Distance to C₂ (5,4)</th><th>Assignment</th></tr>
+        </thead>
         <tbody>
-          <tr><td>A (1,2)</td><td>0</td><td>√20 ≈ 4.47</td><td class="highlight">Cluster 1</td></tr>
-          <tr><td>B (2,1)</td><td>√2 ≈ 1.41</td><td>√18 ≈ 4.24</td><td class="highlight">Cluster 1</td></tr>
-          <tr><td>C (4,3)</td><td>√10 ≈ 3.16</td><td>√2 ≈ 1.41</td><td class="highlight">Cluster 2</td></tr>
-          <tr><td>D (5,4)</td><td>√20 ≈ 4.47</td><td>0</td><td class="highlight">Cluster 2</td></tr>
-          <tr><td>E (3,5)</td><td>√13 ≈ 3.61</td><td>√5 ≈ 2.24</td><td class="highlight">Cluster 2</td></tr>
-          <tr><td>F (4,5)</td><td>√18 ≈ 4.24</td><td>√2 ≈ 1.41</td><td class="highlight">Cluster 2</td></tr>
+          <tr>
+            <td>A (1,2)</td>
+            <td>√[(1-1)² + (2-2)²] = 0</td>
+            <td>√[(1-5)² + (2-4)²] = √(16 + 4) = √20 ≈ 4.47</td>
+            <td class="highlight">Cluster 1</td>
+          </tr>
+          <tr>
+            <td>B (2,1)</td>
+            <td>√[(2-1)² + (1-2)²] = √(1 + 1) = √2 ≈ 1.41</td>
+            <td>√[(2-5)² + (1-4)²] = √(9 + 9) = √18 ≈ 4.24</td>
+            <td class="highlight">Cluster 1</td>
+          </tr>
+          <tr>
+            <td>C (4,3)</td>
+            <td>√[(4-1)² + (3-2)²] = √(9 + 1) = √10 ≈ 3.16</td>
+            <td>√[(4-5)² + (3-4)²] = √(1 + 1) = √2 ≈ 1.41</td>
+            <td class="highlight">Cluster 2</td>
+          </tr>
+          <tr>
+            <td>D (5,4)</td>
+            <td>√[(5-1)² + (4-2)²] = √(16 + 4) = √20 ≈ 4.47</td>
+            <td>√[(5-5)² + (4-4)²] = 0</td>
+            <td class="highlight">Cluster 2</td>
+          </tr>
+          <tr>
+            <td>E (3,5)</td>
+            <td>√[(3-1)² + (5-2)²] = √(4 + 9) = √13 ≈ 3.61</td>
+            <td>√[(3-5)² + (5-4)²] = √(4 + 1) = √5 ≈ 2.24</td>
+            <td class="highlight">Cluster 2</td>
+          </tr>
+          <tr>
+            <td>F (4,5)</td>
+            <td>√[(4-1)² + (5-2)²] = √(9 + 9) = √18 ≈ 4.24</td>
+            <td>√[(4-5)² + (5-4)²] = √(1 + 1) = √2 ≈ 1.41</td>
+            <td class="highlight">Cluster 2</td>
+          </tr>
         </tbody>
       </table>
       
@@ -676,24 +688,68 @@ plt.show()</code></pre>
       </div>
 
       <h4>📊 Step 4: Repeat Assignment with New Centroids</h4>
-      <p>Reassign points based on new centroids (converged, unchanged).</p>
+      <p>Reassign points based on new centroids:</p>
+      
+      <table class="detailed-table">
+        <thead>
+          <tr><th>Point</th><th>Distance to C₁ (1.5,1.5)</th><th>Distance to C₂ (4,4.25)</th><th>Assignment</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>A (1,2)</td>
+            <td>√[(1-1.5)² + (2-1.5)²] = √(0.25 + 0.25) = √0.5 ≈ 0.71</td>
+            <td>√[(1-4)² + (2-4.25)²] = √(9 + 5.06) = √14.06 ≈ 3.75</td>
+            <td class="highlight">Cluster 1</td>
+          </tr>
+          <tr>
+            <td>B (2,1)</td>
+            <td>√[(2-1.5)² + (1-1.5)²] = √(0.25 + 0.25) = √0.5 ≈ 0.71</td>
+            <td>√[(2-4)² + (1-4.25)²] = √(4 + 10.56) = √14.56 ≈ 3.82</td>
+            <td class="highlight">Cluster 1</td>
+          </tr>
+          <tr>
+            <td>C (4,3)</td>
+            <td>√[(4-1.5)² + (3-1.5)²] = √(6.25 + 2.25) = √8.5 ≈ 2.92</td>
+            <td>√[(4-4)² + (3-4.25)²] = √(0 + 1.56) = √1.56 ≈ 1.25</td>
+            <td class="highlight">Cluster 2</td>
+          </tr>
+          <tr>
+            <td>D (5,4)</td>
+            <td>√[(5-1.5)² + (4-1.5)²] = √(12.25 + 6.25) = √18.5 ≈ 4.30</td>
+            <td>√[(5-4)² + (4-4.25)²] = √(1 + 0.06) = √1.06 ≈ 1.03</td>
+            <td class="highlight">Cluster 2</td>
+          </tr>
+          <tr>
+            <td>E (3,5)</td>
+            <td>√[(3-1.5)² + (5-1.5)²] = √(2.25 + 12.25) = √14.5 ≈ 3.81</td>
+            <td>√[(3-4)² + (5-4.25)²] = √(1 + 0.56) = √1.56 ≈ 1.25</td>
+            <td class="highlight">Cluster 2</td>
+          </tr>
+          <tr>
+            <td>F (4,5)</td>
+            <td>√[(4-1.5)² + (5-1.5)²] = √(6.25 + 12.25) = √18.5 ≈ 4.30</td>
+            <td>√[(4-4)² + (5-4.25)²] = √(0 + 0.56) = √0.56 ≈ 0.75</td>
+            <td class="highlight">Cluster 2</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p><strong>Assignment unchanged!</strong> Both clusters have same points as before. The algorithm has converged.</p>
       
       <div class="pro-tip" style="margin-top: 20px;">
         <p><strong>💡 Final Result:</strong><br>
         Cluster 1 (centroid at 1.5, 1.5): Points A and B<br>
         Cluster 2 (centroid at 4, 4.25): Points C, D, E, F<br>
-        <strong>Inertia =</strong> (0.71² + 0.71²) + (1.25² + 1.03² + 1.25² + 0.75²) = <strong>5.74</strong></p>
+        <strong>Inertia =</strong> (0.71² + 0.71²) + (1.25² + 1.03² + 1.25² + 0.75²) = 0.5 + 0.5 + 1.56 + 1.06 + 1.56 + 0.56 = <strong>5.74</strong></p>
       </div>
     </div>
   </div>
 
-  <!-- 2.4 Interactive Demo - FIXED with larger points and robust rendering -->
+  <!-- 2.4 Interactive Demo -->
   <div class="panel section">
     <h3><i class="fas fa-sliders-h"></i> 2.4 Interactive K-Means Demo</h3>
     
-    <div class="cluster-chart" style="height: 450px; min-height: 400px;">
-      <canvas id="kmeansChart" width="800" height="450" style="width:100%; height:100%; background: var(--panel2); border-radius: var(--radius);"></canvas>
-    </div>
+    <div class="cluster-chart"><canvas id="kmeansChart"></canvas></div>
     
     <div class="controls-panel">
       <div class="slider-container">
@@ -709,14 +765,14 @@ plt.show()</code></pre>
       
       <div class="slider-container">
         <label><i class="fas fa-random"></i> Noise Level (Data Spread):</label>
-        <input type="range" id="kmeansNoise" min="0" max="0.5" step="0.02" value="0.1">
+        <input type="range" id="kmeansNoise" min="0" max="0.5" step="0.05" value="0.1">
         <span class="slider-value" id="kmeansNoiseVal">0.10</span>
         <div style="font-size: 12px; margin-left: 10px; color: var(--muted);">Higher noise = more overlapping clusters</div>
       </div>
       
       <div class="button-group">
-        <button class="btn btn-primary" id="runKMeansBtn"><i class="fas fa-play"></i> Run K-Means</button>
-        <button class="btn btn-secondary" id="generateKMeansBtn"><i class="fas fa-sync"></i> Generate New Data</button>
+        <button class="btn btn-primary" onclick="runKMeans()"><i class="fas fa-play"></i> Run K-Means</button>
+        <button class="btn btn-secondary" onclick="generateKMeansData()"><i class="fas fa-sync"></i> Generate New Data</button>
       </div>
       
       <div class="metrics-container">
@@ -736,7 +792,7 @@ plt.show()</code></pre>
         </div>
         <div class="metric-card">
           <div class="metric-label">Iterations</div>
-          <div class="metric-value" id="kmeansIter">--</div>
+          <div class="metric-value" id="kmeansIter">10</div>
         </div>
       </div>
       
@@ -770,6 +826,7 @@ plt.show()</code></pre>
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
       <div>
         <svg width="100%" height="250" viewBox="0 0 400 250">
+          <!-- Elbow curve -->
           <polyline points="40,200 100,150 160,110 220,90 280,85 340,82" stroke="var(--primary)" stroke-width="3" fill="none"/>
           <circle cx="40" cy="200" r="4" fill="var(--primary)"/>
           <circle cx="100" cy="150" r="4" fill="var(--primary)"/>
@@ -1049,14 +1106,44 @@ X_scaled = scaler.fit_transform(X)</code>
     <h3><i class="fas fa-chart-simple"></i> 2.8 When to Choose K-Means Over Other Methods</h3>
     
     <table class="detailed-table">
-      <thead><tr><th>Scenario</th><th>K-Means</th><th>Hierarchical</th><th>DBSCAN</th></tr></thead>
+      <thead>
+        <tr><th>Scenario</th><th>K-Means</th><th>Hierarchical</th><th>DBSCAN</th></thead>
       <tbody>
-        <tr><td><strong>Large dataset (&gt;10,000)</strong></td><td class="highlight">✅ Excellent</td><td>❌ Too slow (O(n³))</td><td>⚠️ Good with indexing</td></tr>
-        <tr><td><strong>Spherical clusters</strong></td><td class="highlight">✅ Perfect</td><td>✅ Good</td><td>✅ Good</td></tr>
-        <tr><td><strong>Irregular shapes (moons)</strong></td><td>❌ Fails</td><td>⚠️ May work</td><td class="highlight">✅ Excellent</td></tr>
-        <tr><td><strong>Known number of clusters (K)</strong></td><td class="highlight">✅ Ideal</td><td>⚠️ Need to cut dendrogram</td><td>❌ No K parameter</td></tr>
-        <tr><td><strong>Interpretability needed</strong></td><td class="highlight">✅ Centroids are interpretable</td><td>✅ Dendrogram helps</td><td>⚠️ Less interpretable</td></tr>
-        <tr><td><strong>Outlier detection</strong></td><td>⚠️ All points assigned to clusters</td><td>⚠️ All points assigned</span><td class="highlight">✅ Identifies noise</td>
+        <tr>
+          <td><strong>Large dataset (&gt;10,000)</strong></td>
+          <td class="highlight">✅ Excellent</td>
+          <td>❌ Too slow (O(n³))</td>
+          <td>⚠️ Good with indexing</td>
+        </tr>
+        <tr>
+          <td><strong>Spherical clusters</strong></td>
+          <td class="highlight">✅ Perfect</td>
+          <td>✅ Good</td>
+          <td>✅ Good</td>
+        </tr>
+        <tr>
+          <td><strong>Irregular shapes (moons)</strong></td>
+          <td>❌ Fails</td>
+          <td>⚠️ May work</td>
+          <td class="highlight">✅ Excellent</td>
+        </tr>
+        <tr>
+          <td><strong>Known number of clusters (K)</strong></td>
+          <td class="highlight">✅ Ideal</td>
+          <td>⚠️ Need to cut dendrogram</td>
+          <td>❌ No K parameter</td>
+        </tr>
+        <tr>
+          <td><strong>Interpretability needed</strong></td>
+          <td class="highlight">✅ Centroids are interpretable</td>
+          <td>✅ Dendrogram helps</td>
+          <td>⚠️ Less interpretable</td>
+        </tr>
+        <tr>
+          <td><strong>Outlier detection</strong></td>
+          <td>⚠️ All points assigned to clusters</td>
+          <td>⚠️ All points assigned</td>
+          <td class="highlight">✅ Identifies noise</td>
         </tr>
       </tbody>
     </table>
@@ -1129,6 +1216,22 @@ centroids = kmeans.cluster_centers_
 inertia = kmeans.inertia_</code></pre>
     </div>
   </div>
+
+  <script>
+    // K-Means specific JavaScript functions (add to existing script)
+    function updateKMeansMetrics() {
+      const k = parseInt(document.getElementById('kmeansK').value);
+      const noise = parseFloat(document.getElementById('kmeansNoise').value);
+      
+      // Update iteration count display
+      document.getElementById('kmeansIter').innerText = '10';
+      document.getElementById('kmeansPoints').innerText = '180';
+    }
+    
+    // Add event listeners for sliders
+    document.getElementById('kmeansK')?.addEventListener('input', updateKMeansMetrics);
+    document.getElementById('kmeansNoise')?.addEventListener('input', updateKMeansMetrics);
+  </script>
 </div>
 
 <!-- ==================== SECTION 3: HIERARCHICAL CLUSTERING (ENHANCED) ==================== -->
@@ -3616,6 +3719,401 @@ gmm = GaussianMixture(n_components=3)</code>
       </div>
     </div>
   </div>
+
+  <script>
+    // Algorithm Comparison Interactive Functions
+    let comparisonData = null;
+    
+    function generateComparisonData() {
+      const pattern = document.getElementById('comparisonDataPattern').value;
+      const noise = parseFloat(document.getElementById('comparisonNoise').value);
+      document.getElementById('comparisonNoiseVal').innerText = noise.toFixed(2);
+      
+      let X;
+      const n_samples = 300;
+      
+      if (pattern === 'blobs') {
+        const centers = [[-2, -2], [2, 2], [0, 3]];
+        X = [];
+        for (let i = 0; i < centers.length; i++) {
+          for (let j = 0; j < n_samples/3; j++) {
+            X.push({
+              x: centers[i][0] + (Math.random() - 0.5) * 1.2 + (Math.random() - 0.5) * noise * 3,
+              y: centers[i][1] + (Math.random() - 0.5) * 1.2 + (Math.random() - 0.5) * noise * 3
+            });
+          }
+        }
+      } else if (pattern === 'moons') {
+        X = [];
+        for (let i = 0; i < n_samples; i++) {
+          const angle = Math.PI * (i / (n_samples/2));
+          if (i < n_samples/2) {
+            X.push({
+              x: Math.cos(angle) * 2 + (Math.random() - 0.5) * noise * 2,
+              y: Math.sin(angle) * 1.5 + (Math.random() - 0.5) * noise * 2
+            });
+          } else {
+            X.push({
+              x: 2 + Math.cos(angle) * 2 + (Math.random() - 0.5) * noise * 2,
+              y: Math.sin(angle) * 1.5 - 1 + (Math.random() - 0.5) * noise * 2
+            });
+          }
+        }
+      } else if (pattern === 'circles') {
+        X = [];
+        for (let i = 0; i < n_samples; i++) {
+          const angle = Math.PI * 2 * (i / n_samples);
+          if (i < n_samples/2) {
+            const r = 1.5;
+            X.push({
+              x: Math.cos(angle) * r + (Math.random() - 0.5) * noise * 2,
+              y: Math.sin(angle) * r + (Math.random() - 0.5) * noise * 2
+            });
+          } else {
+            const r = 3;
+            X.push({
+              x: Math.cos(angle) * r + (Math.random() - 0.5) * noise * 2,
+              y: Math.sin(angle) * r + (Math.random() - 0.5) * noise * 2
+            });
+          }
+        }
+      } else if (pattern === 'varied') {
+        X = [];
+        // Dense cluster
+        for (let i = 0; i < 150; i++) {
+          X.push({ x: (Math.random() - 0.5) * 1.2 + (Math.random() - 0.5) * noise, y: (Math.random() - 0.5) * 1.2 + (Math.random() - 0.5) * noise });
+        }
+        // Sparse cluster
+        for (let i = 0; i < 100; i++) {
+          X.push({ x: 4 + (Math.random() - 0.5) * 2.5 + (Math.random() - 0.5) * noise * 2, y: 3 + (Math.random() - 0.5) * 2.5 + (Math.random() - 0.5) * noise * 2 });
+        }
+        // Medium cluster
+        for (let i = 0; i < 50; i++) {
+          X.push({ x: -3 + (Math.random() - 0.5) * 1.8 + (Math.random() - 0.5) * noise * 1.5, y: 4 + (Math.random() - 0.5) * 1.8 + (Math.random() - 0.5) * noise * 1.5 });
+        }
+      } else if (pattern === 'noisy') {
+        X = [];
+        // Main clusters
+        for (let i = 0; i < 250; i++) {
+          if (i < 100) {
+            X.push({ x: (Math.random() - 0.5) * 1.5 + (Math.random() - 0.5) * noise, y: (Math.random() - 0.5) * 1.5 + (Math.random() - 0.5) * noise });
+          } else if (i < 200) {
+            X.push({ x: 4 + (Math.random() - 0.5) * 1.5 + (Math.random() - 0.5) * noise, y: 3 + (Math.random() - 0.5) * 1.5 + (Math.random() - 0.5) * noise });
+          } else {
+            X.push({ x: -2 + (Math.random() - 0.5) * 1.5 + (Math.random() - 0.5) * noise, y: 5 + (Math.random() - 0.5) * 1.5 + (Math.random() - 0.5) * noise });
+          }
+        }
+        // Add noise points
+        for (let i = 0; i < 50; i++) {
+          X.push({ x: (Math.random() - 0.5) * 12, y: (Math.random() - 0.5) * 10 });
+        }
+      } else if (pattern === 'anisotropic') {
+        X = [];
+        for (let i = 0; i < 3; i++) {
+          const angle = (i * 2 * Math.PI / 3);
+          const stretch = 2.5;
+          for (let j = 0; j < 100; j++) {
+            const u = (Math.random() - 0.5) * stretch;
+            const v = (Math.random() - 0.5) * 0.8;
+            X.push({
+              x: Math.cos(angle) * u - Math.sin(angle) * v + Math.cos(angle) * 3,
+              y: Math.sin(angle) * u + Math.cos(angle) * v + Math.sin(angle) * 3
+            });
+          }
+        }
+      }
+      
+      comparisonData = X;
+      runAllAlgorithms();
+    }
+    
+    function computeSilhouette(points, labels) {
+      const unique = [...new Set(labels.filter(l => l !== -1))];
+      if (unique.length < 2) return -1;
+      
+      let scores = [];
+      for (let i = 0; i < points.length; i++) {
+        if (labels[i] === -1) continue;
+        
+        let a = 0, aCount = 0;
+        for (let j = 0; j < points.length; j++) {
+          if (labels[j] === labels[i] && i !== j) {
+            a += Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+            aCount++;
+          }
+        }
+        a = aCount ? a / aCount : 0;
+        
+        let b = Infinity;
+        for (let c of unique) {
+          if (c === labels[i]) continue;
+          let sum = 0, count = 0;
+          for (let j = 0; j < points.length; j++) {
+            if (labels[j] === c) {
+              sum += Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+              count++;
+            }
+          }
+          const avg = count ? sum / count : Infinity;
+          if (avg < b) b = avg;
+        }
+        
+        if (b !== Infinity && a !== 0) {
+          scores.push((b - a) / Math.max(a, b));
+        }
+      }
+      
+      return scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : -1;
+    }
+    
+    function runKMeansOnComparison() {
+      if (!comparisonData) return { labels: [], sil: 0 };
+      const k = 3;
+      let centroids = [];
+      for (let i = 0; i < k; i++) centroids.push({ x: comparisonData[i % comparisonData.length].x, y: comparisonData[i % comparisonData.length].y });
+      let labels = new Array(comparisonData.length).fill(0);
+      for (let iter = 0; iter < 20; iter++) {
+        for (let i = 0; i < comparisonData.length; i++) {
+          let minDist = Infinity, best = 0;
+          for (let c = 0; c < k; c++) {
+            let d = Math.hypot(comparisonData[i].x - centroids[c].x, comparisonData[i].y - centroids[c].y);
+            if (d < minDist) { minDist = d; best = c; }
+          }
+          labels[i] = best;
+        }
+        let newCent = Array(k).fill().map(() => ({ x: 0, y: 0, count: 0 }));
+        for (let i = 0; i < comparisonData.length; i++) {
+          let c = labels[i];
+          newCent[c].x += comparisonData[i].x;
+          newCent[c].y += comparisonData[i].y;
+          newCent[c].count++;
+        }
+        for (let c = 0; c < k; c++) if (newCent[c].count) centroids[c] = { x: newCent[c].x / newCent[c].count, y: newCent[c].y / newCent[c].count };
+      }
+      const sil = computeSilhouette(comparisonData, labels);
+      return { labels, sil };
+    }
+    
+    function runHierarchicalOnComparison() {
+      if (!comparisonData) return { labels: [], sil: 0 };
+      const n = comparisonData.length;
+      let clusters = comparisonData.map((_, i) => [i]);
+      let active = [...Array(n).keys()];
+      while (active.length > 3) {
+        let minD = Infinity, mini = -1, minj = -1;
+        for (let i = 0; i < active.length; i++) {
+          for (let j = i + 1; j < active.length; j++) {
+            let sumD = 0, count = 0;
+            for (let a of clusters[active[i]]) {
+              for (let b of clusters[active[j]]) {
+                sumD += Math.hypot(comparisonData[a].x - comparisonData[b].x, comparisonData[a].y - comparisonData[b].y);
+                count++;
+              }
+            }
+            const avgD = count ? sumD / count : Infinity;
+            if (avgD < minD) { minD = avgD; mini = i; minj = j; }
+          }
+        }
+        if (mini === -1) break;
+        const newCluster = [...clusters[active[mini]], ...clusters[active[minj]]];
+        clusters.push(newCluster);
+        const newIdx = active.length;
+        active = active.filter((_, idx) => idx !== mini && idx !== minj);
+        active.push(newIdx);
+      }
+      const labels = new Array(n).fill(-1);
+      for (let i = 0; i < active.length; i++) {
+        for (let p of clusters[active[i]]) labels[p] = i;
+      }
+      const sil = computeSilhouette(comparisonData, labels);
+      return { labels, sil };
+    }
+    
+    function runDBSCANOnComparison() {
+      if (!comparisonData) return { labels: [], sil: 0 };
+      const eps = 0.35;
+      const minPts = 5;
+      const n = comparisonData.length;
+      let labels = new Array(n).fill(-1);
+      let clusterId = 0;
+      for (let i = 0; i < n; i++) {
+        if (labels[i] !== -1) continue;
+        let neighbors = [];
+        for (let j = 0; j < n; j++) {
+          if (Math.hypot(comparisonData[i].x - comparisonData[j].x, comparisonData[i].y - comparisonData[j].y) <= eps) {
+            neighbors.push(j);
+          }
+        }
+        if (neighbors.length < minPts) continue;
+        labels[i] = clusterId;
+        let seed = [...neighbors];
+        for (let s = 0; s < seed.length; s++) {
+          let p = seed[s];
+          if (labels[p] === -1) labels[p] = clusterId;
+          if (labels[p] !== -2) {
+            labels[p] = clusterId;
+            let n2 = [];
+            for (let j = 0; j < n; j++) {
+              if (Math.hypot(comparisonData[p].x - comparisonData[j].x, comparisonData[p].y - comparisonData[j].y) <= eps) {
+                n2.push(j);
+              }
+            }
+            if (n2.length >= minPts) {
+              for (let q of n2) {
+                if (labels[q] === -1 || labels[q] === -2) {
+                  if (labels[q] === -1) labels[q] = clusterId;
+                  if (!seed.includes(q)) seed.push(q);
+                }
+              }
+            }
+          }
+        }
+        clusterId++;
+      }
+      const sil = computeSilhouette(comparisonData, labels);
+      return { labels, sil };
+    }
+    
+    function runGMMOnComparison() {
+      if (!comparisonData) return { labels: [], sil: 0 };
+      const k = 3;
+      let means = [];
+      for (let i = 0; i < k; i++) means.push({ x: comparisonData[i % comparisonData.length].x, y: comparisonData[i % comparisonData.length].y });
+      let covs = Array(k).fill().map(() => [[0.5, 0], [0, 0.5]]);
+      let weights = Array(k).fill(1/k);
+      let labels = new Array(comparisonData.length).fill(0);
+      for (let iter = 0; iter < 20; iter++) {
+        let responsibilities = Array(comparisonData.length).fill().map(() => Array(k).fill(0));
+        for (let i = 0; i < comparisonData.length; i++) {
+          let total = 0;
+          for (let c = 0; c < k; c++) {
+            const dx = comparisonData[i].x - means[c].x;
+            const dy = comparisonData[i].y - means[c].y;
+            const prob = Math.exp(-(dx*dx + dy*dy) / (2 * 0.5)) * weights[c];
+            responsibilities[i][c] = prob;
+            total += prob;
+          }
+          for (let c = 0; c < k; c++) {
+            responsibilities[i][c] = total ? responsibilities[i][c] / total : 1/k;
+          }
+          let maxC = 0;
+          for (let c = 1; c < k; c++) if (responsibilities[i][c] > responsibilities[i][maxC]) maxC = c;
+          labels[i] = maxC;
+        }
+        let newMeans = Array(k).fill().map(() => ({ x: 0, y: 0, weight: 0 }));
+        for (let i = 0; i < comparisonData.length; i++) {
+          for (let c = 0; c < k; c++) {
+            newMeans[c].x += responsibilities[i][c] * comparisonData[i].x;
+            newMeans[c].y += responsibilities[i][c] * comparisonData[i].y;
+            newMeans[c].weight += responsibilities[i][c];
+          }
+        }
+        for (let c = 0; c < k; c++) {
+          if (newMeans[c].weight > 0) {
+            means[c] = { x: newMeans[c].x / newMeans[c].weight, y: newMeans[c].y / newMeans[c].weight };
+            weights[c] = newMeans[c].weight / comparisonData.length;
+          }
+        }
+      }
+      const sil = computeSilhouette(comparisonData, labels);
+      return { labels, sil };
+    }
+    
+    function runAllAlgorithms() {
+      if (!comparisonData) generateComparisonData();
+      
+      const kmeansRes = runKMeansOnComparison();
+      const hierRes = runHierarchicalOnComparison();
+      const dbscanRes = runDBSCANOnComparison();
+      const gmmRes = runGMMOnComparison();
+      
+      document.getElementById('kmeansComparisonSil').innerText = kmeansRes.sil.toFixed(3);
+      document.getElementById('hierComparisonSil').innerText = hierRes.sil.toFixed(3);
+      document.getElementById('dbscanComparisonSil').innerText = dbscanRes.sil.toFixed(3);
+      document.getElementById('gmmComparisonSil').innerText = gmmRes.sil.toFixed(3);
+      
+      function renderChart(canvasId, labels, sil) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        if (!comparisonData) return;
+        
+        const uniqueLabels = [...new Set(labels.filter(l => l !== -1))];
+        const colors = ['#60A5FA', '#A78BFA', '#F472B6', '#34D399', '#FBBF24', '#FB7185'];
+        
+        for (let i = 0; i < comparisonData.length; i++) {
+          const x = (comparisonData[i].x + 4) / 10 * w;
+          const y = (comparisonData[i].y + 4) / 10 * h;
+          let color = '#888';
+          if (labels[i] !== -1) {
+            color = colors[labels[i] % colors.length];
+          } else {
+            color = '#FF6B6B';
+          }
+          ctx.fillStyle = color;
+          ctx.beginPath();
+          ctx.arc(x, y, 3, 0, 2 * Math.PI);
+          ctx.fill();
+        }
+      }
+      
+      renderChart('comparisonKMeansChart', kmeansRes.labels, kmeansRes.sil);
+      renderChart('comparisonHierChart', hierRes.labels, hierRes.sil);
+      renderChart('comparisonDBSCANChart', dbscanRes.labels, dbscanRes.sil);
+      renderChart('comparisonGMMChart', gmmRes.labels, gmmRes.sil);
+    }
+    
+    function recommendAlgorithm() {
+      const q1 = document.getElementById('q1').value;
+      const q2 = document.getElementById('q2').value;
+      const q3 = document.getElementById('q3').value;
+      const q4 = document.getElementById('q4').value;
+      const q5 = document.getElementById('q5').value;
+      
+      let recommendation = '';
+      let reason = '';
+      
+      if (q5 === 'yes') {
+        recommendation = 'Gaussian Mixture Model (GMM)';
+        reason = 'You need probabilistic/soft assignments. GMM provides probabilities for each point belonging to each cluster.';
+      } else if (q3 === 'yes') {
+        recommendation = 'DBSCAN or OPTICS';
+        reason = 'Your data contains outliers. DBSCAN automatically identifies noise points and doesn\'t force them into clusters.';
+      } else if (q2 === 'irregular') {
+        recommendation = 'DBSCAN or Spectral Clustering';
+        reason = 'For non-spherical or irregular cluster shapes, DBSCAN and Spectral Clustering perform best as they don\'t assume spherical clusters.';
+      } else if (q1 === 'no') {
+        if (q4 === 'small') {
+          recommendation = 'Hierarchical Clustering';
+          reason = 'You don\'t know K and have a small dataset. Hierarchical clustering with dendrogram helps you discover the natural number of clusters.';
+        } else {
+          recommendation = 'DBSCAN';
+          reason = 'You don\'t know K. DBSCAN automatically determines the number of clusters based on density.';
+        }
+      } else if (q2 === 'overlapping') {
+        recommendation = 'Gaussian Mixture Model (GMM)';
+        reason = 'For overlapping clusters, GMM handles soft boundaries better than hard clustering algorithms.';
+      } else if (q4 === 'large') {
+        recommendation = 'Mini-Batch K-Means or BIRCH';
+        reason = 'For large datasets, these algorithms are optimized for scalability and memory efficiency.';
+      } else {
+        recommendation = 'K-Means (start here)';
+        reason = 'Based on your answers, K-Means is a good starting point. It\'s fast, simple, and works well for many problems. Always validate with silhouette scores!';
+      }
+      
+      document.getElementById('recommendationText').innerHTML = `<span style="color: var(--primary); font-size: 1.3rem;">${recommendation}</span>`;
+      document.getElementById('recommendationReason').innerHTML = reason;
+      document.getElementById('recommendationResult').style.display = 'block';
+    }
+    
+    // Initialize
+    generateComparisonData();
+    window.runAllAlgorithms = runAllAlgorithms;
+    window.generateComparisonData = generateComparisonData;
+    window.recommendAlgorithm = recommendAlgorithm;
+  </script>
 </div>
 
    <!-- ==================== SECTION 6: EVALUATION METRICS (ENHANCED) ==================== -->
@@ -4361,6 +4859,398 @@ score = davies_bouldin_score(X, labels)</code>
         <span class="keyword">return</span> <span class="string">'Invalid clustering'</span></code></pre>
     </div>
   </div>
+
+  <script>
+    // Metrics Explorer Functions
+    let metricsPoints = [];
+    
+    function generateMetricsData() {
+      const k = parseInt(document.getElementById('metricsK').value);
+      const separation = parseFloat(document.getElementById('metricsSeparation').value);
+      const compactness = parseFloat(document.getElementById('metricsCompactness').value);
+      const noiseLevel = parseFloat(document.getElementById('metricsNoise').value);
+      
+      const pointsPerCluster = 100;
+      let points = [];
+      
+      // Generate cluster centers with varying separation
+      const centers = [];
+      const angleStep = (2 * Math.PI) / k;
+      for (let i = 0; i < k; i++) {
+        const angle = i * angleStep;
+        const radius = separation * 1.5;
+        centers.push({
+          x: Math.cos(angle) * radius,
+          y: Math.sin(angle) * radius
+        });
+      }
+      
+      // Generate points around centers
+      for (let c = 0; c < k; c++) {
+        for (let i = 0; i < pointsPerCluster; i++) {
+          const angle = Math.random() * 2 * Math.PI;
+          const r = Math.sqrt(-2 * Math.log(Math.random())) * compactness;
+          const dx = Math.cos(angle) * r;
+          const dy = Math.sin(angle) * r;
+          points.push({
+            x: centers[c].x + dx,
+            y: centers[c].y + dy,
+            trueLabel: c
+          });
+        }
+      }
+      
+      // Add noise points
+      const nNoise = Math.floor(noiseLevel * points.length);
+      for (let i = 0; i < nNoise; i++) {
+        points.push({
+          x: (Math.random() - 0.5) * 12,
+          y: (Math.random() - 0.5) * 10,
+          trueLabel: -1
+        });
+      }
+      
+      return points;
+    }
+    
+    function computeMetricsOnData(points) {
+      if (!points.length) return { silhouette: 0, davies: 0, ch: 0, inertia: 0 };
+      
+      // Run K-Means on points
+      const k = parseInt(document.getElementById('metricsK').value);
+      let centroids = [];
+      for (let i = 0; i < k; i++) {
+        centroids.push({ x: points[i % points.length].x, y: points[i % points.length].y });
+      }
+      
+      let labels = new Array(points.length).fill(0);
+      for (let iter = 0; iter < 20; iter++) {
+        for (let i = 0; i < points.length; i++) {
+          let minDist = Infinity, best = 0;
+          for (let c = 0; c < k; c++) {
+            let d = Math.hypot(points[i].x - centroids[c].x, points[i].y - centroids[c].y);
+            if (d < minDist) { minDist = d; best = c; }
+          }
+          labels[i] = best;
+        }
+        let newCent = Array(k).fill().map(() => ({ x: 0, y: 0, count: 0 }));
+        for (let i = 0; i < points.length; i++) {
+          let c = labels[i];
+          newCent[c].x += points[i].x;
+          newCent[c].y += points[i].y;
+          newCent[c].count++;
+        }
+        for (let c = 0; c < k; c++) if (newCent[c].count) centroids[c] = { x: newCent[c].x / newCent[c].count, y: newCent[c].y / newCent[c].count };
+      }
+      
+      // Compute inertia
+      let inertia = 0;
+      for (let i = 0; i < points.length; i++) {
+        inertia += Math.hypot(points[i].x - centroids[labels[i]].x, points[i].y - centroids[labels[i]].y) ** 2;
+      }
+      
+      // Compute silhouette
+      let silhouette = computeSilhouetteFast(points, labels);
+      
+      // Compute Davies-Bouldin approximation
+      let davies = computeDaviesBouldin(points, labels, centroids);
+      
+      // Compute Calinski-Harabasz approximation
+      let ch = computeCalinskiHarabasz(points, labels, centroids);
+      
+      return { silhouette, davies, ch, inertia, labels, centroids };
+    }
+    
+    function computeSilhouetteFast(points, labels) {
+      const unique = [...new Set(labels)];
+      if (unique.length < 2) return -1;
+      
+      let scores = [];
+      for (let i = 0; i < Math.min(points.length, 200); i++) { // Sample for speed
+        let a = 0, aCount = 0;
+        for (let j = 0; j < points.length; j++) {
+          if (labels[j] === labels[i] && i !== j) {
+            a += Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+            aCount++;
+          }
+        }
+        a = aCount ? a / aCount : 0;
+        
+        let b = Infinity;
+        for (let c of unique) {
+          if (c === labels[i]) continue;
+          let sum = 0, count = 0;
+          for (let j = 0; j < points.length; j++) {
+            if (labels[j] === c) {
+              sum += Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+              count++;
+            }
+          }
+          const avg = count ? sum / count : Infinity;
+          if (avg < b) b = avg;
+        }
+        
+        if (b !== Infinity && a !== 0) {
+          scores.push((b - a) / Math.max(a, b));
+        }
+      }
+      
+      return scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : -1;
+    }
+    
+    function computeDaviesBouldin(points, labels, centroids) {
+      const k = centroids.length;
+      let s = Array(k).fill(0);
+      for (let i = 0; i < points.length; i++) {
+        s[labels[i]] += Math.hypot(points[i].x - centroids[labels[i]].x, points[i].y - centroids[labels[i]].y);
+      }
+      for (let c = 0; c < k; c++) {
+        const count = labels.filter(l => l === c).length;
+        s[c] = count ? s[c] / count : 0;
+      }
+      
+      let db = 0;
+      for (let i = 0; i < k; i++) {
+        let maxRatio = 0;
+        for (let j = 0; j < k; j++) {
+          if (i === j) continue;
+          const d = Math.hypot(centroids[i].x - centroids[j].x, centroids[i].y - centroids[j].y);
+          const ratio = (s[i] + s[j]) / (d + 1e-10);
+          if (ratio > maxRatio) maxRatio = ratio;
+        }
+        db += maxRatio;
+      }
+      return db / k;
+    }
+    
+    function computeCalinskiHarabasz(points, labels, centroids) {
+      const k = centroids.length;
+      const n = points.length;
+      
+      // Overall centroid
+      let overallX = 0, overallY = 0;
+      for (let p of points) {
+        overallX += p.x;
+        overallY += p.y;
+      }
+      overallX /= n;
+      overallY /= n;
+      
+      let betweenSum = 0;
+      let withinSum = 0;
+      
+      for (let c = 0; c < k; c++) {
+        const clusterPoints = points.filter((_, i) => labels[i] === c);
+        const count = clusterPoints.length;
+        if (count === 0) continue;
+        
+        // Between-cluster sum
+        const dx = centroids[c].x - overallX;
+        const dy = centroids[c].y - overallY;
+        betweenSum += count * (dx * dx + dy * dy);
+        
+        // Within-cluster sum
+        for (let p of clusterPoints) {
+          const wx = p.x - centroids[c].x;
+          const wy = p.y - centroids[c].y;
+          withinSum += wx * wx + wy * wy;
+        }
+      }
+      
+      return (betweenSum / (k - 1)) / (withinSum / (n - k) + 1e-10);
+    }
+    
+    function renderMetricsChart(points, labels, centroids) {
+      const canvas = document.getElementById('metricsExplorerChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      
+      // Find bounds
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      for (let p of points) {
+        minX = Math.min(minX, p.x);
+        maxX = Math.max(maxX, p.x);
+        minY = Math.min(minY, p.y);
+        maxY = Math.max(maxY, p.y);
+      }
+      const padding = 20;
+      const scaleX = (w - 2 * padding) / (maxX - minX);
+      const scaleY = (h - 2 * padding) / (maxY - minY);
+      
+      const colors = ['#60A5FA', '#A78BFA', '#F472B6', '#34D399', '#FBBF24', '#FB7185', '#22D3EE', '#F59E0B'];
+      
+      // Draw points
+      for (let i = 0; i < points.length; i++) {
+        const x = padding + (points[i].x - minX) * scaleX;
+        const y = padding + (points[i].y - minY) * scaleY;
+        ctx.fillStyle = colors[labels[i] % colors.length];
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+      
+      // Draw centroids
+      for (let c = 0; c < centroids.length; c++) {
+        const x = padding + (centroids[c].x - minX) * scaleX;
+        const y = padding + (centroids[c].y - minY) * scaleY;
+        ctx.fillStyle = '#000';
+        ctx.beginPath();
+        ctx.arc(x, y, 6, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillStyle = colors[c % colors.length];
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    }
+    
+    function updateMetricsExplorer() {
+      const k = parseInt(document.getElementById('metricsK').value);
+      const separation = parseFloat(document.getElementById('metricsSeparation').value);
+      const compactness = parseFloat(document.getElementById('metricsCompactness').value);
+      const noise = parseFloat(document.getElementById('metricsNoise').value);
+      
+      document.getElementById('metricsKVal').innerText = k;
+      document.getElementById('metricsSeparationVal').innerText = separation.toFixed(2);
+      document.getElementById('metricsCompactnessVal').innerText = compactness.toFixed(2);
+      document.getElementById('metricsNoiseVal').innerText = noise.toFixed(2);
+      
+      const points = generateMetricsData();
+      const metrics = computeMetricsOnData(points);
+      
+      document.getElementById('expSilhouette').innerText = metrics.silhouette.toFixed(3);
+      document.getElementById('expDavies').innerText = metrics.davies.toFixed(3);
+      document.getElementById('expCH').innerText = Math.round(metrics.ch);
+      document.getElementById('expInertia').innerText = Math.round(metrics.inertia);
+      
+      // Add interpretations
+      const silEl = document.getElementById('silInterpretation');
+      if (metrics.silhouette > 0.7) silEl.innerHTML = '✓ Excellent clustering';
+      else if (metrics.silhouette > 0.5) silEl.innerHTML = '✓ Good clustering';
+      else if (metrics.silhouette > 0.2) silEl.innerHTML = '⚠ Fair clustering';
+      else silEl.innerHTML = '✗ Poor clustering';
+      
+      const daviesEl = document.getElementById('daviesInterpretation');
+      if (metrics.davies < 0.5) daviesEl.innerHTML = '✓ Excellent separation';
+      else if (metrics.davies < 1.0) daviesEl.innerHTML = '✓ Good separation';
+      else if (metrics.davies < 1.5) daviesEl.innerHTML = '⚠ Moderate overlap';
+      else daviesEl.innerHTML = '✗ Significant overlap';
+      
+      renderMetricsChart(points, metrics.labels, metrics.centroids);
+    }
+    
+    function resetMetricsExplorer() {
+      document.getElementById('metricsK').value = 3;
+      document.getElementById('metricsSeparation').value = 1.5;
+      document.getElementById('metricsCompactness').value = 0.8;
+      document.getElementById('metricsNoise').value = 0;
+      updateMetricsExplorer();
+    }
+    
+    // Elbow Chart Functions
+    function updateElbowChart() {
+      const complexity = parseInt(document.getElementById('elbowComplexity').value);
+      document.getElementById('elbowComplexityVal').innerText = complexity;
+      
+      const canvas = document.getElementById('elbowChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width, h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      
+      const ks = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+      let inertias = [];
+      
+      // Generate inertia curve based on complexity
+      const baseInertia = [500, 320, 210, 150, 110, 85, 70, 60, 53, 48];
+      for (let i = 0; i < baseInertia.length; i++) {
+        let noise = (complexity / 100) * 30;
+        inertias.push(baseInertia[i] + (Math.random() - 0.5) * noise);
+      }
+      
+      // Draw axes
+      const padding = 40;
+      const width = w - 2 * padding;
+      const height = h - 2 * padding;
+      
+      ctx.strokeStyle = getColors().grid;
+      ctx.beginPath();
+      ctx.moveTo(padding, padding);
+      ctx.lineTo(padding, h - padding);
+      ctx.lineTo(w - padding, h - padding);
+      ctx.stroke();
+      
+      // Draw curve
+      const maxInertia = Math.max(...inertias);
+      const minInertia = Math.min(...inertias);
+      
+      ctx.beginPath();
+      ctx.strokeStyle = getColors().primary;
+      ctx.lineWidth = 2;
+      for (let i = 0; i < ks.length; i++) {
+        const x = padding + (i / (ks.length - 1)) * width;
+        const y = h - padding - ((inertias[i] - minInertia) / (maxInertia - minInertia)) * height;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Draw points
+      for (let i = 0; i < ks.length; i++) {
+        const x = padding + (i / (ks.length - 1)) * width;
+        const y = h - padding - ((inertias[i] - minInertia) / (maxInertia - minInertia)) * height;
+        ctx.fillStyle = getColors().primary;
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Highlight elbow (around K=3)
+        if (i === 2) {
+          ctx.fillStyle = getColors().warning;
+          ctx.beginPath();
+          ctx.arc(x, y, 8, 0, 2 * Math.PI);
+          ctx.fill();
+          ctx.fillStyle = getColors().text;
+          ctx.font = '10px sans-serif';
+          ctx.fillText('Elbow', x + 10, y - 10);
+        }
+      }
+      
+      // Add labels
+      ctx.fillStyle = getColors().text;
+      ctx.font = '12px sans-serif';
+      ctx.fillText('Number of Clusters (K)', w/2 - 60, h - 10);
+      ctx.save();
+      ctx.translate(20, h/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.fillText('Inertia (WCSS)', -30, 0);
+      ctx.restore();
+      
+      for (let i = 0; i < ks.length; i += 2) {
+        const x = padding + (i / (ks.length - 1)) * width;
+        ctx.fillText(ks[i], x - 5, h - padding + 15);
+      }
+    }
+    
+    function getColors() {
+      const isDay = document.body.getAttribute('data-theme') === 'day';
+      return {
+        text: isDay ? '#0F172A' : '#EAF0FF',
+        grid: isDay ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)',
+        primary: isDay ? '#2563EB' : '#60A5FA',
+        warning: isDay ? '#F59E0B' : '#FBBF24'
+      };
+    }
+    
+    // Initialize
+    updateMetricsExplorer();
+    updateElbowChart();
+    window.updateMetricsExplorer = updateMetricsExplorer;
+    window.resetMetricsExplorer = resetMetricsExplorer;
+    window.updateElbowChart = updateElbowChart;
+  </script>
 </div>
     <!-- ==================== SECTION 7: TRY IT YOURSELF ==================== -->
     <div id="hands" class="module-content">
@@ -4649,9 +5539,206 @@ print(<span class="string">"\n✅ Results saved to 'customer_segments.csv'"</spa
     </footer>
   </div>
 
-<script src="js/comparison.js" defer></script>
-<script src="js/metrics.js" defer></script>
-<script src="js/app.js" defer></script>
+  <script>
+    // Theme Management
+    const themeBtn = document.getElementById('themeToggle');
+    const bodyEl = document.body;
+    function setTheme(theme) { bodyEl.setAttribute('data-theme', theme); localStorage.setItem('cluster-theme', theme); updateAllCharts(); }
+    themeBtn.addEventListener('click', () => { const newTheme = bodyEl.getAttribute('data-theme') === 'night' ? 'day' : 'night'; setTheme(newTheme); });
+    if(localStorage.getItem('cluster-theme')) setTheme(localStorage.getItem('cluster-theme'));
 
+    // Initialize clipboard
+    const clipboard = new ClipboardJS('.copy-btn');
+    clipboard.on('success', function(e) {
+      const btn = e.trigger;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '✓ Copied!';
+      setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+      e.clearSelection();
+    });
+
+    let kmeansChart, hierChart, dbscanChart, evalChart;
+    function getColors() { const isDay = bodyEl.getAttribute('data-theme') === 'day'; return { text: isDay ? '#0F172A' : '#EAF0FF', grid: isDay ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)', primary: isDay ? '#2563EB' : '#60A5FA' }; }
+    function updateAllCharts() { [kmeansChart, hierChart, dbscanChart, evalChart].forEach(c => { if(c) c.update(); }); }
+
+    // Data Generation
+    function generateBlobs(n=180, centers=3, noise=0.1) {
+      let points = [];
+      for(let c=0; c<centers; c++) {
+        let cx = (c+1)*3 + (Math.random()-0.5)*noise*5;
+        let cy = (c+1)*2 + (Math.random()-0.5)*noise*5;
+        for(let i=0; i<n/centers; i++) {
+          points.push({ x: cx + (Math.random()-0.5)*1.5 + (Math.random()-0.5)*noise*3, y: cy + (Math.random()-0.5)*1.5 + (Math.random()-0.5)*noise*3 });
+        }
+      }
+      return points;
+    }
+
+    // K-Means
+    let kmeansPoints = [];
+    function generateKMeansData() {
+      const noise = parseFloat(document.getElementById('kmeansNoise').value);
+      document.getElementById('kmeansNoiseVal').innerText = noise.toFixed(2);
+      kmeansPoints = generateBlobs(180, 3, noise);
+      runKMeans();
+    }
+    function runKMeans() {
+      const k = parseInt(document.getElementById('kmeansK').value);
+      document.getElementById('kmeansKVal').innerText = k;
+      if(!kmeansPoints.length) generateKMeansData();
+      let centroids = [];
+      for(let i=0;i<k;i++) centroids.push({ x: kmeansPoints[i%kmeansPoints.length].x, y: kmeansPoints[i%kmeansPoints.length].y });
+      let labels = new Array(kmeansPoints.length).fill(0);
+      for(let iter=0;iter<10;iter++) {
+        for(let i=0;i<kmeansPoints.length;i++) {
+          let minDist=Infinity, best=0;
+          for(let c=0;c<k;c++) { let d=Math.hypot(kmeansPoints[i].x-centroids[c].x, kmeansPoints[i].y-centroids[c].y); if(d<minDist) { minDist=d; best=c; } }
+          labels[i]=best;
+        }
+        let newCent = Array(k).fill().map(()=>({x:0,y:0,count:0}));
+        for(let i=0;i<kmeansPoints.length;i++) { let c=labels[i]; newCent[c].x+=kmeansPoints[i].x; newCent[c].y+=kmeansPoints[i].y; newCent[c].count++; }
+        for(let c=0;c<k;c++) if(newCent[c].count) centroids[c] = { x: newCent[c].x/newCent[c].count, y: newCent[c].y/newCent[c].count };
+      }
+      let inertia=0;
+      for(let i=0;i<kmeansPoints.length;i++) inertia += Math.hypot(kmeansPoints[i].x-centroids[labels[i]].x, kmeansPoints[i].y-centroids[labels[i]].y)**2;
+      document.getElementById('kmeansInertia').innerText = inertia.toFixed(0);
+      let sil = silhouetteScore(kmeansPoints, labels);
+      document.getElementById('kmeansSil').innerText = sil.toFixed(3);
+      if(kmeansChart) kmeansChart.destroy();
+      const ctx = document.getElementById('kmeansChart').getContext('2d');
+      let datasets = [];
+      for(let c=0;c<k;c++) datasets.push({ label: `Cluster ${c}`, data: kmeansPoints.filter((_,i)=>labels[i]===c).map(p=>({x:p.x,y:p.y})), backgroundColor: `hsl(${c*360/k}, 70%, 60%)`, pointRadius: 5, type: 'scatter' });
+      datasets.push({ label: 'Centroids', data: centroids, backgroundColor: '#000', pointRadius: 8, pointStyle: 'rectRot', type: 'scatter' });
+      kmeansChart = new Chart(ctx, { type: 'scatter', data: { datasets }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { color: getColors().grid }, ticks: { color: getColors().text } }, y: { grid: { color: getColors().grid }, ticks: { color: getColors().text } } }, plugins: { legend: { labels: { color: getColors().text } } } } });
+    }
+    function silhouetteScore(points, labels) {
+      let unique = [...new Set(labels)];
+      let scores = [];
+      for(let i=0;i<points.length;i++) {
+        let a=0, cnt=0;
+        for(let j=0;j<points.length;j++) if(labels[j]===labels[i] && i!==j) { a+=Math.hypot(points[i].x-points[j].x, points[i].y-points[j].y); cnt++; }
+        a = cnt? a/cnt : 0;
+        let b=Infinity;
+        for(let c of unique) if(c!==labels[i]) { let sum=0, cnt2=0; for(let j=0;j<points.length;j++) if(labels[j]===c) { sum+=Math.hypot(points[i].x-points[j].x, points[i].y-points[j].y); cnt2++; } let avg = cnt2? sum/cnt2 : Infinity; if(avg<b) b=avg; }
+        scores.push((b-a)/Math.max(a,b));
+      }
+      return scores.reduce((a,b)=>a+b,0)/scores.length;
+    }
+
+    // Hierarchical
+    let hierPoints = [];
+    function generateHierarchicalData() { hierPoints = generateBlobs(150, 4, 0.15); runHierarchical(); }
+    function runHierarchical() {
+      const cut = parseInt(document.getElementById('hierCut').value);
+      document.getElementById('hierCutVal').innerText = cut;
+      if(!hierPoints.length) generateHierarchicalData();
+      let n = hierPoints.length;
+      let clusters = hierPoints.map((_,i)=>[i]);
+      let dist = Array(n).fill().map(()=>Array(n).fill(0));
+      for(let i=0;i<n;i++) for(let j=i+1;j<n;j++) dist[i][j]=dist[j][i]=Math.hypot(hierPoints[i].x-hierPoints[j].x, hierPoints[i].y-hierPoints[j].y);
+      let active = [...Array(n).keys()];
+      while(active.length > cut) {
+        let minD=Infinity, mini=-1, minj=-1;
+        for(let i=0;i<active.length;i++) for(let j=i+1;j<active.length;j++) { let d = dist[active[i]][active[j]]; if(d<minD) { minD=d; mini=i; minj=j; } }
+        if(mini===-1) break;
+        let newCluster = [...clusters[active[mini]], ...clusters[active[minj]]];
+        clusters.push(newCluster);
+        let newIdx = active.length;
+        for(let i=0;i<active.length;i++) if(i!==mini && i!==minj) { let avgD=0; for(let a of newCluster) for(let b of clusters[active[i]]) avgD+=Math.hypot(hierPoints[a].x-hierPoints[b].x, hierPoints[a].y-hierPoints[b].y); avgD /= (newCluster.length * clusters[active[i]].length); dist[newIdx][active[i]] = dist[active[i]][newIdx] = avgD; }
+        active = active.filter((_,idx)=>idx!==mini && idx!==minj);
+        active.push(newIdx);
+      }
+      let labels = new Array(n).fill(-1);
+      for(let i=0;i<active.length;i++) for(let p of clusters[active[i]]) labels[p]=i;
+      if(hierChart) hierChart.destroy();
+      const ctx = document.getElementById('hierarchicalChart').getContext('2d');
+      let datasets = [];
+      for(let c=0;c<active.length;c++) datasets.push({ label: `Cluster ${c}`, data: hierPoints.filter((_,i)=>labels[i]===c).map(p=>({x:p.x,y:p.y})), backgroundColor: `hsl(${c*360/active.length}, 70%, 60%)`, pointRadius: 5, type: 'scatter' });
+      hierChart = new Chart(ctx, { type: 'scatter', data: { datasets }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { color: getColors().grid } }, y: { grid: { color: getColors().grid } } }, plugins: { legend: { labels: { color: getColors().text } } } } });
+    }
+
+    // DBSCAN
+    let dbscanPoints = [];
+    function generateDBSCANData() { dbscanPoints = [...generateBlobs(120, 3, 0.1), ...generateBlobs(60, 1, 0.05).map(p=>({x:p.x+6,y:p.y+2}))]; runDBSCAN(); }
+    function runDBSCAN() {
+      const eps = parseFloat(document.getElementById('eps').value);
+      const minPts = parseInt(document.getElementById('minPts').value);
+      document.getElementById('epsVal').innerText = eps.toFixed(2);
+      document.getElementById('minPtsVal').innerText = minPts;
+      if(!dbscanPoints.length) generateDBSCANData();
+      let n = dbscanPoints.length;
+      let labels = new Array(n).fill(-1);
+      let clusterId = 0;
+      for(let i=0;i<n;i++) {
+        if(labels[i]!==-1) continue;
+        let neighbors = [];
+        for(let j=0;j<n;j++) if(Math.hypot(dbscanPoints[i].x-dbscanPoints[j].x, dbscanPoints[i].y-dbscanPoints[j].y) <= eps) neighbors.push(j);
+        if(neighbors.length < minPts) continue;
+        labels[i] = clusterId;
+        let seed = [...neighbors];
+        for(let s=0;s<seed.length;s++) {
+          let p = seed[s];
+          if(labels[p]===-1) labels[p]=clusterId;
+          if(labels[p]!==-2) { labels[p]=clusterId; let n2=[]; for(let j=0;j<n;j++) if(Math.hypot(dbscanPoints[p].x-dbscanPoints[j].x, dbscanPoints[p].y-dbscanPoints[j].y) <= eps) n2.push(j); if(n2.length >= minPts) for(let q of n2) if(labels[q]===-1 || labels[q]===-2) { if(labels[q]===-1) labels[q]=clusterId; if(!seed.includes(q)) seed.push(q); } }
+        }
+        clusterId++;
+      }
+      let unique = new Set(labels); if(unique.has(-1)) unique.delete(-1);
+      document.getElementById('dbscanClusters').innerText = unique.size;
+      if(dbscanChart) dbscanChart.destroy();
+      const ctx = document.getElementById('dbscanChart').getContext('2d');
+      let datasets = [];
+      for(let c=0;c<clusterId;c++) datasets.push({ label: `Cluster ${c}`, data: dbscanPoints.filter((_,i)=>labels[i]===c).map(p=>({x:p.x,y:p.y})), backgroundColor: `hsl(${c*360/clusterId}, 70%, 60%)`, pointRadius: 5, type: 'scatter' });
+      let outliers = dbscanPoints.filter((_,i)=>labels[i]===-1);
+      if(outliers.length) datasets.push({ label: 'Noise', data: outliers, backgroundColor: '#aaa', pointRadius: 4, type: 'scatter' });
+      dbscanChart = new Chart(ctx, { type: 'scatter', data: { datasets }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { color: getColors().grid } }, y: { grid: { color: getColors().grid } } }, plugins: { legend: { labels: { color: getColors().text } } } } });
+    }
+
+    // Evaluation Chart (Elbow)
+    function initEvalChart() {
+      let ks = [2,3,4,5,6,7,8];
+      let inertias = [450, 280, 190, 145, 120, 105, 95];
+      if(evalChart) evalChart.destroy();
+      const ctx = document.getElementById('evalChart').getContext('2d');
+      evalChart = new Chart(ctx, { type: 'line', data: { labels: ks, datasets: [{ label: 'Inertia (WCSS)', data: inertias, borderColor: getColors().primary, tension: 0.1, fill: false, pointRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: getColors().text } } }, scales: { x: { title: { display: true, text: 'K (Number of Clusters)', color: getColors().text }, grid: { color: getColors().grid } }, y: { title: { display: true, text: 'Inertia', color: getColors().text }, grid: { color: getColors().grid } } } } });
+    }
+
+    function downloadSampleData() {
+      let csv = "Age,Annual_Income,Spending_Score,Purchase_Frequency\n";
+      for(let i=0;i<200;i++) {
+        let age = Math.floor(Math.random() * 52) + 18;
+        let income = Math.floor(Math.random() * 105000) + 15000;
+        let score = Math.floor(Math.random() * 99) + 1;
+        let freq = Math.floor(Math.random() * 29) + 1;
+        csv += `${age},${income},${score},${freq}\n`;
+      }
+      let blob = new Blob([csv], {type: 'text/csv'});
+      let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'customer_data.csv'; a.click(); URL.revokeObjectURL(a.href);
+    }
+
+    // Navigation
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.module-content').forEach(m => m.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(btn.dataset.module).classList.add('active');
+        btn.classList.add('active');
+        if(btn.dataset.module === 'kmeans') setTimeout(() => { if(!kmeansPoints.length) generateKMeansData(); else runKMeans(); }, 100);
+        if(btn.dataset.module === 'hierarchical') setTimeout(() => { if(!hierPoints.length) generateHierarchicalData(); else runHierarchical(); }, 100);
+        if(btn.dataset.module === 'dbscan') setTimeout(() => { if(!dbscanPoints.length) generateDBSCANData(); else runDBSCAN(); }, 100);
+        if(btn.dataset.module === 'eval') setTimeout(() => initEvalChart(), 100);
+      });
+    });
+
+    // Initialize
+    generateKMeansData();
+    generateHierarchicalData();
+    generateDBSCANData();
+    initEvalChart();
+    window.runKMeans = runKMeans; window.generateKMeansData = generateKMeansData;
+    window.runHierarchical = runHierarchical; window.generateHierarchicalData = generateHierarchicalData;
+    window.runDBSCAN = runDBSCAN; window.generateDBSCANData = generateDBSCANData;
+    window.downloadSampleData = downloadSampleData;
+  </script>
 </body>
 </html>
