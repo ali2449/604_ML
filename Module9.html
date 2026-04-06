@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Module 9: Feature Engineering — Interaction, Polynomial, Binning & Domain Transformations</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
+  <style>
+    :root {
+      --bg0: #070A12; --bg1: #0B1020; --panel: #0F172A; --panel2: #0B1226;
+      --text: #EAF0FF; --muted: rgba(234,240,255,0.75); --border: rgba(148,163,184,0.14);
+      --primary: #60A5FA; --secondary: #A78BFA; --success: #34D399; --danger: #FB7185;
+      --warning: #FBBF24; --radius: 16px; --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    }
+    [data-theme="day"] {
+      --bg0: #F8FAFC; --bg1: #F1F5F9; --panel: #FFFFFF; --panel2: #F8FAFC;
+      --text: #0F172A; --muted: rgba(15,23,42,0.75); --border: rgba(148,163,184,0.25);
+      --primary: #2563EB; --secondary: #7C3AED;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg0); color: var(--text); line-height: 1.7;
+      transition: background 0.3s, color 0.3s;
+    }
+    .container { max-width: 1500px; margin: 0 auto; padding: 22px; }
+    .theme-toggle-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+    .theme-toggle {
+      display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px;
+      border-radius: 50px; background: var(--panel); border: 1px solid var(--border);
+      cursor: pointer; backdrop-filter: blur(10px);
+    }
+    header {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--panel) 94%, var(--primary) 6%), color-mix(in srgb, var(--panel2) 92%, var(--secondary) 8%));
+      padding: 28px; border-radius: 22px; margin-bottom: 24px; border: 1px solid var(--border);
+    }
+    .badge { display: inline-flex; gap: 10px; padding: 8px 16px; background: color-mix(in srgb, var(--panel2) 84%, transparent); border-radius: 50px; margin-top: 12px; }
+    .module-nav { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+    .nav-btn {
+      padding: 12px 20px; border-radius: 50px; background: var(--panel);
+      border: 1px solid var(--border); color: var(--text); font-weight: 600; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .nav-btn.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; }
+    .module-content { display: none; animation: fadeIn 0.4s ease; }
+    .module-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .panel { background: var(--panel); border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 24px; overflow: hidden; }
+    .section { padding: 24px; }
+    .section h3 { font-size: 1.5rem; margin-bottom: 20px; display: flex; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+    .section h4 { font-size: 1.2rem; margin: 20px 0 12px 0; color: var(--primary); }
+    .info-box, .pro-tip, .common-pitfall, .explanation-box, .performance-box {
+      padding: 20px; margin: 20px 0; border-radius: 0 var(--radius) var(--radius) 0; position: relative;
+    }
+    .info-box { border-left: 4px solid var(--primary); background: rgba(96,165,250,0.05); }
+    .info-box::before { content: '📖 Key Concept'; position: absolute; top: -10px; left: 20px; background: var(--panel); padding: 0 10px; font-size: 12px; }
+    .pro-tip { border-left: 4px solid var(--success); background: rgba(52,211,153,0.05); }
+    .pro-tip::before { content: '💡 Pro Tip'; position: absolute; top: -10px; left: 20px; background: var(--panel); padding: 0 10px; }
+    .common-pitfall { border-left: 4px solid var(--danger); background: rgba(251,113,133,0.05); }
+    .common-pitfall::before { content: '⚠️ Watch Out!'; position: absolute; top: -10px; left: 20px; background: var(--panel); padding: 0 10px; }
+    .performance-box { border-left: 4px solid var(--warning); background: rgba(251,191,36,0.05); }
+    .performance-box::before { content: '📊 Performance Impact'; position: absolute; top: -10px; left: 20px; background: var(--panel); padding: 0 10px; }
+    .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 20px 0; }
+    .concept-card { background: var(--panel2); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); }
+    .detailed-table { width: 100%; border-collapse: separate; border-spacing: 0; border-radius: 12px; border: 1px solid var(--border); background: var(--panel2); margin: 16px 0; }
+    .detailed-table th, .detailed-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: left; }
+    .detailed-table tr:last-child td { border-bottom: none; }
+    .dataframe-table { width: 100%; border-collapse: collapse; font-size: 13px; font-family: var(--mono); background: var(--panel2); border-radius: 12px; overflow: hidden; }
+    .dataframe-table th, .dataframe-table td { padding: 8px 12px; border: 1px solid var(--border); text-align: center; }
+    .dataframe-table th { background: var(--primary); color: white; font-weight: 600; }
+    .code-container { position: relative; margin: 20px 0; }
+    .code-block {
+      background: #1E1E2E; padding: 20px; border-radius: var(--radius); font-family: var(--mono);
+      font-size: 13px; overflow-x: auto; border: 1px solid var(--border);
+      color: #e0e0e0; line-height: 1.5;
+    }
+    [data-theme="day"] .code-block { background: #282C34; color: #ABB2BF; }
+    .copy-btn {
+      position: absolute; top: 10px; right: 10px; background: var(--primary);
+      color: white; border: none; padding: 6px 12px; border-radius: 6px;
+      cursor: pointer; font-size: 12px; z-index: 10;
+    }
+    .keyword { color: #C678DD; } .string { color: #98C379; } .comment { color: #5C6370; font-style: italic; }
+    .function { color: #61AFEF; } .number { color: #D19A66; }
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 12px; font-weight: 600; cursor: pointer; background: var(--panel); border: 1px solid var(--border); }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; }
+    .metric-card { background: linear-gradient(135deg, var(--panel2), var(--panel)); padding: 20px; border-radius: var(--radius); text-align: center; border: 1px solid var(--border); }
+    .metric-value { font-size: 32px; font-weight: bold; color: var(--primary); }
+    .math-equation { text-align: center; margin: 15px 0; font-size: 1.1rem; }
+    .badge-success { background: var(--success); color: #000; padding: 4px 8px; border-radius: 20px; font-size: 12px; }
+    footer { text-align: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--muted); }
+  </style>
+</head>
+<body data-theme="night">
+<div class="theme-toggle-container"><button class="theme-toggle" id="themeToggle"><span class="label">Night Mode</span></button></div>
+<div class="container">
+  <header>
+    <h1>🧪 Module 9: Feature Engineering</h1>
+    <h2>Creating Powerful Features — Interactions, Polynomials, Binning, Domain Knowledge</h2>
+    <div class="badge"><i class="fas fa-code-branch"></i> Interaction Features | Polynomial Expansion | Log/Box-Cox | Binning | Target Encoding | FeatureCross</div>
+    <p style="margin-top: 15px;"><strong>🎯 Learning Objectives:</strong> Understand how to create new informative features from raw data, capture non-linear patterns, encode domain knowledge, and avoid common pitfalls like leakage.</p>
+  </header>
+
+  <div class="module-nav">
+    <button class="nav-btn active" data-module="intro">1. Why Engineer Features?</button>
+    <button class="nav-btn" data-module="methods">2. Interaction & Polynomial</button>
+    <button class="nav-btn" data-module="transforms">3. Transformations & Binning</button>
+    <button class="nav-btn" data-module="encoding">4. Encoding & Domain</button>
+    <button class="nav-btn" data-module="workflow">5. Workflow & Pitfalls</button>
+    <button class="nav-btn" data-module="hands">6. Hands‑On Python</button>
+    <button class="nav-btn" data-module="quiz">7. Quiz & Summary</button>
+  </div>
+
+      <!-- SECTION 1: WHY FEATURE ENGINEERING - EXTENDED VERSION (WITH FIXED VISUALIZATION) -->
+  <div id="intro" class="module-content active">
+    <!-- Part 1: Core Definition & Importance -->
+    <div class="panel section">
+      <h3><i class="fas fa-lightbulb"></i> 1.1 What is Feature Engineering? (The Secret Sauce of ML)</h3>
+      <p><strong>Feature engineering</strong> is the art and science of transforming raw data into informative features that make machine learning models work better. While algorithms get the glory, feature engineering is often the difference between a winning and losing model.</p>
+      
+      <div class="info-box">
+        <strong>🎯 The Core Insight:</strong> "Coming up with features is difficult, time-consuming, requires expert knowledge. 'Applied machine learning' is basically feature engineering." — Andrew Ng (Former Head of Google Brain, Co-founder of Coursera)
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📊 Raw Data → Engineered Feature Examples</h5>
+          <table style="width:100%; font-size:12px;">
+            <tr><th>Raw Data</th><th>Engineered Feature</th><th>Why It Helps</th></tr>
+            <tr><td>timestamp: "2024-01-15 14:32:00"</td><td>hour_of_day = 14, is_weekend = False</td><td>Captures hourly/weekly patterns</td></tr>
+            <tr><td>latitude, longitude</td><td>distance_to_city_center</td><td>Location relevance, not just coordinates</td></tr>
+            <tr><td>price, sqft</td><td>price_per_sqft = price / sqft</td><td>Normalizes for size, better comparison</td></tr>
+            <tr><td>customer_age</td><td>age_group = "18-25", "26-35", ...</td><td>Captures non-linear age effects</td></tr>
+          </table>
+        </div>
+        
+        <div class="concept-card">
+          <h5>🏆 Why Feature Engineering Dominates Competitions</h5>
+          <p>In Kaggle's <strong>House Prices</strong> competition, the top solutions used <strong>200+ engineered features</strong> from just 80 raw features. Winners spent 80% of their time on feature engineering, 20% on model tuning.</p>
+          <div class="pro-tip" style="margin-top:10px">💡 The best model with poor features loses to a simple model with great features.</div>
+        </div>
+      </div>
+
+      <div class="performance-box">
+        <strong>📊 Measured Impact of Feature Engineering:</strong>
+        <div class="concept-grid" style="margin-top:10px">
+          <div class="metric-card"><div class="metric-value">+15-30%</div><div>Accuracy improvement from good feature engineering</div></div>
+          <div class="metric-card"><div class="metric-value">50-80%</div><div>Time data scientists spend on feature engineering</div></div>
+          <div class="metric-card"><div class="metric-value">2-10x</div><div>Model interpretability improvement</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 2: Raw vs Engineered - Detailed Case Study -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-line"></i> 1.2 Raw vs Engineered: A Real-World Case Study</h3>
+      <p>Let's examine how feature engineering transforms a mediocre house price prediction model into an accurate one using the same algorithm (Linear Regression).</p>
+      
+      <h4>🏠 Problem: Predict House Sale Price</h4>
+      <table class="dataframe-table">
+        <thead><tr><th>Stage</th><th>Features Used</th><th>Model R² Score</th><th>Explanation</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Stage 1: Raw Only</strong></td><td>sqft, bedrooms, bathrooms, year_built</td><td>0.62</td><td>Basic linear relationship, misses complexity</td></tr>
+          <tr><td><strong>Stage 2: + Transformations</strong></td><td>+ log(sqft), sqft², age = 2024 - year_built</td><td>0.74</td><td>Captures diminishing returns (big houses have lower price per sqft)</td></tr>
+          <tr><td><strong>Stage 3: + Interactions</strong></td><td>+ sqft × location_score, bedrooms × bathrooms</td><td>0.83</td><td>Location amplifies sqft value; bedroom-bathroom combo matters</td></tr>
+          <tr><td><strong>Stage 4: + Domain Knowledge</strong></td><td>+ has_garage, has_basement, lot_size, distance_to_school</td><td>0.89</td><td>Features that actually drive real estate value</td></tr>
+          <tr><td><strong>Stage 5: + Aggregations</strong></td><td>+ median_price_in_zipcode, avg_sqft_in_neighborhood</td><td>0.93</td><td>Contextual features from grouped data</td></tr>
+        </tbody>
+      </table>
+      
+      <div class="info-box" style="margin-top:15px">
+        <strong>📖 Key Insight:</strong> The algorithm never changed (simple Linear Regression), but the features did. Feature engineering alone improved R² from 0.62 → 0.93 — that's the difference between a useless model and a production-ready system!
+      </div>
+    </div>
+
+    <!-- Part 3: The Feature Engineering Hierarchy -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-simple"></i> 1.3 The Feature Engineering Hierarchy (From Easy to Advanced)</h3>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>Level 1: ✅ Basic Cleaning</h5>
+          <ul style="margin-left:15px">
+            <li>Handle missing values (impute with mean/median/mode)</li>
+            <li>Remove duplicates and constant columns</li>
+            <li>Fix data types (dates as datetime, categories as category)</li>
+            <li>Rename columns for clarity</li>
+          </ul>
+          <div class="pro-tip" style="margin-top:8px">💡 80% of real-world data issues are solved here</div>
+        </div>
+        
+        <div class="concept-card">
+          <h5>Level 2: 📐 Scaling & Transformations</h5>
+          <ul style="margin-left:15px">
+            <li>Standardization (z-score): (x - μ) / σ</li>
+            <li>Normalization (min-max): (x - min) / (max - min)</li>
+            <li>Log transform for skewed distributions</li>
+            <li>Box-Cox / Yeo-Johnson for normality</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>Level 3: 🧩 Interaction & Polynomials</h5>
+          <ul style="margin-left:15px">
+            <li>Multiplication: X1 × X2 (synergy effects)</li>
+            <li>Division: X1 / X2 (ratios, normalization)</li>
+            <li>Polynomial: X², X³ (curvature)</li>
+            <li>Difference: X1 - X2 (distance, change)</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>Level 4: 📊 Aggregation & Statistics</h5>
+          <ul style="margin-left:15px">
+            <li>Group-by aggregations: mean, median, std, count</li>
+            <li>Rolling windows (time series)</li>
+            <li>Ratio to group average</li>
+            <li>Rank within group</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>Level 5: 🧠 Domain-Specific</h5>
+          <ul style="margin-left:15px">
+            <li>Distance calculations (Haversine for geo)</li>
+            <li>Text features (TF-IDF, word embeddings)</li>
+            <li>Date features (hour, day, month, season, is_holiday)</li>
+            <li>Business rules (customer lifetime value)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 4: Visual: How Feature Engineering Transforms Data - FIXED VERSION -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-scatter"></i> 1.4 Visual: How Feature Engineering Transforms Data</h3>
+      
+      <div class="info-box">
+        <strong>📊 Interactive Demo:</strong> See how transformations change data distribution and model fit. <strong>Click the buttons below to compare!</strong>
+      </div>
+      
+      <!-- Visualization Controls -->
+      <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+        <button id="showSkewedBtn" class="btn btn-primary" style="background: #FB7185; border: none;">📉 Show Skewed Distribution (Raw Price)</button>
+        <button id="showNormalBtn" class="btn btn-primary" style="background: #34D399; border: none;">📈 Show Normal Distribution (Log Transformed)</button>
+        <button id="showComparisonBtn" class="btn btn-primary" style="background: #60A5FA; border: none;">🔄 Show Side-by-Side Comparison</button>
+      </div>
+      
+      <!-- Canvas for visualization -->
+      <canvas id="feDemoCanvas" width="700" height="300" style="width:100%; height:300px; background: var(--panel2); border-radius: var(--radius); margin: 15px 0; border: 1px solid var(--border);"></canvas>
+      
+      <!-- Explanation panel that updates dynamically -->
+      <div id="vizExplanation" class="info-box" style="margin-top: 10px;">
+        <strong>📖 Current View:</strong> Click a button above to see different transformations.
+      </div>
+      
+      <div class="concept-grid" style="margin-top: 15px;">
+        <div class="concept-card">
+          <h5>📉 Before: Skewed Feature (Raw Price)</h5>
+          <p>Most house prices clustered at lower end, long tail of expensive houses. Linear models struggle with this distribution because they assume normality.</p>
+          <div class="common-pitfall">⚠️ Problem: Model over-predicts for cheap houses, under-predicts for expensive ones. Residuals are not normally distributed.</div>
+          <div class="math-equation">\[ \text{Skewness} > 1 \quad \text{(highly skewed)} \]</div>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📈 After: Log Transformation</h5>
+          <p>Log(price) becomes approximately normal. Linear models perform much better on this scale because the relationship becomes linear.</p>
+          <div class="pro-tip">💡 Solution: Apply log transform, train model, then exponentiate predictions back to original scale: \(\hat{y} = \exp(\hat{y}_{log})\)</div>
+          <div class="math-equation">\[ x' = \log(x + 1) \]</div>
+        </div>
+      </div>
+      
+      <!-- Sample data table showing transformation -->
+      <div style="margin-top: 20px;">
+        <h4>📊 Real Example: House Prices Before & After Log Transform</h4>
+        <table class="dataframe-table">
+          <thead><tr><th>House ID</th><th>Raw Price ($)</th><th>Log(Price)</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>$150,000</td><td>11.92</td><td>Cheap houses get reasonable scale</td></tr>
+            <tr><td>2</td><td>$350,000</td><td>12.77</td><td>Mid-range compressed</td></tr>
+            <tr><td>3</td><td>$850,000</td><td>13.65</td><td>Expensive houses pulled in</td></tr>
+            <tr><td>4</td><td>$2,500,000</td><td>14.73</td><td>Outliers less extreme</td></tr>
+          </tbody>
+        </table>
+        <div class="pro-tip" style="margin-top: 10px;">💡 Notice how the range compresses: $150k → $2.5M (16x difference) becomes 11.92 → 14.73 (only 1.24x difference on log scale)!</div>
+      </div>
+    </div>
+
+    <!-- Part 5: Real-World Examples from Different Domains -->
+    <div class="panel section">
+      <h3><i class="fas fa-industry"></i> 1.5 Domain-Specific Feature Engineering Examples</h3>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>🛒 E-Commerce / Retail</h5>
+          <table style="width:100%; font-size:11px">
+            <tr><th>Raw Feature</th><th>Engineered Feature</th></tr>
+            <tr><td>timestamp</td><td>hour_of_day, day_of_week, days_since_last_purchase</td></tr>
+            <tr><td>user_id, product_id</td><td>user_avg_purchase_value, product_popularity_rank</td></tr>
+            <tr><td>cart_items</td><td>cart_total_value, items_per_category, is_bulk_purchase</td></tr>
+          </table>
+        </div>
+        
+        <div class="concept-card">
+          <h5>🏥 Healthcare</h5>
+          <table style="width:100%; font-size:11px">
+            <tr><th>Raw Feature</th><th>Engineered Feature</th></tr>
+            <tr><td>age, bmi, blood_pressure</td><td>age_bmi_interaction, hypertension_risk_score</td></tr>
+            <tr><td>visit_dates</td><td>avg_days_between_visits, n_visits_last_year</td></tr>
+            <tr><td>lab_results</td><td>ratio_to_normal_range, percent_change_from_baseline</td></tr>
+          </table>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📱 Finance / Credit Risk</h5>
+          <table style="width:100%; font-size:11px">
+            <tr><th>Raw Feature</th><th>Engineered Feature</th></tr>
+            <tr><td>income, debt</td><td>debt_to_income_ratio, disposable_income</td></tr>
+            <tr><td>credit_card_usage</td><td>utilization_rate, avg_monthly_spend, payment_history_score</td></tr>
+            <tr><td>loan_amount, term</td><td>monthly_payment = amount/term, interest_rate_bucket</td></tr>
+          </table>
+        </div>
+        
+        <div class="concept-card">
+          <h5>🚗 Transportation / Logistics</h5>
+          <table style="width:100%; font-size:11px">
+            <tr><th>Raw Feature</th><th>Engineered Feature</th></tr>
+            <tr><td>pickup_lat, pickup_lon, dropoff_lat, dropoff_lon</td><td>haversine_distance, bearing_angle</td></tr>
+            <tr><td>pickup_time</td><td>rush_hour_flag, day_of_week, is_holiday</td></tr>
+            <tr><td>driver_id, trip_count</td><td>driver_experience_score, avg_speed</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 6: Interactive ROI Calculator for Feature Engineering -->
+    <div class="panel section">
+      <h3><i class="fas fa-calculator"></i> 1.6 ROI Calculator: The Value of Investing in Feature Engineering</h3>
+      
+      <div class="info-box">
+        <strong>📊 Business Impact Calculator:</strong> See how much feature engineering can save/earn your organization.
+      </div>
+      
+      <div style="background: var(--panel2); padding: 20px; border-radius: var(--radius); margin: 15px 0;">
+        <div class="concept-grid">
+          <div class="concept-card">
+            <label><strong>📈 Baseline Model Accuracy (%):</strong></label>
+            <input type="number" id="baselineAcc" value="75" step="1" style="width:100%; margin:8px 0; padding:8px; border-radius:8px;">
+            <label><strong>📊 Expected Accuracy Lift from FE (%):</strong></label>
+            <input type="number" id="accuracyLift" value="12" step="1" style="width:100%; margin:8px 0; padding:8px; border-radius:8px;">
+          </div>
+          <div class="concept-card">
+            <label><strong>💰 Annual Revenue Impact (per 1% accuracy):</strong></label>
+            <input type="number" id="revenuePerPercent" value="50000" step="10000" style="width:100%; margin:8px 0; padding:8px; border-radius:8px;">
+            <label><strong>👨‍💻 Data Scientist Monthly Cost ($):</strong></label>
+            <input type="number" id="dsCost" value="12000" step="1000" style="width:100%; margin:8px 0; padding:8px; border-radius:8px;">
+          </div>
+        </div>
+        
+        <button id="calcFEROI" class="btn btn-primary" style="width:100%; margin-top:15px;">Calculate ROI of Feature Engineering</button>
+        
+        <div id="feROIResults" style="margin-top:20px;">
+          <table style="width:100%">
+            <tr><td><strong>New Accuracy:</strong></td><td><strong id="newAccDisplay">87.0%</strong></td></tr>
+            <tr><td><strong>Absolute Improvement:</strong></td><td><strong id="absImprove">12.0%</strong></td></tr>
+            <tr><td><strong>Annual Revenue Impact:</strong></td><td><strong id="revenueImpact">$600,000</strong></td></tr>
+            <tr><td><strong>Typical FE Project Time (weeks):</strong></td><td>2-4 weeks</td></tr>
+            <tr><td><strong>Estimated Investment (salary + overhead):</strong></td><td><strong id="investmentCost">$12,000</strong></td></tr>
+            <tr style="background: var(--success); color: black;"><td><strong>🚀 ROI (Return on Investment):</strong></td><td><strong id="roiPercent">4,900%</strong></td></tr>
+          </table>
+        </div>
+      </div>
+      
+      <div class="pro-tip">
+        <strong>💡 Bottom Line:</strong> Feature engineering typically delivers 100x to 1000x ROI because it improves model performance without changing infrastructure, models, or collecting new data.
+      </div>
+    </div>
+
+    <!-- Part 7: When Does Feature Engineering Help Most? -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-bar"></i> 1.7 When Should You Prioritize Feature Engineering?</h3>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>✅ HIGH Impact Scenarios</h5>
+          <ul style="margin-left:15px">
+            <li>You have domain expertise (e.g., finance, healthcare, retail)</li>
+            <li>Raw data is rich but messy (logs, text, geo, time series)</li>
+            <li>Linear models underperform (signs of non-linearity)</li>
+            <li>You need model interpretability (engineered features tell a story)</li>
+            <li>Limited data but lots of potential interactions</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>⚠️ LOWER Impact Scenarios</h5>
+          <ul style="margin-left:15px">
+            <li>Deep learning with raw pixels, audio, or raw text (networks learn features)</li>
+            <li>Already have well-engineered features from domain experts</li>
+            <li>Very small dataset (risk of overfitting with too many engineered features)</li>
+            <li>Extremely high-dimensional data where interpretability isn't needed</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 8: Common Misconceptions -->
+    <div class="panel section">
+      <h3><i class="fas fa-exclamation-triangle"></i> 1.8 Common Misconceptions About Feature Engineering</h3>
+      
+      <table class="detailed-table">
+        <thead><tr><th>Myth</th><th>Reality</th><th>Why It's Wrong</th></tr></thead>
+        <tbody>
+          <tr><td>"Neural networks don't need feature engineering"</td><td>Even deep learning benefits from good input features</td><td>Normalization, embeddings, and domain features still matter</td></tr>
+          <tr><td>"More features = better model"</td><td>Irrelevant engineered features add noise</td><td>Always combine feature engineering with feature selection (Module 8)</td></tr>
+          <tr><td>"Feature engineering is just guessing"</td><td>There are systematic methods (interactions, polynomials, aggregations)</td><td>Follow proven patterns and validate with cross-validation</td></tr>
+          <tr><td>"Automated ML replaces feature engineering"</td><td>AutoML helps but can't replace domain knowledge</td><td>AutoML works on given features; it doesn't create new ones from domain insights</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Part 9: Feature Engineering Checklist -->
+    <div class="panel section">
+      <h3><i class="fas fa-check-circle"></i> 1.9 Quick Checklist: Start Your Feature Engineering Process</h3>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📋 Step 1: Understand the Data</h5>
+          <ul>
+            <li>☐ What does each column represent?</li>
+            <li>☐ Are there date/time columns?</li>
+            <li>☐ Are there location coordinates?</li>
+            <li>☐ Are there text columns?</li>
+            <li>☐ What is the business meaning?</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>🔧 Step 2: Apply Basic Transforms</h5>
+          <ul>
+            <li>☐ Handle missing values</li>
+            <li>☐ Log transform skewed features</li>
+            <li>☐ Create ratio features (X1/X2)</li>
+            <li>☐ Create difference features (X1-X2)</li>
+            <li>☐ Bin continuous features</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>🔄 Step 3: Create Interactions</h5>
+          <ul>
+            <li>☐ Multiply key features (X1×X2)</li>
+            <li>☐ Add polynomial terms (X², X³)</li>
+            <li>☐ Consider domain-specific combos</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📊 Step 4: Aggregate & Contextualize</h5>
+          <ul>
+            <li>☐ Group by aggregations (mean, median, count)</li>
+            <li>☐ Rolling statistics for time series</li>
+            <li>☐ Ratio to group average</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 10: Summary - Key Takeaways -->
+    <div class="panel section">
+      <h3><i class="fas fa-clipboard-list"></i> 1.10 Section Summary: Why Feature Engineering Matters</h3>
+      
+      <div class="performance-box">
+        <strong>📚 Key Takeaways:</strong>
+        <ul style="margin-top:10px">
+          <li>✅ Feature engineering transforms raw data into predictive power — often more important than algorithm choice</li>
+          <li>✅ Hierarchy: Cleaning → Scaling → Interactions → Aggregations → Domain-specific</li>
+          <li>✅ Even simple linear models become powerful with good features (R² 0.62 → 0.93 example)</li>
+          <li>✅ Different domains require different techniques (e-commerce, healthcare, finance, logistics)</li>
+          <li>✅ ROI of feature engineering is enormous: 100x-1000x typical</li>
+          <li>✅ Always validate engineered features with cross-validation to avoid overfitting</li>
+        </ul>
+      </div>
+      
+      <div class="info-box" style="margin-top:15px">
+        <strong>📖 Next Up in Module 9:</strong>
+        <ul>
+          <li>Section 2: Interaction & Polynomial Features — Mathematical foundations and implementation</li>
+          <li>Section 3: Transformations & Binning — Log, Box-Cox, and discretization strategies</li>
+          <li>Section 4: Encoding & Domain Knowledge — Target encoding, frequency encoding, business rules</li>
+          <li>Section 5: Workflow & Pitfalls — Avoiding leakage, overfitting, and curse of dimensionality</li>
+          <li>Section 6: Hands-on Python — Complete code examples for all techniques</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+    <!-- SECTION 2: INTERACTION & POLYNOMIAL FEATURES - EXTENDED VERSION -->
+  <div id="methods" class="module-content">
+    <!-- Part 1: What Are Interaction Features? -->
+    <div class="panel section">
+      <h3><i class="fas fa-handshake"></i> 2.1 What Are Interaction Features?</h3>
+      <p><strong>Interaction features</strong> capture the combined effect of two or more variables that cannot be explained by each variable alone. In real-world data, features rarely act independently — they work together in complex ways.</p>
+      
+      <div class="info-box">
+        <strong>📖 The Core Concept:</strong> An interaction occurs when the effect of one feature on the target depends on the value of another feature. For example, the impact of square footage on house price is MUCH larger in a good neighborhood than a bad one.
+      </div>
+
+      <div class="math-equation">\[ \text{Interaction Feature} = X_i \times X_j \quad \text{or} \quad X_i \div X_j \quad \text{or} \quad X_i - X_j \]</div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📊 Types of Interactions</h5>
+          <table style="width:100%; font-size:12px;">
+            <thead><tr><th>Type</th><th>Formula</th><th>Real-World Example</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Multiplicative</strong></td><td>X₁ × X₂</td><td>sqft × location_score (big house in great area = premium price)</td></tr>
+              <tr><td><strong>Ratio</strong></td><td>X₁ ÷ X₂</td><td>price ÷ sqft = price_per_sqft (normalizes for size)</td></tr>
+              <tr><td><strong>Difference</strong></td><td>X₁ - X₂</td><td>current_price - purchase_price = profit</td></tr>
+              <tr><td><strong>Logical</strong></td><td>X₁ AND X₂</td><td>has_garage AND has_basement (amenity combination)</td></tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="concept-card">
+          <h5>🏠 Real Estate Example</h5>
+          <p><strong>Without interaction:</strong> Price = 100×sqft + 50000×location</p>
+          <p><strong>With interaction:</strong> Price = 100×sqft + 50000×location + <span style="color: var(--success);">20×sqft×location</span></p>
+          <p>The interaction term means: for each extra sqft, the value is <strong>20×location_score</strong> higher — location amplifies sqft value!</p>
+          <div class="pro-tip">💡 This captures the synergy that raw features miss.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 2: Visualizing Interactions -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-line"></i> 2.2 Visualizing Interactions: When Features Work Together</h3>
+      
+      <div class="info-box">
+        <strong>📊 Interactive Demo:</strong> See how interaction features capture patterns that individual features miss.
+      </div>
+      
+      <!-- Interaction Visualization Controls -->
+      <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+        <button id="showNoInteractionBtn" class="btn" style="background: #FB7185; border: none; color: white;">❌ Without Interaction (Parallel Lines)</button>
+        <button id="showInteractionBtn" class="btn" style="background: #34D399; border: none; color: white;">✅ With Interaction (Crossing Lines)</button>
+        <button id="showRealWorldBtn" class="btn" style="background: #60A5FA; border: none; color: white;">🏠 Real-World: House Price Example</button>
+      </div>
+      
+      <canvas id="interactionCanvas" width="700" height="300" style="width:100%; height:300px; background: var(--panel2); border-radius: var(--radius); margin: 15px 0; border: 1px solid var(--border);"></canvas>
+      
+      <div id="interactionExplanation" class="info-box" style="margin-top: 10px;">
+        <strong>📖 Current View:</strong> Click a button above to see different interaction patterns.
+      </div>
+      
+      <div class="concept-grid" style="margin-top: 15px;">
+        <div class="concept-card">
+          <h5>❌ Without Interaction (Additive Model)</h5>
+          <div class="math-equation">\[ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 \]</div>
+          <p>Lines are parallel — the effect of x₁ is the same regardless of x₂. This rarely matches reality!</p>
+          <div class="common-pitfall">⚠️ Limitation: Cannot capture synergy or diminishing returns across features.</div>
+        </div>
+        
+        <div class="concept-card">
+          <h5>✅ With Interaction (Multiplicative Model)</h5>
+          <div class="math-equation">\[ y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 (x_1 \times x_2) \]</div>
+          <p>Lines cross — the effect of x₁ CHANGES based on x₂ value. This captures real-world complexity.</p>
+          <div class="pro-tip">💡 The interaction term allows the slope for x₁ to vary with x₂!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 3: Polynomial Features Explained -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-scatter"></i> 2.3 Polynomial Features: Capturing Curves with Linear Models</h3>
+      
+      <p><strong>Polynomial features</strong> allow linear models to fit non-linear relationships by adding powers of existing features (x², x³, etc.). This transforms a linear model into a polynomial regression.</p>
+      
+      <div class="math-equation">\[ \text{Polynomial of degree d: } y = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 + \dots + \beta_d x^d \]</div>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📈 Degree 1 (Linear)</h5>
+          <div class="math-equation">\[ y = \beta_0 + \beta_1 x \]</div>
+          <p>Straight line — too simple for most real data.</p>
+          <canvas id="degree1Canvas" width="200" height="120" style="width:100%; height:120px; background: var(--panel2); border-radius: 8px; margin-top: 10px;"></canvas>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📈 Degree 2 (Quadratic)</h5>
+          <div class="math-equation">\[ y = \beta_0 + \beta_1 x + \beta_2 x^2 \]</div>
+          <p>U-shaped or inverted-U — captures diminishing returns.</p>
+          <canvas id="degree2Canvas" width="200" height="120" style="width:100%; height:120px; background: var(--panel2); border-radius: 8px; margin-top: 10px;"></canvas>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📈 Degree 3 (Cubic)</h5>
+          <div class="math-equation">\[ y = \beta_0 + \beta_1 x + \beta_2 x^2 + \beta_3 x^3 \]</div>
+          <p>S-shaped — captures increasing then decreasing trends.</p>
+          <canvas id="degree3Canvas" width="200" height="120" style="width:100%; height:120px; background: var(--panel2); border-radius: 8px; margin-top: 10px;"></canvas>
+        </div>
+      </div>
+      
+      <div class="performance-box" style="margin-top: 15px;">
+        <strong>⚠️ Warning: The Curse of Dimensionality with Polynomials</strong>
+        <p>With 10 original features, degree=2 creates 55 features! Degree=3 creates 286 features! Always combine polynomial features with feature selection (Module 8).</p>
+        <div class="math-equation">\[ \text{Number of polynomial features} = \binom{n + d}{d} \]</div>
+        <p>Where n = original features, d = degree. For n=20, d=3 → 1,771 features!</p>
+      </div>
+    </div>
+
+    <!-- Part 4: Real-World Examples of Interactions -->
+    <div class="panel section">
+      <h3><i class="fas fa-industry"></i> 2.4 Real-World Interaction Examples Across Domains</h3>
+      
+      <table class="detailed-table">
+        <thead>
+          <tr><th>Domain</th><th>Feature A</th><th>Feature B</th><th>Interaction Feature</th><th>Why It Matters</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>🏠 Real Estate</strong></td>
+            <td>sqft</td>
+            <td>location_score</td>
+            <td>sqft × location_score</td>
+            <td>A large house in a bad area isn't worth much; in a great area it's premium</td>
+          </tr>
+          <tr>
+            <td><strong>🛒 E-commerce</strong></td>
+            <td>ad_spend</td>
+            <td>seasonality</td>
+            <td>ad_spend × holiday_flag</td>
+            <td>Ads perform differently during holidays vs regular days</td>
+          </tr>
+          <tr>
+            <td><strong>🏥 Healthcare</strong></td>
+            <td>age</td>
+            <td>bmi</td>
+            <td>age × bmi</td>
+            <td>Obesity risk multiplies with age (elderly + high BMI = high risk)</td>
+          </tr>
+          <tr>
+            <td><strong>📱 Finance</strong></td>
+            <td>income</td>
+            <td>credit_score</td>
+            <td>income ÷ credit_score</td>
+            <td>Debt capacity ratio: high income + low credit = risky</td>
+          </tr>
+          <tr>
+            <td><strong>🚗 Transportation</strong></td>
+            <td>distance</td>
+            <td>traffic_density</td>
+            <td>distance × traffic_density</td>
+            <td>Long distance in heavy traffic = exponential delay</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Part 5: Mathematical Deep Dive -->
+    <div class="panel section">
+      <h3><i class="fas fa-square-root-alt"></i> 2.5 Mathematical Deep Dive: Why Interactions Work</h3>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📐 The Math Behind Interactions</h5>
+          <p><strong>Without interaction (additive model):</strong></p>
+          <div class="math-equation">\[ E[Y|X_1, X_2] = \beta_0 + \beta_1 X_1 + \beta_2 X_2 \]</div>
+          <p><strong>With interaction (multiplicative model):</strong></p>
+          <div class="math-equation">\[ E[Y|X_1, X_2] = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 (X_1 \times X_2) \]</div>
+          <p>The partial derivative (effect of X₁ on Y) becomes:</p>
+          <div class="math-equation">\[ \frac{\partial Y}{\partial X_1} = \beta_1 + \beta_3 X_2 \]</div>
+          <p><strong>Key insight:</strong> The effect of X₁ now DEPENDS on X₂'s value!</p>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📈 Polynomial Regression Math</h5>
+          <p><strong>Quadratic model:</strong></p>
+          <div class="math-equation">\[ y = \beta_0 + \beta_1 x + \beta_2 x^2 \]</div>
+          <p>The derivative (slope) changes with x:</p>
+          <div class="math-equation">\[ \frac{dy}{dx} = \beta_1 + 2\beta_2 x \]</div>
+          <p><strong>Interpretation:</strong></p>
+          <ul>
+            <li>If β₂ > 0: curve opens UP (U-shaped, increasing returns)</li>
+            <li>If β₂ < 0: curve opens DOWN (∩-shaped, diminishing returns)</li>
+            <li>Vertex at x = -β₁/(2β₂)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 6: When to Use Interactions and Polynomials -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-bar"></i> 2.6 When to Use Interactions & Polynomials?</h3>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>✅ Use Interactions When:</h5>
+          <ul style="margin-left: 15px;">
+            <li>You suspect synergy between features (e.g., advertising × season)</li>
+            <li>Domain knowledge suggests combined effects</li>
+            <li>Residual plots show patterns across feature combinations</li>
+            <li>Linear model underperforms on test data</li>
+            <li>Features have complementary or multiplicative relationships</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>✅ Use Polynomials When:</h5>
+          <ul style="margin-left: 15px;">
+            <li>Relationship between X and Y is curved (check scatter plot)</li>
+            <li>Diminishing returns or saturation effects exist</li>
+            <li>U-shaped or inverted-U patterns present</li>
+            <li>Residuals show systematic pattern vs fitted values</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>⚠️ Avoid When:</h5>
+          <ul style="margin-left: 15px;">
+            <li>Feature count is already high (risk of overfitting)</li>
+            <li>Sample size is small (n < 10 × new features)</li>
+            <li>Tree-based models already capture interactions naturally</li>
+            <li>You haven't applied feature selection after creation</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="pro-tip" style="margin-top: 15px;">
+        <strong>💡 Pro Tip:</strong> For tree-based models (Random Forest, XGBoost), explicit interaction features are LESS critical because trees automatically capture interactions through splits. For linear models, they are ESSENTIAL!
+      </div>
+    </div>
+
+    <!-- Part 7: Before vs After - Interaction Impact -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-line"></i> 2.7 Case Study: The Power of Interactions</h3>
+      
+      <p><strong>Dataset:</strong> Predicting house prices with sqft (feature A) and neighborhood_quality (feature B, 1-10 scale).</p>
+      
+      <table class="dataframe-table">
+        <thead>
+          <tr><th>Model</th><th>Formula</th><th>R² Score</th><th>Interpretation</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>No Interaction</td>
+            <td>Price = 100×sqft + 50000×quality</td>
+            <td style="color: #FB7185;">0.68</td>
+            <td>Assumes sqft value is same in all neighborhoods → wrong!</td>
+          </tr>
+          <tr>
+            <td style="background: var(--success); color: black;">With Interaction</td>
+            <td>Price = 50×sqft + 30000×quality + <strong>15×sqft×quality</strong></td>
+            <td style="color: #34D399;">0.89</td>
+            <td>In good neighborhoods, each sqft is worth 15×quality more → realistic!</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <div class="info-box" style="margin-top: 15px;">
+        <strong>📊 What the Interaction Reveals:</strong>
+        <ul>
+          <li>In a low-quality neighborhood (quality=3): each sqft adds 50 + 15×3 = 95</li>
+          <li>In a high-quality neighborhood (quality=9): each sqft adds 50 + 15×9 = 185</li>
+          <li><strong>Same sqft is worth nearly 2x more in the good neighborhood!</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Part 8: Polynomial Overfitting Demo -->
+    <div class="panel section">
+      <h3><i class="fas fa-exclamation-triangle"></i> 2.8 The Danger of Too Many Polynomials (Overfitting)</h3>
+      
+      <div class="info-box">
+        <strong>⚠️ Interactive Demo:</strong> See how increasing polynomial degree leads to overfitting.
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+        <label><strong>Polynomial Degree:</strong></label>
+        <input type="range" id="polyDegreeSlider" min="1" max="15" value="1" style="flex: 1;">
+        <span id="degreeValue" style="background: var(--primary); padding: 5px 15px; border-radius: 20px;">Degree 1</span>
+        <button id="resetPolyBtn" class="btn">Reset to Degree 1</button>
+      </div>
+      
+      <canvas id="polyOverfitCanvas" width="700" height="300" style="width:100%; height:300px; background: var(--panel2); border-radius: var(--radius); margin: 15px 0; border: 1px solid var(--border);"></canvas>
+      
+      <div id="overfitExplanation" class="common-pitfall" style="margin-top: 10px;">
+        <strong>⚠️ Degree 1 (Underfitting):</strong> Too simple, misses the curve pattern.
+      </div>
+      
+      <div class="concept-grid" style="margin-top: 15px;">
+        <div class="concept-card">
+          <h5>📊 Optimal Degree (2-4)</h5>
+          <p>Captures the true underlying pattern without memorizing noise. Generalizes well to new data.</p>
+          <div class="pro-tip">💡 For most real data, degree=2 or 3 is sufficient!</div>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📈 High Degree (10+)</h5>
+          <p>Model becomes wiggly, trying to pass through every training point. Performs poorly on test data.</p>
+          <div class="common-pitfall">⚠️ Classic overfitting — high training accuracy, poor test accuracy!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 9: Best Practices for Interactions & Polynomials -->
+    <div class="panel section">
+      <h3><i class="fas fa-clipboard-list"></i> 2.9 Best Practices Checklist</h3>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>✅ DO's</h5>
+          <ul>
+            <li>☐ Create interactions based on domain knowledge</li>
+            <li>☐ Start with degree=2 polynomials (x² is often enough)</li>
+            <li>☐ Scale features BEFORE creating polynomials</li>
+            <li>☐ Use cross-validation to select optimal degree</li>
+            <li>☐ Combine with feature selection (Lasso/RFE) after creation</li>
+            <li>☐ Visualize relationships first (scatter plots)</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>❌ DON'Ts</h5>
+          <ul>
+            <li>✗ Don't create interactions blindly (test their importance)</li>
+            <li>✗ Don't use high-degree polynomials with small datasets</li>
+            <li>✗ Don't forget to apply polynomials to test data consistently</li>
+            <li>✗ Don't use polynomials without regularization</li>
+            <li>✗ Don't assume all interactions are multiplicative (try ratios too)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 10: Summary - Interactions & Polynomials -->
+    <div class="panel section">
+      <h3><i class="fas fa-clipboard-list"></i> 2.10 Section Summary: Interactions & Polynomial Features</h3>
+      
+      <div class="performance-box">
+        <strong>📚 Key Takeaways:</strong>
+        <ul style="margin-top: 10px;">
+          <li>✅ <strong>Interactions</strong> capture synergy: effect of X₁ depends on X₂ (e.g., sqft × location)</li>
+          <li>✅ <strong>Polynomials</strong> capture curvature: x², x³ allow linear models to fit curves</li>
+          <li>✅ Both techniques dramatically improve linear models but can cause overfitting</li>
+          <li>✅ Tree-based models handle interactions automatically, but still benefit from ratio features</li>
+          <li>✅ Always validate with cross-validation and combine with feature selection</li>
+          <li>✅ Start simple (degree=2, key interactions) before adding complexity</li>
+        </ul>
+      </div>
+      
+      <div class="math-equation" style="margin-top: 15px;">
+        \[ \text{Complete Model} = \text{Main Effects} + \text{Interactions} + \text{Polynomials} + \text{Noise} \]
+      </div>
+      
+      <div class="info-box" style="margin-top: 15px;">
+        <strong>📖 Next in Module 9:</strong>
+        <ul>
+          <li>Section 3: Transformations & Binning — Log, Box-Cox, and discretization strategies</li>
+          <li>Section 4: Encoding & Domain Knowledge — Target encoding, frequency encoding, business rules</li>
+          <li>Section 5: Workflow & Pitfalls — Avoiding leakage, overfitting, and curse of dimensionality</li>
+          <li>Section 6: Hands-on Python — Complete code examples for all techniques</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+    <!-- SECTION 3: TRANSFORMATIONS & BINNING - EXTENDED VERSION -->
+  <div id="transforms" class="module-content">
+    <!-- Part 1: Why Transform Data? -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-line"></i> 3.1 Why Transform Numerical Features?</h3>
+      <p><strong>Feature transformations</strong> modify the distribution or scale of numerical features to make them more suitable for machine learning models. Many models (linear regression, SVM, neural networks) assume normally distributed data or specific scales.</p>
+      
+      <div class="info-box">
+        <strong>📖 The Core Problem:</strong> Real-world data is rarely normally distributed. It often has <strong>skewness</strong> (long tails), <strong>outliers</strong>, or <strong>non-linear relationships</strong> with the target. Transformations fix these issues.
+      </div>
+
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>🎯 Goals of Transformation</h5>
+          <ul style="margin-left: 15px;">
+            <li>✅ Make distribution more <strong>symmetric</strong> (reduce skewness)</li>
+            <li>✅ <strong>Stabilize variance</strong> (homoscedasticity)</li>
+            <li>✅ Make relationships more <strong>linear</strong></li>
+            <li>✅ Reduce impact of <strong>outliers</strong></li>
+            <li>✅ Make data <strong>scale-invariant</strong></li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>⚠️ Signs You Need Transformations</h5>
+          <ul style="margin-left: 15px;">
+            <li>📊 Skewness &gt; 1 or &lt; -1 (highly skewed)</li>
+            <li>📈 Residual plots show funnel shapes (heteroscedasticity)</li>
+            <li>🎯 Model performs poorly on extreme values</li>
+            <li>📉 Features have vastly different scales</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 2: Log Transformation - Deep Dive -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-line"></i> 3.2 Log Transformation: The Most Important Transform</h3>
+      
+      <div class="math-equation">\[ x' = \log(x + 1) \quad \text{or} \quad x' = \ln(x) \quad \text{or} \quad x' = \log_{10}(x) \]</div>
+      
+      <p>The <strong>log transformation</strong> is the most commonly used transformation for right-skewed data (long tail on the right). It compresses large values and expands small values.</p>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📊 When to Use Log Transform</h5>
+          <table style="width:100%; font-size:12px;">
+            <thead><tr><th>Data Type</th><th>Example</th><th>Why Log Helps</th></tr></thead>
+            <tbody>
+              <tr><td>Positive, right-skewed数据<td>Income, Price, Population, Click Counts数据<td>Compresses long tail, makes distribution symmetric</td></tr>
+              <tr><td>Multiplicative relationships数据 económics data数据.Converts multiplicative → additive (easier for linear models)数据</tr>
+              <tr><td>Count data (Poisson-like)数据<td>Website visits, sales count数据.Stabilizes variance for count data数据</tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📈 Before vs After Log Transform</h5>
+          <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <div style="flex:1; text-align: center;">
+              <canvas id="logBeforeCanvas" width="200" height="120" style="width:100%; height:120px; background: var(--panel2); border-radius: 8px;"></canvas>
+              <p style="font-size:12px">Raw (Skewed)</p>
+            </div>
+            <div style="flex:1; text-align: center;">
+              <canvas id="logAfterCanvas" width="200" height="120" style="width:100%; height:120px; background: var(--panel2); border-radius: 8px;"></canvas>
+              <p style="font-size:12px">Log Transformed</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="pro-tip" style="margin-top: 15px;">
+        <strong>💡 Important:</strong> Add 1 before taking log to handle zeros: \( \log(x + 1) \). This is called the <strong>log1p</strong> transformation.
+      </div>
+    </div>
+
+    <!-- Part 3: Box-Cox Transformation -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-bar"></i> 3.3 Box-Cox Transformation: The Optimal Power Transform</h3>
+      
+      <div class="math-equation">\[ x^{(\lambda)} = \begin{cases} 
+        \frac{x^\lambda - 1}{\lambda} & \text{if } \lambda \neq 0 \\
+        \ln(x) & \text{if } \lambda = 0 
+      \end{cases} \]</div>
+      
+      <p>The <strong>Box-Cox transformation</strong> automatically finds the optimal power parameter λ that makes the data as normally distributed as possible. It's a family of power transforms that includes log, square root, and inverse as special cases.</p>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📐 Common λ Values and Their Meaning</h5>
+          <table style="width:100%; font-size:12px;">
+            <thead><tr><th>λ Value</th><th>Transformation</th><th>Use Case</th></tr></thead>
+            <tbody>
+              <tr><td>λ = 2</strong>数据:x²</strong>数据:Square (left-skewed data)数据</tr>
+              <tr><td>λ = 1</strong>数据:No transform (x)数据:Already normal数据</tr>
+              <tr><td>λ = 0.5</strong>数据:√x (Square root)数据:Count data (Poisson)数据</tr>
+              <tr><td>λ = 0</strong>数据:ln(x) (Log)数据:Right-skewed, multiplicative数据</tr>
+              <tr><td>λ = -1</strong>数据:1/x (Inverse)数据:Severe right skew, rates数据</tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="concept-card">
+          <h5>🔍 Interactive λ Finder</h5>
+          <label><strong>Adjust λ to see effect:</strong></label>
+          <input type="range" id="boxCoxLambda" min="-2" max="2" step="0.1" value="0" style="width:100%; margin: 10px 0;">
+          <div style="display: flex; justify-content: space-between;">
+            <span>λ = -2 (1/x²)</span>
+            <span id="lambdaValueDisplay">λ = 0.0 (Log)</span>
+            <span>λ = 2 (x²)</span>
+          </div>
+          <canvas id="boxCoxCanvas" width="300" height="150" style="width:100%; height:150px; background: var(--panel2); border-radius: 8px; margin-top: 10px;"></canvas>
+          <div id="lambdaExplanation" class="pro-tip" style="margin-top: 8px; font-size: 12px;">λ = 0 (Log) is best for right-skewed data</div>
+        </div>
+      </div>
+      
+      <div class="info-box">
+        <strong>📖 Note:</strong> Box-Cox requires positive data. For data with negative values, use <strong>Yeo-Johnson</strong> transformation instead.
+      </div>
+    </div>
+
+    <!-- Part 4: Square Root and Cube Root -->
+    <div class="panel section">
+      <h3><i class="fas fa-chart-simple"></i> 3.4 Square Root & Cube Root Transformations</h3>
+      
+      <div class="math-equation">\[ \text{Square root: } x' = \sqrt{x} \quad \text{Cube root: } x' = \sqrt[3]{x} \]</div>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📊 Square Root (λ = 0.5)</h5>
+          <p><strong>Best for:</strong> Count data, Poisson-distributed variables (e.g., number of visits, defects, accidents)</p>
+          <p><strong>Effect:</strong> Less aggressive than log, still handles moderate skewness</p>
+          <div class="pro-tip">💡 Perfect for count data where variance ≈ mean</div>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📊 Cube Root (λ = 1/3)</h5>
+          <p><strong>Best for:</strong> Data with zeros, moderate skewness, or negative values</p>
+          <p><strong>Effect:</strong> Handles zeros naturally (unlike log), preserves sign</p>
+          <div class="pro-tip">💡 Works well for financial returns and percentage changes</div>
+        </div>
+      </div>
+      
+      <div class="comparison-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+        <canvas id="sqrtCanvas" width="300" height="150" style="width:100%; height:150px; background: var(--panel2); border-radius: 8px;"></canvas>
+        <canvas id="cuberootCanvas" width="300" height="150" style="width:100%; height:150px; background: var(--panel2); border-radius: 8px;"></canvas>
+      </div>
+    </div>
+
+    <!-- Part 5: Scaling and Normalization -->
+    <div class="panel section">
+      <h3><i class="fas fa-ruler"></i> 3.5 Scaling & Normalization: Bringing Features to Same Scale</h3>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📏 Standardization (Z-Score)</h5>
+          <div class="math-equation">\[ z = \frac{x - \mu}{\sigma} \]</div>
+          <p><strong>Result:</strong> Mean = 0, Standard Deviation = 1</p>
+          <p><strong>When to use:</strong> Linear regression, SVM, neural networks, PCA, k-means</p>
+          <p><strong>Robust to outliers?</strong> No (use RobustScaler instead)</p>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📏 Min-Max Normalization</h5>
+          <div class="math-equation">\[ x_{norm} = \frac{x - \min(x)}{\max(x) - \min(x)} \]</div>
+          <p><strong>Result:</strong> Range [0, 1] (or [-1, 1] with feature_range)</p>
+          <p><strong>When to use:</strong> Neural networks (sigmoid/tanh), image pixels, bounded features</p>
+          <p><strong>Robust to outliers?</strong> No (outliers compress the range)</p>
+        </div>
+        
+        <div class="concept-card">
+          <h5>🛡️ Robust Scaling</h5>
+          <div class="math-equation">\[ x_{robust} = \frac{x - \text{median}(x)}{\text{IQR}(x)} \]</div>
+          <p><strong>Result:</strong> Uses median and IQR (interquartile range)</p>
+          <p><strong>When to use:</strong> Data with many outliers</p>
+          <p><strong>Robust to outliers?</strong> Yes! (uses percentiles)</p>
+        </div>
+      </div>
+      
+      <div class="performance-box">
+        <strong>📊 Scaling Decision Tree:</strong>
+        <ul>
+          <li>➡️ Neural networks? → MinMaxScaler [0,1] or [-1,1]</li>
+          <li>➡️ Linear models / SVM / PCA? → StandardScaler</li>
+          <li>➡️ Many outliers? → RobustScaler</li>
+          <li>➡️ Sparse data? → Don't scale (preserve zeros)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Part 6: Binning / Discretization -->
+    <div class="panel section">
+      <h3><i class="fas fa-border-all"></i> 3.6 Binning / Discretization: Converting Continuous to Categorical</h3>
+      
+      <p><strong>Binning</strong> converts a continuous feature into discrete intervals (bins). This can help capture non-linear relationships and reduce the impact of measurement noise.</p>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>📊 Equal-Width Binning</h5>
+          <div class="math-equation">\[ \text{bin width} = \frac{\max(x) - \min(x)}{\text{n\_bins}} \]</div>
+          <p>Divides range into equal-sized intervals.</p>
+          <p><strong>Example:</strong> Age [0-20], [20-40], [40-60], [60-80]</p>
+          <div class="common-pitfall">⚠️ Sensitive to outliers (one bin may be empty or huge)</div>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📊 Equal-Frequency (Quantile) Binning</h5>
+          <p>Each bin contains approximately the same number of samples.</p>
+          <p><strong>Example:</strong> Income: bottom 25%, 25-50%, 50-75%, top 25%</p>
+          <div class="pro-tip">💡 Better for skewed distributions — ensures balanced bins</div>
+        </div>
+        
+        <div class="concept-card">
+          <h5>📊 Custom / Domain Binning</h5>
+          <p>Bins defined by business rules or domain knowledge.</p>
+          <p><strong>Example:</strong> Age: Child (0-12), Teen (13-19), Adult (20-64), Senior (65+)</p>
+          <div class="pro-tip">💡 Most interpretable for business stakeholders</div>
+        </div>
+      </div>
+      
+      <!-- Interactive Binning Demo -->
+      <div class="info-box" style="margin-top: 15px;">
+        <strong>🎮 Interactive Binning Demo:</strong> See how different binning strategies affect the data.
+      </div>
+      
+      <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+        <button id="equalWidthBtn" class="btn">Equal-Width Binning (5 bins)</button>
+        <button id="equalFreqBtn" class="btn">Equal-Frequency Binning (5 bins)</button>
+        <button id="customBinsBtn" class="btn">Custom Bins (Domain Knowledge)</button>
+      </div>
+      
+      <canvas id="binningCanvas" width="700" height="250" style="width:100%; height:250px; background: var(--panel2); border-radius: var(--radius); margin: 15px 0; border: 1px solid var(--border);"></canvas>
+      
+      <div id="binningExplanation" class="info-box" style="margin-top: 10px;">
+        <strong>📊 Click a button above to see different binning strategies</strong>
+      </div>
+    </div>
+
+    <!-- Part 7: Real-World Transformation Examples -->
+    <div class="panel section">
+      <h3><i class="fas fa-industry"></i> 3.7 Real-World Transformation Examples by Domain</h3>
+      
+      <table class="detailed-table">
+        <thead>
+          <tr><th>Domain</th><th>Raw Feature</th><th>Transformation</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>💰 Finance</strong></td>
+            <td>Stock price, Income, Loan amount</strong></td>
+            <td>Log transform</strong></td>
+            <td>Prices are multiplicative and right-skewed; log makes returns additive</strong></td>
+          </tr>
+          <tr>
+            <td><strong>🏥 Healthcare</strong></td>
+            <td>Blood pressure, BMI, Lab values</strong></td>
+            <td>Standardization</strong></td>
+            <td>Different units (mg/dL, mmHg, kg/m²) need common scale</strong></td>
+          </tr>
+          <tr>
+            <td><strong>🛒 E-commerce</strong></strong></td>
+            <td>Click counts, Purchase amounts</strong></td>
+            <td>Square root or Log</strong></td>
+            <td>Count data with variance proportional to mean (Poisson-like)</strong></td>
+          </tr>
+          <tr>
+            <td><strong>🌍 Geography</strong></td>
+            <td>Latitude, Longitude</strong></td>
+            <td>Min-Max or Custom</strong></td>
+            <td>Normalize to [0,1] for distance calculations</strong></td>
+          </tr>
+          <tr>
+            <td><strong>📸 Computer Vision</strong></td>
+            <td>Pixel values (0-255)</strong></td>
+            <td>Min-Max to [0,1] or [-1,1]</strong></td>
+            <td>Neural networks converge faster with normalized inputs</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Part 8: Transformation Decision Flowchart -->
+    <div class="panel section">
+      <h3><i class="fas fa-code-branch"></i> 3.8 Transformation Decision Flowchart</h3>
+      
+      <div class="info-box">
+        <strong>🗺️ Follow this decision tree to choose the right transformation:</strong>
+      </div>
+      
+      <div class="flowchart-container" style="overflow-x: auto; padding: 20px; background: var(--panel2); border-radius: var(--radius); margin-top: 15px;">
+        <svg width="800" height="550" viewBox="0 0 800 550" style="font-family: system-ui; margin: 0 auto; display: block;">
+          <!-- Start -->
+          <rect x="250" y="10" width="300" height="40" rx="20" fill="var(--primary)" stroke="var(--border)" stroke-width="2"/>
+          <text x="400" y="35" text-anchor="middle" fill="white" font-size="13" font-weight="bold">Start: Examine Your Feature</text>
+          
+          <line x1="400" y1="50" x2="400" y2="80" stroke="var(--text)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          
+          <!-- Decision 1: Skewed? -->
+          <polygon points="400,80 520,135 400,190 280,135" fill="var(--panel)" stroke="var(--text)" stroke-width="2"/>
+          <text x="400" y="130" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="bold">Is data</text>
+          <text x="400" y="145" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="bold">skewed?</text>
+          
+          <!-- Yes -->
+          <line x1="520" y1="135" x2="650" y2="135" stroke="var(--success)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          <text x="580" y="125" fill="var(--success)" font-size="11">Yes</text>
+          
+          <!-- No -->
+          <line x1="280" y1="135" x2="150" y2="135" stroke="var(--danger)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          <text x="210" y="125" fill="var(--danger)" font-size="11">No</text>
+          
+          <!-- Skewed branch -->
+          <rect x="650" y="115" width="140" height="40" rx="8" fill="var(--success)" stroke="var(--border)" stroke-width="2"/>
+          <text x="720" y="135" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Apply Log or</text>
+          <text x="720" y="148" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Box-Cox</text>
+          
+          <line x1="720" y1="155" x2="720" y2="200" stroke="var(--text)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          <rect x="620" y="200" width="200" height="40" rx="8" fill="var(--warning)" stroke="var(--border)" stroke-width="2"/>
+          <text x="720" y="220" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="bold">Check skewness again</text>
+          
+          <!-- No branch -->
+          <line x1="150" y1="135" x2="150" y2="200" stroke="var(--text)" stroke-width="2"/>
+          <line x1="150" y1="200" x2="400" y2="200" stroke="var(--text)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          
+          <!-- Decision 2: Different scales? -->
+          <polygon points="400,200 520,255 400,310 280,255" fill="var(--panel)" stroke="var(--text)" stroke-width="2"/>
+          <text x="400" y="248" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="bold">Features on</text>
+          <text x="400" y="263" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="bold">different scales?</text>
+          
+          <!-- Yes -->
+          <line x1="520" y1="255" x2="650" y2="255" stroke="var(--success)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          <text x="580" y="245" fill="var(--success)" font-size="11">Yes</text>
+          
+          <!-- No -->
+          <line x1="280" y1="255" x2="150" y2="255" stroke="var(--danger)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          <text x="210" y="245" fill="var(--danger)" font-size="11">No</text>
+          
+          <!-- Scale branch -->
+          <rect x="650" y="235" width="140" height="40" rx="8" fill="var(--success)" stroke="var(--border)" stroke-width="2"/>
+          <text x="720" y="255" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Apply Scaling</text>
+          <text x="720" y="268" text-anchor="middle" fill="white" font-size="10">(StandardScaler)</text>
+          
+          <!-- No scale branch -->
+          <line x1="150" y1="255" x2="150" y2="340" stroke="var(--text)" stroke-width="2"/>
+          <line x1="150" y1="340" x2="400" y2="340" stroke="var(--text)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          
+          <!-- Decision 3: Non-linear relationship? -->
+          <polygon points="400,340 520,395 400,450 280,395" fill="var(--panel)" stroke="var(--text)" stroke-width="2"/>
+          <text x="400" y="388" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="bold">Non-linear</text>
+          <text x="400" y="403" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="bold">relationship?</text>
+          
+          <!-- Yes -->
+          <line x1="520" y1="395" x2="650" y2="395" stroke="var(--success)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          <text x="580" y="385" fill="var(--success)" font-size="11">Yes</text>
+          
+          <!-- No -->
+          <line x1="280" y1="395" x2="150" y2="395" stroke="var(--danger)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          <text x="210" y="385" fill="var(--danger)" font-size="11">No</text>
+          
+          <!-- Non-linear branch -->
+          <rect x="650" y="375" width="140" height="40" rx="8" fill="var(--success)" stroke="var(--border)" stroke-width="2"/>
+          <text x="720" y="395" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Polynomial or</text>
+          <text x="720" y="408" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Binning</text>
+          
+          <!-- Final merge -->
+          <line x1="720" y1="415" x2="720" y2="490" stroke="var(--text)" stroke-width="2"/>
+          <line x1="150" y1="395" x2="150" y2="490" stroke="var(--text)" stroke-width="2"/>
+          <line x1="150" y1="490" x2="400" y2="490" stroke="var(--text)" stroke-width="2" marker-end="url(#arrowhead)"/>
+          
+          <!-- End -->
+          <rect x="250" y="500" width="300" height="40" rx="20" fill="var(--success)" stroke="var(--border)" stroke-width="2"/>
+          <text x="400" y="525" text-anchor="middle" fill="white" font-size="13" font-weight="bold">✓ Ready for Modeling!</text>
+          
+          <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="var(--text)"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Part 9: Common Pitfalls -->
+    <div class="panel section">
+      <h3><i class="fas fa-exclamation-triangle"></i> 3.9 Common Pitfalls & How to Avoid Them</h3>
+      
+      <table class="detailed-table">
+        <thead>
+          <tr><th>Pitfall</th><th>Why It's Wrong</th><th>Solution</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Applying log to negative values</strong></td>
+            <td>log(negative) = undefined (NaN)</strong></td>
+            <td>Use Yeo-Johnson or add constant to make positive</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Scaling BEFORE train/test split</strong></strong></td>
+            <td>Test data information leaks into training</strong></td>
+            <td>Fit scaler on train ONLY, then transform test</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Using Box-Cox with zeros/negatives</strong></strong></td>
+            <td>Box-Cox requires positive data</strong></td>
+            <td>Use Yeo-Johnson (handles negatives) or shift data</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Binning loses information</strong></strong></td>
+            <td>Reduces variance, may oversimplify</strong></td>
+            <td>Use fewer bins or try both binned and raw</strong></td>
+          </tr>
+          <tr>
+            <td><strong>Forgetting to inverse transform predictions</strong></strong></td>
+            <td>Predictions are on transformed scale (e.g., log scale)</strong></td>
+            <td>Apply inverse transform: exp(pred) for log transform</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Part 10: Best Practices Checklist -->
+    <div class="panel section">
+      <h3><i class="fas fa-clipboard-list"></i> 3.10 Transformations & Binning: Best Practices</h3>
+      
+      <div class="concept-grid">
+        <div class="concept-card">
+          <h5>✅ DO's</h5>
+          <ul>
+            <li>☐ Always visualize distributions before transforming</li>
+            <li>☐ Fit transformations ONLY on training data</li>
+            <li>☐ Save fitted transformers for production</li>
+            <li>☐ Use log1p for data with zeros: np.log1p(x)</li>
+            <li>☐ Apply inverse transform to interpret predictions</li>
+            <li>☐ Use Pipeline to prevent leakage</li>
+          </ul>
+        </div>
+        
+        <div class="concept-card">
+          <h5>❌ DON'Ts</h5>
+          <ul>
+            <li>✗ Don't transform categorical features</li>
+            <li>✗ Don't apply Box-Cox to negative data</li>
+            <li>✗ Don't use equal-width binning with outliers</li>
+            <li>✗ Don't forget to handle zeros before log</li>
+            <li>✗ Don't transform without validating impact</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Part 11: Section Summary -->
+    <div class="panel section">
+      <h3><i class="fas fa-clipboard-list"></i> 3.11 Section Summary: Transformations & Binning</h3>
+      
+      <div class="performance-box">
+        <strong>📚 Key Takeaways:</strong>
+        <ul style="margin-top: 10px;">
+          <li>✅ <strong>Log transform</strong> is best for right-skewed, positive data (income, price, counts)</li>
+          <li>✅ <strong>Box-Cox</strong> automatically finds optimal λ for normality</li>
+          <li>✅ <strong>Standardization</strong> (z-score) for linear models, PCA, SVM</li>
+          <li>✅ <strong>Min-Max</strong> for neural networks, bounded features</li>
+          <li>✅ <strong>Binning</strong> captures non-linear patterns and reduces noise</li>
+          <li>✅ Always fit transformations on training data only → prevent leakage</li>
+        </ul>
+      </div>
+      
+      <div class="math-equation" style="margin-top: 15px;">
+        \[ \text{Transformed Feature} = \text{Function}(\text{Raw Feature}) \quad \text{where Function ∈ {Log, Box-Cox, Sqrt, Standardize, Bin}} \]
+      </div>
+      
+      <div class="info-box" style="margin-top: 15px;">
+        <strong>📖 Next in Module 9:</strong>
+        <ul>
+          <li>Section 4: Encoding & Domain Knowledge — Target encoding, frequency encoding, business rules</li>
+          <li>Section 5: Workflow & Pitfalls — Complete pipeline and common mistakes</li>
+          <li>Section 6: Hands-on Python — Code examples for all techniques</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: ENCODING & DOMAIN KNOWLEDGE -->
+  <div id="encoding" class="module-content">
+    <div class="panel section">
+      <h3><i class="fas fa-code"></i> 4.1 Advanced Encoding</h3>
+      <div class="concept-grid"><div class="concept-card"><h5>📌 Target Encoding (Mean Encoding)</h5><p>Replace category with mean of target. Must use smoothing and cross-validation to avoid leakage.</p><div class="math-equation">\[ \text{encoded} = \frac{\text{mean(target)} \times n + \text{global_mean} \times \alpha}{n + \alpha} \]</div></div><div class="concept-card"><h5>📊 Frequency Encoding</h5><p>Replace category with count/frequency. Works well for high-cardinality.</p></div><div class="concept-card"><h5>🏷️ One-Hot & Ordinal</h5><p>One-hot for low cardinality, ordinal for ordered categories.</p></div></div>
+    </div>
+    <div class="panel section">
+      <h3><i class="fas fa-brain"></i> 4.2 Domain-Specific Features</h3>
+      <table class="detailed-table"><thead><tr><th>Domain</th><th>Raw Data</th><th>Engineered Features</th></tr></thead><tbody><tr><td>E-commerce</td><td>timestamp, user_id, product_id</td><td>hour_of_day, user_purchase_freq, days_since_last_purchase</td></tr><tr><td>Real Estate</td><td>lat, lon, price, sqft</td><td>distance_to_cbd, price_per_sqft, age_of_building</td></tr><tr><td>Finance</td><td>transaction amount, time</td><td>rolling_avg_7d, ratio_to_avg, is_weekend_flag</td></tr></tbody></table>
+    </div>
+  </div>
+
+  <!-- SECTION 5: WORKFLOW & PITFALLS -->
+  <div id="workflow" class="module-content">
+    <div class="panel section">
+      <h3><i class="fas fa-shield-alt"></i> 5.1 Golden Rules: No Leakage!</h3>
+      <div class="info-box">⚠️ Critical: Fit transformations (e.g., scaling, bin edges, target encoding) ONLY on training data, then transform test/validation.</div>
+      <div class="code-container"><button class="copy-btn" data-clipboard-target="#leakCode">📋 Copy</button><pre class="code-block" id="leakCode"><code><span class="comment"># ✅ CORRECT</span>
+scaler = StandardScaler().fit(X_train)
+X_train_scaled = scaler.transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+<span class="comment"># ❌ WRONG (leakage)</span>
+X_scaled = scaler.fit_transform(X)  # uses test info
+X_train, X_test = split(X_scaled)</code></pre></div>
+    </div>
+    <div class="panel section">
+      <h3><i class="fas fa-exclamation-triangle"></i> 5.2 Common Pitfalls</h3>
+      <ul><li><strong>Curse of dimensionality</strong> from polynomial/interaction features → combine with feature selection (Module 8).</li><li><strong>Target leakage</strong> when creating features using future information.</li><li><strong>Overfitting</strong> complex features without cross-validation.</li><li><strong>Not handling outliers</strong> before binning/transformations.</li></ul>
+    </div>
+  </div>
+
+  <!-- SECTION 6: HANDS-ON PYTHON -->
+  <div id="hands" class="module-content">
+    <div class="panel section">
+      <h3><i class="fab fa-python"></i> 6.1 Polynomial & Interaction with sklearn</h3>
+      <div class="code-container"><button class="copy-btn" data-clipboard-target="#polyCode">📋 Copy</button><pre class="code-block" id="polyCode"><code><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> PolynomialFeatures, StandardScaler
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+df = pd.DataFrame({'sqft': [1200, 1800, 2400], 'bedrooms': [2,3,4]})
+poly = PolynomialFeatures(degree=2, include_bias=False)
+poly_features = poly.fit_transform(df)
+print(poly.get_feature_names_out(['sqft','bedrooms']))
+<span class="comment"># Output: ['sqft', 'bedrooms', 'sqft^2', 'sqft bedrooms', 'bedrooms^2']</span></code></pre></div>
+    </div>
+    <div class="panel section">
+      <h3><i class="fas fa-chart-line"></i> 6.2 Log Transform & Binning</h3>
+      <div class="code-container"><button class="copy-btn" data-clipboard-target="#logCode">📋 Copy</button><pre class="code-block" id="logCode"><code><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+df['price_log'] = np.log1p(df['price'])  <span class="comment"># log(1+x)</span>
+<span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> KBinsDiscretizer
+kbin = KBinsDiscretizer(n_bins=5, encode='onehot-dense', strategy='quantile')
+df['age_binned'] = kbin.fit_transform(df[['age']])</code></pre></div>
+    </div>
+    <div class="panel section">
+      <h3><i class="fas fa-chart-simple"></i> 6.3 Target Encoding (Safe)</h3>
+      <div class="code-container"><button class="copy-btn" data-clipboard-target="#targetCode">📋 Copy</button><pre class="code-block" id="targetCode"><code><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> StratifiedKFold
+<span class="keyword">import</span> pandas <span class="keyword">as</span> pd
+
+<span class="keyword">def</span> target_encode(train, test, col, target, n_folds=5):
+    skf = StratifiedKFold(n_splits=n_folds, shuffle=<span class="keyword">True</span>)
+    train_encoded = np.zeros(len(train))
+    <span class="keyword">for</span> idx, (train_idx, val_idx) <span class="keyword">in</span> enumerate(skf.split(train[col], train[target])):
+        mean_target = train.iloc[train_idx].groupby(col)[target].mean()
+        train_encoded[val_idx] = train.iloc[val_idx][col].map(mean_target)
+    global_mean = train[target].mean()
+    test_encoded = test[col].map(train.groupby(col)[target].mean()).fillna(global_mean)
+    <span class="keyword">return</span> train_encoded, test_encoded</code></pre></div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: QUIZ & SUMMARY -->
+  <div id="quiz" class="module-content">
+    <div class="panel section">
+      <h3><i class="fas fa-graduation-cap"></i> 7.1 Knowledge Check</h3>
+      <div class="concept-card"><p><strong>❓ When should you use polynomial features?</strong></p><details><summary>Answer</summary><div class="pro-tip">When linear model underfits and you suspect non-linear relationships, but feature count small.</div></details></div>
+      <div class="concept-card"><p><strong>❓ What is target leakage?</strong></p><details><summary>Answer</summary><div class="common-pitfall">Using information from the target variable that would not be available at prediction time (e.g., future data).</div></details></div>
+    </div>
+    <div class="panel section"><h3><i class="fas fa-clipboard-list"></i> 7.2 Summary</h3>
+      <ul><li>✅ Feature engineering transforms raw data into powerful predictors.</li><li>✅ Interaction (×, /) and polynomial (x²) features capture non-linear patterns.</li><li>✅ Log/Box-Cox handle skewness; binning captures stepwise effects.</li><li>✅ Target encoding works well for high-cardinality but needs CV to prevent leakage.</li><li>✅ Domain-specific features often provide the biggest lift.</li></ul>
+      <div class="next-module-banner" style="background: linear-gradient(135deg, var(--success), var(--primary)); padding: 20px; border-radius: var(--radius); text-align: center; margin-top: 20px;">🎉 Next: Module 10 — Model Deployment & Monitoring</div>
+    </div>
+  </div>
+  <footer><p>🧪 Module 9: Feature Engineering — Transform raw data into predictive power</p></footer>
+</div>
+<script>
+  // Theme & navigation (same as Module 8)
+  const body = document.body;
+  const themeBtn = document.getElementById('themeToggle');
+  function setTheme(theme) { body.setAttribute('data-theme', theme); localStorage.setItem('fe-theme', theme); if(themeBtn) themeBtn.querySelector('.label').textContent = theme === 'day' ? 'Day Mode' : 'Night Mode'; }
+  themeBtn?.addEventListener('click', () => setTheme(body.getAttribute('data-theme') === 'day' ? 'night' : 'day'));
+  const savedTheme = localStorage.getItem('fe-theme'); if(savedTheme) setTheme(savedTheme); else setTheme('night');
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.module;
+      document.querySelectorAll('.module-content').forEach(m => m.classList.remove('active'));
+      document.getElementById(id)?.classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+  // polynomial visualization
+  const polyCanvas = document.getElementById('polyCanvas');
+  if(polyCanvas){
+    let ctx = polyCanvas.getContext('2d');
+    let w = polyCanvas.clientWidth, h = 200;
+    polyCanvas.width = w; polyCanvas.height = h;
+    ctx.clearRect(0,0,w,h);
+    ctx.beginPath(); ctx.strokeStyle = '#60A5FA'; ctx.lineWidth=2;
+    for(let x=0; x<=w; x+=2){
+      let t = x/w;
+      let y_raw = 0.3 + 0.7*t + 0.8*t*t -0.5*t*t*t;
+      let y = h - y_raw*h;
+      if(x===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+    ctx.fillStyle = 'var(--text)'; ctx.fillText('Polynomial (degree 3) fit', 20, 30);
+  }
+  if(typeof ClipboardJS !== 'undefined') new ClipboardJS('.copy-btn');
+</script>
+
+<script>
+// ============================================
+// FIXED VISUALIZATION FOR SECTION 1.4
+// ============================================
+
+const feCanvas = document.getElementById('feDemoCanvas');
+let ctx = null;
+let canvasWidth = 700;
+let canvasHeight = 300;
+
+function initCanvas() {
+  if (feCanvas) {
+    feCanvas.width = canvasWidth;
+    feCanvas.height = canvasHeight;
+    ctx = feCanvas.getContext('2d');
+    // Draw initial view
+    drawSkewedDistribution();
+  }
+}
+
+function drawSkewedDistribution() {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  
+  // Background
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  
+  // Draw skewed (exponential) distribution
+  const barWidth = (canvasWidth - 100) / 40;
+  const maxHeight = canvasHeight - 60;
+  
+  for (let i = 0; i < 40; i++) {
+    let x = 50 + i * barWidth;
+    // Exponential decay: many low values, few high values
+    let height = maxHeight * Math.exp(-i / 8);
+    ctx.fillStyle = '#FB7185';
+    ctx.fillRect(x, canvasHeight - 40 - height, barWidth - 2, height);
+  }
+  
+  // Draw axes
+  ctx.beginPath();
+  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.lineWidth = 1;
+  ctx.moveTo(40, canvasHeight - 40);
+  ctx.lineTo(canvasWidth - 20, canvasHeight - 40);
+  ctx.moveTo(40, canvasHeight - 40);
+  ctx.lineTo(40, 20);
+  ctx.stroke();
+  
+  // Labels
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('Price ($)', 15, canvasHeight/2);
+  ctx.fillText('Frequency', canvasWidth/2, canvasHeight - 15);
+  ctx.fillStyle = '#FB7185';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('Skewed Distribution (Raw Price)', canvasWidth/2 - 150, 35);
+  
+  // Update explanation
+  const vizExplanation = document.getElementById('vizExplanation');
+  if (vizExplanation) {
+    vizExplanation.innerHTML = `
+      <strong>📉 Current View: Skewed Distribution (Raw Price)</strong><br><br>
+      This distribution is <strong>right-skewed</strong> (long tail of expensive houses). 
+      Most values cluster on the left, with a few extreme outliers on the right.
+      Linear regression assumes normally distributed residuals — this violation leads to poor predictions.
+    `;
+  }
+}
+
+function drawNormalDistribution() {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  
+  // Draw normal (bell curve) distribution
+  const barWidth = (canvasWidth - 100) / 40;
+  const maxHeight = canvasHeight - 60;
+  
+  for (let i = 0; i < 40; i++) {
+    let x = 50 + i * barWidth;
+    // Normal distribution centered at 20
+    let z = (i - 20) / 6;
+    let height = maxHeight * Math.exp(-z * z / 2);
+    ctx.fillStyle = '#34D399';
+    ctx.fillRect(x, canvasHeight - 40 - height, barWidth - 2, height);
+  }
+  
+  // Draw axes
+  ctx.beginPath();
+  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.lineWidth = 1;
+  ctx.moveTo(40, canvasHeight - 40);
+  ctx.lineTo(canvasWidth - 20, canvasHeight - 40);
+  ctx.moveTo(40, canvasHeight - 40);
+  ctx.lineTo(40, 20);
+  ctx.stroke();
+  
+  // Labels
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.font = '12px sans-serif';
+  ctx.fillText('Log(Price)', 15, canvasHeight/2);
+  ctx.fillText('Frequency', canvasWidth/2, canvasHeight - 15);
+  ctx.fillStyle = '#34D399';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('Normal Distribution (Log Transformed)', canvasWidth/2 - 160, 35);
+  
+  // Update explanation
+  const vizExplanation = document.getElementById('vizExplanation');
+  if (vizExplanation) {
+    vizExplanation.innerHTML = `
+      <strong>📈 Current View: Normal Distribution (Log Transformed)</strong><br><br>
+      After applying log transformation, the distribution becomes approximately <strong>normal (bell-shaped)</strong>.
+      Linear models perform optimally on this scale because residuals become normally distributed.
+      Simply take exponent of predictions to return to original price scale!
+    `;
+  }
+}
+
+function drawComparison() {
+  if (!ctx) return;
+  ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  
+  const barWidth = (canvasWidth - 100) / 80;
+  const maxHeight = canvasHeight - 60;
+  
+  // Left side: Skewed (first 40 bars)
+  for (let i = 0; i < 40; i++) {
+    let x = 40 + i * barWidth;
+    let height = maxHeight * Math.exp(-i / 8);
+    ctx.fillStyle = '#FB7185';
+    ctx.fillRect(x, canvasHeight - 40 - height, barWidth - 1, height);
+  }
+  
+  // Right side: Normal (next 40 bars)
+  for (let i = 0; i < 40; i++) {
+    let x = 40 + 40 * barWidth + i * barWidth;
+    let z = (i - 20) / 6;
+    let height = maxHeight * Math.exp(-z * z / 2);
+    ctx.fillStyle = '#34D399';
+    ctx.fillRect(x, canvasHeight - 40 - height, barWidth - 1, height);
+  }
+  
+  // Draw axes
+  ctx.beginPath();
+  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.lineWidth = 1;
+  ctx.moveTo(30, canvasHeight - 40);
+  ctx.lineTo(canvasWidth - 20, canvasHeight - 40);
+  ctx.moveTo(30, canvasHeight - 40);
+  ctx.lineTo(30, 20);
+  ctx.stroke();
+  
+  // Labels
+  ctx.fillStyle = '#FB7185';
+  ctx.font = 'bold 11px sans-serif';
+  ctx.fillText('Raw Price (Skewed)', canvasWidth/4 - 50, canvasHeight - 20);
+  ctx.fillStyle = '#34D399';
+  ctx.fillText('Log(Price) → Normal', 3*canvasWidth/4 - 60, canvasHeight - 20);
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText('Before → After Log Transform', canvasWidth/2 - 100, 35);
+  
+  // Update explanation
+  const vizExplanation = document.getElementById('vizExplanation');
+  if (vizExplanation) {
+    vizExplanation.innerHTML = `
+      <strong>🔄 Side-by-Side Comparison: Before (Left) vs After (Right) Log Transform</strong><br><br>
+      <strong>Left (Red):</strong> Raw price distribution is heavily skewed → violates linear model assumptions.<br>
+      <strong>Right (Green):</strong> Log-transformed distribution is approximately normal → optimal for linear models.<br>
+      <strong>Result:</strong> Better predictions, proper confidence intervals, and more stable coefficients!
+    `;
+  }
+}
+
+// Attach event listeners
+const skewedBtn = document.getElementById('showSkewedBtn');
+const normalBtn = document.getElementById('showNormalBtn');
+const compareBtn = document.getElementById('showComparisonBtn');
+
+if (skewedBtn) skewedBtn.addEventListener('click', drawSkewedDistribution);
+if (normalBtn) normalBtn.addEventListener('click', drawNormalDistribution);
+if (compareBtn) compareBtn.addEventListener('click', drawComparison);
+
+// Initialize canvas on load
+window.addEventListener('load', initCanvas);
+
+// ============================================
+// ROI CALCULATOR
+// ============================================
+
+const baselineInput = document.getElementById('baselineAcc');
+const liftInput = document.getElementById('accuracyLift');
+const revenueInput = document.getElementById('revenuePerPercent');
+const dsCostInput = document.getElementById('dsCost');
+const calcBtn = document.getElementById('calcFEROI');
+
+function updateFE() {
+  let baseline = parseFloat(baselineInput?.value) || 75;
+  let lift = parseFloat(liftInput?.value) || 12;
+  let revenuePerPercent = parseFloat(revenueInput?.value) || 50000;
+  let dsMonthly = parseFloat(dsCostInput?.value) || 12000;
+  
+  let newAcc = baseline + lift;
+  let revenueImpact = lift * revenuePerPercent;
+  let investment = dsMonthly;
+  
+  const newAccDisplay = document.getElementById('newAccDisplay');
+  const absImprove = document.getElementById('absImprove');
+  const revenueImpactEl = document.getElementById('revenueImpact');
+  const investmentCost = document.getElementById('investmentCost');
+  const roiPercent = document.getElementById('roiPercent');
+  
+  if (newAccDisplay) newAccDisplay.innerText = newAcc.toFixed(1) + '%';
+  if (absImprove) absImprove.innerText = lift.toFixed(1) + '%';
+  if (revenueImpactEl) revenueImpactEl.innerText = '$' + revenueImpact.toLocaleString();
+  if (investmentCost) investmentCost.innerText = '$' + investment.toLocaleString();
+  
+  let roi = ((revenueImpact - investment) / investment) * 100;
+  if (roiPercent) roiPercent.innerText = roi.toFixed(0) + '%';
+}
+
+if (calcBtn) calcBtn.addEventListener('click', updateFE);
+updateFE();
+
+// ============================================
+// THEME HANDLER (for canvas redraw on theme change)
+// ============================================
+
+const observer = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    if (mutation.attributeName === 'data-theme') {
+      // Redraw current view based on active button state
+      const activeView = document.querySelector('.viz-active');
+      if (activeView === skewedBtn) drawSkewedDistribution();
+      else if (activeView === normalBtn) drawNormalDistribution();
+      else drawComparison();
+    }
+  });
+});
+observer.observe(document.body, { attributes: true });
+</script>
+
+<script>
+// ============================================
+// SECTION 2.2: INTERACTION VISUALIZATION
+// ============================================
+
+const interactionCanvas = document.getElementById('interactionCanvas');
+let interactionCtx = null;
+
+function initInteractionCanvas() {
+  if (interactionCanvas) {
+    interactionCanvas.width = 700;
+    interactionCanvas.height = 300;
+    interactionCtx = interactionCanvas.getContext('2d');
+    drawNoInteraction();
+  }
+}
+
+function drawNoInteraction() {
+  if (!interactionCtx) return;
+  const ctx = interactionCtx;
+  const w = 700, h = 300;
+  ctx.clearRect(0, 0, w, h);
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw axes
+  ctx.beginPath();
+  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.moveTo(60, h - 50);
+  ctx.lineTo(w - 30, h - 50);
+  ctx.moveTo(60, h - 50);
+  ctx.lineTo(60, 30);
+  ctx.stroke();
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.fillText('Feature X₁', w/2, h - 20);
+  ctx.save();
+  ctx.translate(25, h/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Target Y', 0, 0);
+  ctx.restore();
+  
+  // Draw parallel lines (no interaction)
+  const colors = ['#FB7185', '#FBBF24', '#60A5FA', '#34D399'];
+  const labels = ['Low X₂', 'Medium X₂', 'High X₂', 'Very High X₂'];
+  
+  for (let i = 0; i < 4; i++) {
+    let yOffset = 180 - i * 35;
+    ctx.beginPath();
+    ctx.strokeStyle = colors[i];
+    ctx.lineWidth = 2;
+    for (let x = 0; x <= 500; x++) {
+      let px = 70 + x * (w - 100) / 500;
+      let py = h - 70 - (yOffset + x * 0.2);
+      if (x === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.fillStyle = colors[i];
+    ctx.fillText(labels[i], w - 60, h - 70 - (yOffset + 450 * 0.2));
+  }
+  
+  ctx.fillStyle = '#FB7185';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('❌ No Interaction: Parallel Lines', w/2 - 150, 45);
+  
+  const explanation = document.getElementById('interactionExplanation');
+  if (explanation) {
+    explanation.innerHTML = `
+      <strong>❌ Without Interaction (Additive Model)</strong><br><br>
+      Lines are <strong>parallel</strong> — the effect of X₁ is the same regardless of X₂'s value.
+      This assumes features act independently, which rarely matches reality.
+      For house prices: Would a larger house add the same value in a bad neighborhood as a good one? No!
+    `;
+  }
+}
+
+function drawWithInteraction() {
+  if (!interactionCtx) return;
+  const ctx = interactionCtx;
+  const w = 700, h = 300;
+  ctx.clearRect(0, 0, w, h);
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw axes
+  ctx.beginPath();
+  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.moveTo(60, h - 50);
+  ctx.lineTo(w - 30, h - 50);
+  ctx.moveTo(60, h - 50);
+  ctx.lineTo(60, 30);
+  ctx.stroke();
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.fillText('Feature X₁', w/2, h - 20);
+  ctx.save();
+  ctx.translate(25, h/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Target Y', 0, 0);
+  ctx.restore();
+  
+  // Draw crossing lines (with interaction)
+  const colors = ['#FB7185', '#FBBF24', '#60A5FA', '#34D399'];
+  const labels = ['Low X₂', 'Medium X₂', 'High X₂', 'Very High X₂'];
+  
+  for (let i = 0; i < 4; i++) {
+    let slope = 0.1 + i * 0.15;
+    ctx.beginPath();
+    ctx.strokeStyle = colors[i];
+    ctx.lineWidth = 2;
+    for (let x = 0; x <= 500; x++) {
+      let px = 70 + x * (w - 100) / 500;
+      let py = h - 70 - (80 + x * slope);
+      if (x === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    ctx.fillStyle = colors[i];
+    let finalY = h - 70 - (80 + 500 * slope);
+    ctx.fillText(labels[i], w - 60, finalY);
+  }
+  
+  ctx.fillStyle = '#34D399';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('✅ With Interaction: Lines Cross', w/2 - 150, 45);
+  
+  const explanation = document.getElementById('interactionExplanation');
+  if (explanation) {
+    explanation.innerHTML = `
+      <strong>✅ With Interaction (Multiplicative Model)</strong><br><br>
+      Lines <strong>cross</strong> — the effect of X₁ CHANGES based on X₂'s value.
+      This captures synergy! For house prices: Each extra sqft adds MUCH more value in a good neighborhood.
+      The interaction term (X₁ × X₂) allows the slope to vary with X₂.
+    `;
+  }
+}
+
+function drawRealWorldExample() {
+  if (!interactionCtx) return;
+  const ctx = interactionCtx;
+  const w = 700, h = 300;
+  ctx.clearRect(0, 0, w, h);
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw axes
+  ctx.beginPath();
+  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.moveTo(60, h - 50);
+  ctx.lineTo(w - 30, h - 50);
+  ctx.moveTo(60, h - 50);
+  ctx.lineTo(60, 30);
+  ctx.stroke();
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.fillText('Square Footage (sqft)', w/2, h - 20);
+  ctx.save();
+  ctx.translate(25, h/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('House Price ($)', 0, 0);
+  ctx.restore();
+  
+  // Good neighborhood (steep slope)
+  ctx.beginPath();
+  ctx.strokeStyle = '#34D399';
+  ctx.lineWidth = 3;
+  for (let x = 0; x <= 500; x++) {
+    let px = 70 + x * (w - 100) / 500;
+    let py = h - 70 - (50 + x * 0.45);
+    if (x === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  
+  // Bad neighborhood (shallow slope)
+  ctx.beginPath();
+  ctx.strokeStyle = '#FB7185';
+  ctx.lineWidth = 3;
+  for (let x = 0; x <= 500; x++) {
+    let px = 70 + x * (w - 100) / 500;
+    let py = h - 70 - (20 + x * 0.15);
+    if (x === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  
+  ctx.fillStyle = '#34D399';
+  ctx.fillText('Good Neighborhood (Quality = 9)', w - 180, h - 70 - (50 + 500 * 0.45));
+  ctx.fillStyle = '#FB7185';
+  ctx.fillText('Poor Neighborhood (Quality = 2)', w - 180, h - 70 - (20 + 500 * 0.15));
+  
+  // Add annotation showing interaction
+  ctx.beginPath();
+  ctx.strokeStyle = '#FBBF24';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5, 5]);
+  ctx.moveTo(70 + 300 * (w - 100) / 500, h - 70 - (50 + 300 * 0.45));
+  ctx.lineTo(70 + 300 * (w - 100) / 500, h - 70 - (20 + 300 * 0.15));
+  ctx.stroke();
+  ctx.setLineDash([]);
+  
+  ctx.fillStyle = '#FBBF24';
+  ctx.font = 'bold 10px sans-serif';
+  ctx.fillText('Same sqft → Different price!', 70 + 300 * (w - 100) / 500 - 80, h - 120);
+  
+  ctx.fillStyle = '#34D399';
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText('🏠 Real-World: Sqft × Location Interaction', w/2 - 180, 45);
+  
+  const explanation = document.getElementById('interactionExplanation');
+  if (explanation) {
+    explanation.innerHTML = `
+      <strong>🏠 Real-World Example: House Price Prediction</strong><br><br>
+      <strong>Green line (Good neighborhood):</strong> Each additional sqft adds ~$450 to price<br>
+      <strong>Red line (Poor neighborhood):</strong> Each additional sqft adds only ~$150 to price<br>
+      <strong>Same square footage is worth 3x more in the good neighborhood!</strong><br>
+      This synergy is captured by the interaction feature: sqft × neighborhood_quality
+    `;
+  }
+}
+
+// Attach interaction button listeners
+const noInteractionBtn = document.getElementById('showNoInteractionBtn');
+const interactionBtn = document.getElementById('showInteractionBtn');
+const realWorldBtn = document.getElementById('showRealWorldBtn');
+
+if (noInteractionBtn) noInteractionBtn.addEventListener('click', drawNoInteraction);
+if (interactionBtn) interactionBtn.addEventListener('click', drawWithInteraction);
+if (realWorldBtn) realWorldBtn.addEventListener('click', drawRealWorldExample);
+
+// ============================================
+// SECTION 2.3: POLYNOMIAL DEGREE VISUALIZATION
+// ============================================
+
+function drawPolynomialExample(canvasId, degree, color) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.clientWidth;
+  const h = 120;
+  canvas.width = w;
+  canvas.height = h;
+  
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Draw axes
+  ctx.beginPath();
+  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.moveTo(30, h - 15);
+  ctx.lineTo(w - 10, h - 15);
+  ctx.moveTo(30, h - 15);
+  ctx.lineTo(30, 10);
+  ctx.stroke();
+  
+  // Draw polynomial
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  for (let x = 0; x <= w - 40; x++) {
+    let t = (x / (w - 40)) * 2 - 1; // -1 to 1
+    let y = 0;
+    if (degree === 1) y = t;
+    else if (degree === 2) y = t * t * 0.8;
+    else if (degree === 3) y = t * t * t * 0.6;
+    let px = 30 + x;
+    let py = h - 20 - (y * 40 + 40);
+    if (x === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+}
+
+drawPolynomialExample('degree1Canvas', 1, '#FB7185');
+drawPolynomialExample('degree2Canvas', 2, '#FBBF24');
+drawPolynomialExample('degree3Canvas', 3, '#34D399');
+
+// ============================================
+// SECTION 2.8: POLYNOMIAL OVERFITTING DEMO
+// ============================================
+
+const polySlider = document.getElementById('polyDegreeSlider');
+const degreeSpan = document.getElementById('degreeValue');
+const resetBtn = document.getElementById('resetPolyBtn');
+const overfitCanvas = document.getElementById('polyOverfitCanvas');
+let overfitCtx = null;
+
+function initOverfitCanvas() {
+  if (overfitCanvas) {
+    overfitCanvas.width = 700;
+    overfitCanvas.height = 300;
+    overfitCtx = overfitCanvas.getContext('2d');
+    drawPolynomialFit(1);
+  }
+}
+
+function drawPolynomialFit(degree) {
+  if (!overfitCtx) return;
+  const ctx = overfitCtx;
+  const w = 700, h = 300;
+  ctx.clearRect(0, 0, w, h);
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  ctx.fillRect(0, 0, w, h);
+  
+  // Generate synthetic data points (sine wave with noise)
+  const points = [];
+  for (let i = 0; i <= 30; i++) {
+    let x = i / 30; // 0 to 1
+    let y_true = Math.sin(x * Math.PI * 2) * 40 + 120;
+    let y_noise = y_true + (Math.random() - 0.5) * 20;
+    points.push({ x: x, y: y_noise });
+  }
+  
+  // Draw data points
+  for (let p of points) {
+    let px = 50 + p.x * (w - 100);
+    let py = h - 40 - p.y;
+    ctx.beginPath();
+    ctx.fillStyle = '#60A5FA';
+    ctx.arc(px, py, 4, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+  
+  // Draw polynomial fit using simple regression approximation
+  ctx.beginPath();
+  ctx.strokeStyle = degree > 8 ? '#FB7185' : (degree > 4 ? '#FBBF24' : '#34D399');
+  ctx.lineWidth = 2;
+  
+  for (let x = 0; x <= 100; x++) {
+    let t = x / 100;
+    let y = 0;
+    // Simplified polynomial approximation
+    if (degree === 1) y = 120 + (t - 0.5) * 60;
+    else if (degree === 2) y = 110 + (t - 0.5) * 80 + (t - 0.5) * (t - 0.5) * 60;
+    else if (degree === 3) y = 115 + (t - 0.5) * 100 + Math.pow(t - 0.5, 2) * 40 + Math.pow(t - 0.5, 3) * 80;
+    else if (degree >= 10) {
+      // High degree overfitting - wiggly
+      y = 120 + Math.sin(t * Math.PI * 6) * 30 + Math.sin(t * Math.PI * 12) * 15;
+    } else {
+      y = 120 + Math.sin(t * Math.PI * 2) * 40;
+    }
+    
+    let px = 50 + t * (w - 100);
+    let py = h - 40 - y;
+    if (x === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.stroke();
+  
+  // Draw axes
+  ctx.beginPath();
+  ctx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.moveTo(40, h - 40);
+  ctx.lineTo(w - 20, h - 40);
+  ctx.moveTo(40, h - 40);
+  ctx.lineTo(40, 20);
+  ctx.stroke();
+  
+  ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  ctx.fillText('Feature X', w/2, h - 20);
+  ctx.save();
+  ctx.translate(25, h/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Target Y', 0, 0);
+  ctx.restore();
+  
+  // Update explanation
+  const overfitExp = document.getElementById('overfitExplanation');
+  if (overfitExp) {
+    if (degree === 1) {
+      overfitExp.innerHTML = '<strong>⚠️ Degree 1 (Underfitting):</strong> Too simple — misses the true pattern. The model is biased and will perform poorly on both training and test data.';
+      overfitExp.className = 'common-pitfall';
+    } else if (degree <= 4) {
+      overfitExp.innerHTML = '<strong>✅ Optimal Degree (' + degree + '):</strong> Captures the true underlying pattern without overfitting. This model will generalize well to new data!';
+      overfitExp.className = 'pro-tip';
+    } else if (degree <= 8) {
+      overfitExp.innerHTML = '<strong>⚠️ Warning: Degree ' + degree + '</strong> — Starting to overfit. The model is capturing some noise along with the signal.';
+      overfitExp.className = 'common-pitfall';
+    } else {
+      overfitExp.innerHTML = '<strong>❌ High Degree ' + degree + ' (Overfitting):</strong> The model is wiggly and tries to pass through EVERY training point. It has memorized the noise and will perform terribly on test data!';
+      overfitExp.className = 'common-pitfall';
+    }
+  }
+  
+  // Title
+  ctx.fillStyle = degree > 8 ? '#FB7185' : (degree > 4 ? '#FBBF24' : '#34D399');
+  ctx.font = 'bold 14px sans-serif';
+  ctx.fillText(`Polynomial Degree ${degree}`, w/2 - 80, 35);
+}
+
+function updatePolynomialFit() {
+  let degree = parseInt(polySlider.value);
+  degreeSpan.innerText = `Degree ${degree}`;
+  drawPolynomialFit(degree);
+}
+
+if (polySlider) polySlider.addEventListener('input', updatePolynomialFit);
+if (resetBtn) resetBtn.addEventListener('click', () => { if(polySlider) polySlider.value = 1; updatePolynomialFit(); });
+
+// Initialize all canvases
+window.addEventListener('load', () => {
+  initInteractionCanvas();
+  initOverfitCanvas();
+  drawNoInteraction(); // Default view
+});
+</script>
+
+<script>
+// ============================================
+// SECTION 3.2: LOG TRANSFORM VISUALIZATION
+// ============================================
+
+function drawLogBeforeAfter() {
+  // Before log - skewed distribution
+  const beforeCanvas = document.getElementById('logBeforeCanvas');
+  if (beforeCanvas) {
+    const ctx = beforeCanvas.getContext('2d');
+    const w = beforeCanvas.clientWidth;
+    const h = 120;
+    beforeCanvas.width = w;
+    beforeCanvas.height = h;
+    
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+    ctx.fillRect(0, 0, w, h);
+    
+    const barWidth = (w - 40) / 30;
+    for (let i = 0; i < 30; i++) {
+      let height = h - 20 - (h - 30) * Math.exp(-i / 6);
+      ctx.fillStyle = '#FB7185';
+      ctx.fillRect(20 + i * barWidth, height, barWidth - 2, h - 20 - height);
+    }
+    
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+    ctx.fillText('Skewed', w/2 - 20, 20);
+  }
+  
+  // After log - normal distribution
+  const afterCanvas = document.getElementById('logAfterCanvas');
+  if (afterCanvas) {
+    const ctx = afterCanvas.getContext('2d');
+    const w = afterCanvas.clientWidth;
+    const h = 120;
+    afterCanvas.width = w;
+    afterCanvas.height = h;
+    
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+    ctx.fillRect(0, 0, w, h);
+    
+    const barWidth = (w - 40) / 30;
+    for (let i = 0; i < 30; i++) {
+      let z = (i - 15) / 5;
+      let height = h - 20 - (h - 30) * Math.exp(-z * z / 2);
+      ctx.fillStyle = '#34D399';
+      ctx.fillRect(20 + i * barWidth, height, barWidth - 2, h - 20 - height);
+    }
+    
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+    ctx.fillText('Normal (Log)', w/2 - 30, 20);
+  }
+}
+
+// ============================================
+// SECTION 3.3: BOX-COX INTERACTIVE DEMO
+// ============================================
+
+const lambdaSlider = document.getElementById('boxCoxLambda');
+const lambdaDisplay = document.getElementById('lambdaValueDisplay');
+const lambdaExplanation = document.getElementById('lambdaExplanation');
+const boxCoxCanvas = document.getElementById('boxCoxCanvas');
+let boxCoxCtx = null;
+
+function drawBoxCox(lambda) {
+  if (!boxCoxCanvas) return;
+  const w = boxCoxCanvas.clientWidth;
+  const h = 150;
+  boxCoxCanvas.width = w;
+  boxCoxCanvas.height = h;
+  boxCoxCtx = boxCoxCanvas.getContext('2d');
+  
+  boxCoxCtx.clearRect(0, 0, w, h);
+  boxCoxCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  boxCoxCtx.fillRect(0, 0, w, h);
+  
+  // Generate original skewed data (log-normal)
+  const data = [];
+  for (let i = 0; i <= 40; i++) {
+    let x = i / 40;
+    let orig = Math.exp(x * 3) - 1; // skewed
+    let transformed;
+    if (Math.abs(lambda) < 0.01) {
+      transformed = Math.log(orig + 1);
+    } else {
+      transformed = (Math.pow(orig + 1, lambda) - 1) / lambda;
+    }
+    data.push({ x: orig, y: transformed });
+  }
+  
+  // Normalize for display
+  const maxY = Math.max(...data.map(d => d.y));
+  const minY = Math.min(...data.map(d => d.y));
+  
+  boxCoxCtx.beginPath();
+  boxCoxCtx.strokeStyle = '#60A5FA';
+  boxCoxCtx.lineWidth = 2;
+  for (let i = 0; i < data.length; i++) {
+    let px = 30 + i * (w - 60) / (data.length - 1);
+    let py = h - 20 - ((data[i].y - minY) / (maxY - minY)) * (h - 50);
+    if (i === 0) boxCoxCtx.moveTo(px, py);
+    else boxCoxCtx.lineTo(px, py);
+  }
+  boxCoxCtx.stroke();
+  
+  // Draw axes
+  boxCoxCtx.beginPath();
+  boxCoxCtx.strokeStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  boxCoxCtx.moveTo(20, h - 15);
+  boxCoxCtx.lineTo(w - 10, h - 15);
+  boxCoxCtx.moveTo(20, h - 15);
+  boxCoxCtx.lineTo(20, 10);
+  boxCoxCtx.stroke();
+  
+  boxCoxCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+  boxCoxCtx.fillText('Original (Skewed)', 20, h - 18);
+  boxCoxCtx.fillText('Transformed', w - 80, 20);
+  
+  // Update explanation
+  let lambdaVal = parseFloat(lambda);
+  let explanationText = '';
+  if (lambdaVal >= 1.5) explanationText = 'λ > 1: Expanding large values (makes right-skewed more skewed)';
+  else if (lambdaVal >= 0.8) explanationText = 'λ ≈ 1: Almost no transformation (original scale)';
+  else if (lambdaVal >= 0.3) explanationText = 'λ ≈ 0.5: Square root transform (moderate skew)';
+  else if (lambdaVal >= -0.2) explanationText = 'λ ≈ 0: Log transform (best for right-skewed data!)';
+  else if (lambdaVal >= -0.8) explanationText = 'λ ≈ -0.5: Inverse square root (strong compression)';
+  else explanationText = 'λ < -0.5: Strong inverse transform (use with caution)';
+  
+  if (lambdaExplanation) lambdaExplanation.innerHTML = explanationText;
+  if (lambdaDisplay) lambdaDisplay.innerText = `λ = ${lambdaVal.toFixed(1)}`;
+}
+
+function updateBoxCox() {
+  let lambda = parseFloat(lambdaSlider.value);
+  drawBoxCox(lambda);
+}
+
+if (lambdaSlider) lambdaSlider.addEventListener('input', updateBoxCox);
+
+// ============================================
+// SECTION 3.4: SQUARE ROOT & CUBE ROOT
+// ============================================
+
+function drawSqrtCube() {
+  const sqrtCanvas = document.getElementById('sqrtCanvas');
+  if (sqrtCanvas) {
+    const ctx = sqrtCanvas.getContext('2d');
+    const w = sqrtCanvas.clientWidth;
+    const h = 150;
+    sqrtCanvas.width = w;
+    sqrtCanvas.height = h;
+    
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+    ctx.fillRect(0, 0, w, h);
+    
+    ctx.beginPath();
+    ctx.strokeStyle = '#FBBF24';
+    ctx.lineWidth = 2;
+    for (let i = 0; i <= 100; i++) {
+      let x = i / 100;
+      let y = Math.sqrt(x);
+      let px = 30 + i * (w - 60) / 100;
+      let py = h - 20 - y * (h - 40);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+    ctx.fillText('Square Root: √x', w/2 - 40, 25);
+  }
+  
+  const cubeCanvas = document.getElementById('cuberootCanvas');
+  if (cubeCanvas) {
+    const ctx = cubeCanvas.getContext('2d');
+    const w = cubeCanvas.clientWidth;
+    const h = 150;
+    cubeCanvas.width = w;
+    cubeCanvas.height = h;
+    
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+    ctx.fillRect(0, 0, w, h);
+    
+    ctx.beginPath();
+    ctx.strokeStyle = '#A78BFA';
+    ctx.lineWidth = 2;
+    for (let i = 0; i <= 100; i++) {
+      let x = i / 100;
+      let y = Math.cbrt(x);
+      let px = 30 + i * (w - 60) / 100;
+      let py = h - 20 - y * (h - 40);
+      if (i === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.stroke();
+    
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+    ctx.fillText('Cube Root: ∛x', w/2 - 40, 25);
+  }
+}
+
+// ============================================
+// SECTION 3.6: BINNING INTERACTIVE DEMO
+// ============================================
+
+const binningCanvas = document.getElementById('binningCanvas');
+let binningCtx = null;
+let sampleData = [];
+
+function generateSampleData() {
+  sampleData = [];
+  for (let i = 0; i < 200; i++) {
+    // Generate right-skewed age-like data
+    let age = Math.pow(Math.random() * 100, 1.5);
+    sampleData.push(age);
+  }
+  return sampleData;
+}
+
+function drawEqualWidthBins() {
+  if (!binningCanvas) return;
+  const w = binningCanvas.clientWidth;
+  const h = 250;
+  binningCanvas.width = w;
+  binningCanvas.height = h;
+  binningCtx = binningCanvas.getContext('2d');
+  
+  const data = generateSampleData();
+  const minVal = Math.min(...data);
+  const maxVal = Math.max(...data);
+  const nBins = 5;
+  const binWidth = (maxVal - minVal) / nBins;
+  
+  binningCtx.clearRect(0, 0, w, h);
+  binningCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  binningCtx.fillRect(0, 0, w, h);
+  
+  // Draw histogram
+  for (let b = 0; b < nBins; b++) {
+    let binStart = minVal + b * binWidth;
+    let binEnd = binStart + binWidth;
+    let count = data.filter(d => d >= binStart && d < binEnd).length;
+    let barHeight = (count / data.length) * (h - 60);
+    let barWidth_px = (w - 80) / nBins;
+    binningCtx.fillStyle = '#60A5FA';
+    binningCtx.fillRect(40 + b * barWidth_px, h - 40 - barHeight, barWidth_px - 2, barHeight);
+    binningCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+    binningCtx.font = '9px sans-serif';
+    binningCtx.fillText(`${Math.round(binStart)}-${Math.round(binEnd)}`, 40 + b * barWidth_px + 5, h - 25);
+  }
+  
+  binningCtx.fillStyle = '#FB7185';
+  binningCtx.font = 'bold 12px sans-serif';
+  binningCtx.fillText('Equal-Width Binning (5 bins)', w/2 - 100, 25);
+  
+  const explanation = document.getElementById('binningExplanation');
+  if (explanation) {
+    explanation.innerHTML = '<strong>📊 Equal-Width Binning:</strong> Each bin has the same range (e.g., 0-20, 20-40, 40-60). Easy to understand but sensitive to outliers.';
+  }
+}
+
+function drawEqualFreqBins() {
+  if (!binningCanvas) return;
+  const w = binningCanvas.clientWidth;
+  const h = 250;
+  binningCanvas.width = w;
+  binningCanvas.height = h;
+  binningCtx = binningCanvas.getContext('2d');
+  
+  const data = generateSampleData();
+  const sorted = [...data].sort((a, b) => a - b);
+  const nBins = 5;
+  const binSize = Math.floor(data.length / nBins);
+  
+  binningCtx.clearRect(0, 0, w, h);
+  binningCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  binningCtx.fillRect(0, 0, w, h);
+  
+  for (let b = 0; b < nBins; b++) {
+    let binStart = sorted[b * binSize];
+    let binEnd = b === nBins - 1 ? sorted[data.length - 1] : sorted[(b + 1) * binSize];
+    let count = data.filter(d => d >= binStart && d <= binEnd).length;
+    let barHeight = (count / data.length) * (h - 60);
+    let barWidth_px = (w - 80) / nBins;
+    binningCtx.fillStyle = '#34D399';
+    binningCtx.fillRect(40 + b * barWidth_px, h - 40 - barHeight, barWidth_px - 2, barHeight);
+    binningCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+    binningCtx.font = '8px sans-serif';
+    binningCtx.fillText(`${Math.round(binStart)}-${Math.round(binEnd)}`, 40 + b * barWidth_px + 2, h - 25);
+  }
+  
+  binningCtx.fillStyle = '#34D399';
+  binningCtx.font = 'bold 12px sans-serif';
+  binningCtx.fillText('Equal-Frequency (Quantile) Binning', w/2 - 120, 25);
+  
+  const explanation = document.getElementById('binningExplanation');
+  if (explanation) {
+    explanation.innerHTML = '<strong>📊 Equal-Frequency Binning:</strong> Each bin has ~equal number of samples. Better for skewed distributions, ensures balanced bins.';
+  }
+}
+
+function drawCustomBins() {
+  if (!binningCanvas) return;
+  const w = binningCanvas.clientWidth;
+  const h = 250;
+  binningCanvas.width = w;
+  binningCanvas.height = h;
+  binningCtx = binningCanvas.getContext('2d');
+  
+  const data = generateSampleData();
+  const customBins = [0, 20, 40, 60, 100];
+  
+  binningCtx.clearRect(0, 0, w, h);
+  binningCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--panel2').trim() || '#0B1226';
+  binningCtx.fillRect(0, 0, w, h);
+  
+  for (let b = 0; b < customBins.length - 1; b++) {
+    let binStart = customBins[b];
+    let binEnd = customBins[b + 1];
+    let count = data.filter(d => d >= binStart && d < binEnd).length;
+    let barHeight = (count / data.length) * (h - 60);
+    let barWidth_px = (w - 80) / (customBins.length - 1);
+    binningCtx.fillStyle = '#FBBF24';
+    binningCtx.fillRect(40 + b * barWidth_px, h - 40 - barHeight, barWidth_px - 2, barHeight);
+    binningCtx.fillStyle = getComputedStyle(document.body).getPropertyValue('--text').trim() || '#EAF0FF';
+    binningCtx.font = '9px sans-serif';
+    let label = binEnd >= 100 ? `${binStart}+` : `${binStart}-${binEnd}`;
+    binningCtx.fillText(label, 40 + b * barWidth_px + 5, h - 25);
+  }
+  
+  binningCtx.fillStyle = '#FBBF24';
+  binningCtx.font = 'bold 12px sans-serif';
+  binningCtx.fillText('Custom Bins (Domain Knowledge)', w/2 - 110, 25);
+  
+  const explanation = document.getElementById('binningExplanation');
+  if (explanation) {
+    explanation.innerHTML = '<strong>📊 Custom Binning:</strong> Bins defined by business rules (e.g., Age: 0-20, 20-40, 40-60, 60+). Most interpretable for stakeholders.';
+  }
+}
+
+// Attach binning button listeners
+const equalWidthBtn = document.getElementById('equalWidthBtn');
+const equalFreqBtn = document.getElementById('equalFreqBtn');
+const customBinsBtn = document.getElementById('customBinsBtn');
+
+if (equalWidthBtn) equalWidthBtn.addEventListener('click', drawEqualWidthBins);
+if (equalFreqBtn) equalFreqBtn.addEventListener('click', drawEqualFreqBins);
+if (customBinsBtn) customBinsBtn.addEventListener('click', drawCustomBins);
+
+// Initialize all visualizations
+window.addEventListener('load', () => {
+  drawLogBeforeAfter();
+  drawBoxCox(0);
+  drawSqrtCube();
+  drawEqualWidthBins();
+  if (lambdaSlider) lambdaSlider.value = 0;
+});
+</script>
+
+</body>
+</html>
