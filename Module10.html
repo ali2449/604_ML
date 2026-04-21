@@ -1,1408 +1,816 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Module 10: PyTorch – Ultimate Deep Dive | Linear & Logistic Regression + Neural Nets</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" id="hljs-light">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs.min.css" id="hljs-dark" disabled>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <style>
-    :root {
-      --bg0: #070A12; --bg1: #0B1020; --panel: #0F172A; --panel2: #0B1226;
-      --text: #EAF0FF; --muted: rgba(234,240,255,0.75); --border: rgba(148,163,184,0.14);
-      --primary: #EE6B4F; --secondary: #F4A261; --success: #2A9D8F; --danger: #E76F51;
-      --warning: #E9C46A; --radius: 16px; --mono: 'JetBrains Mono', 'Fira Code', monospace;
-      --code-bg: #1E1E2E;
-      --code-text: #e0e0e0;
-      --tab-bg: rgba(238,107,79,0.1);
-      --tab-hover: rgba(238,107,79,0.2);
-    }
-    [data-theme="day"] {
-      --bg0: #F8FAFC; --bg1: #F1F5F9; --panel: #FFFFFF; --panel2: #F8FAFC;
-      --text: #0F172A; --muted: rgba(15,23,42,0.75); --border: rgba(148,163,184,0.25);
-      --primary: #E76F51; --secondary: #F4A261;
-      --code-bg: #F3F3F3;
-      --code-text: #1E1E1E;
-      --tab-bg: #E2E8F0;
-      --tab-hover: #CBD5E1;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg0); color: var(--text); line-height: 1.6;
-      transition: background 0.2s, color 0.2s;
-    }
-    .container { max-width: 1400px; margin: 0 auto; padding: 22px; }
-    .theme-toggle-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
-    .theme-toggle { display: inline-flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 50px; background: var(--panel); border: 1px solid var(--border); cursor: pointer; backdrop-filter: blur(10px); }
-    header { background: linear-gradient(135deg, #1A1F2E, #0F172A); padding: 32px; border-radius: 28px; margin-bottom: 24px; border: 1px solid var(--border); }
-    [data-theme="day"] header { background: linear-gradient(135deg, #e0e7ff, #ffffff); border-color: var(--border); }
-    .badge { display: inline-flex; gap: 12px; padding: 8px 20px; background: rgba(238,107,79,0.15); border-radius: 50px; margin-top: 16px; flex-wrap: wrap; }
-    .panel { background: var(--panel); border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 28px; overflow: hidden; }
-    .section { padding: 28px; }
-    .section h3 { font-size: 1.6rem; margin-bottom: 24px; display: flex; gap: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
-    .section h4 { font-size: 1.3rem; margin: 28px 0 16px 0; color: var(--primary); }
-    .section h5 { font-size: 1.1rem; margin: 20px 0 10px 0; color: var(--secondary); }
-    .info-box, .pro-tip, .common-pitfall, .math-note { padding: 18px; margin: 24px 0; border-radius: 0 var(--radius) var(--radius) 0; position: relative; }
-    .info-box { border-left: 5px solid var(--primary); background: rgba(238,107,79,0.05); }
-    .pro-tip { border-left: 5px solid var(--success); background: rgba(42,157,143,0.05); }
-    .common-pitfall { border-left: 5px solid var(--danger); background: rgba(231,111,81,0.05); }
-    .math-note { border-left: 5px solid var(--warning); background: rgba(233,196,106,0.05); }
-    .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin: 24px 0; }
-    .concept-card { background: var(--panel2); padding: 22px; border-radius: var(--radius); border: 1px solid var(--border); transition: transform 0.1s ease; }
-    .detailed-table { width: 100%; border-collapse: collapse; border-radius: 12px; border: 1px solid var(--border); background: var(--panel2); margin: 20px 0; font-size: 0.9rem; }
-    .detailed-table th, .detailed-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; }
-    .detailed-table th { background: rgba(238,107,79,0.1); font-weight: 600; }
-    .code-container { position: relative; margin: 24px 0; }
-    .code-block { background: var(--code-bg); padding: 20px; border-radius: var(--radius); font-family: var(--mono); font-size: 13px; overflow-x: auto; border: 1px solid var(--border); color: var(--code-text); }
-    .copy-btn { position: absolute; top: 12px; right: 12px; background: var(--primary); color: white; border: none; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; z-index: 10; transition: 0.1s; }
-    .copy-btn:hover { opacity: 0.9; }
-    .math-equation { text-align: center; margin: 20px 0; font-size: 1.2rem; background: var(--panel2); padding: 12px; border-radius: 12px; }
-    footer { text-align: center; margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--border); color: var(--muted); }
-    ul, ol { margin-left: 1.6rem; margin-bottom: 1rem; }
-    li { margin: 6px 0; }
-    .parameter-highlight { background: rgba(238,107,79,0.2); padding: 2px 6px; border-radius: 6px; font-family: var(--mono); font-size: 0.9rem; }
-    
-    /* Tabs styling */
-    .tabs-container {
-      margin: 20px 0 10px;
-      border-bottom: 1px solid var(--border);
-    }
-    .tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .tab-button {
-      background: transparent;
-      border: none;
-      padding: 12px 24px;
-      font-size: 1rem;
-      font-weight: 600;
-      color: var(--muted);
-      cursor: pointer;
-      border-radius: 12px 12px 0 0;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-    .tab-button.active {
-      background: var(--tab-bg);
-      color: var(--primary);
-      border-bottom: 2px solid var(--primary);
-    }
-    .tab-button:hover:not(.active) {
-      background: var(--tab-hover);
-      color: var(--text);
-    }
-    .tab-content {
-      display: none;
-      padding: 20px 0 10px;
-      animation: fadeIn 0.2s ease;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Module 10: Simple Neural Network | From Logistic Regression to Deep Learning</title>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script" async></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.2s ease, border-color 0.2s ease;
+        }
+
+        :root {
+            --bg-body: #f8f9fc;
+            --bg-card: #ffffff;
+            --text-primary: #1e2a3e;
+            --text-secondary: #2c3e50;
+            --border: #e2e8f0;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --code-bg: #f1f5f9;
+            --shadow: 0 10px 25px -5px rgba(0,0,0,0.05), 0 8px 10px -6px rgba(0,0,0,0.02);
+            --diagram-line: #94a3b8;
+            --diagram-node: #3b82f6;
+            --diagram-text: #1e293b;
+        }
+
+        body.dark {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-primary: #e2e8f0;
+            --text-secondary: #cbd5e1;
+            --border: #334155;
+            --accent: #60a5fa;
+            --accent-hover: #3b82f6;
+            --code-bg: #0f172a;
+            --diagram-line: #64748b;
+            --diagram-node: #60a5fa;
+            --diagram-text: #f1f5f9;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-primary);
+            line-height: 1.5;
+            padding: 1.5rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 1.2rem;
+            right: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 60px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+            box-shadow: var(--shadow);
+            color: var(--text-primary);
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            margin: 1.5rem 0 1rem 0;
+            border-left: 5px solid var(--accent);
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 1rem 0 0.5rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 1.5rem;
+        }
+
+        canvas {
+            background: var(--bg-card);
+            border-radius: 0.8rem;
+            width: 100%;
+            height: auto;
+            border: 1px solid var(--border);
+        }
+
+        .interactive-panel, .architecture-details {
+            background: var(--code-bg);
+            border-radius: 1rem;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .result-badge {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            font-family: monospace;
+            font-size: 1.1rem;
+            border: 1px solid var(--border);
+        }
+
+        button {
+            background: var(--accent);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.6rem;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        th {
+            background: var(--code-bg);
+        }
+
+        .activation-example {
+            background: var(--code-bg);
+            border-radius: 1rem;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .model-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .model-tag {
+            background: var(--accent);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+        }
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+    </style>
 </head>
-<body data-theme="night">
-<div class="theme-toggle-container"><button class="theme-toggle" id="themeToggle"><span class="label">Night Mode</span></button></div>
+<body>
 <div class="container">
-  <header>
-    <h1>🔥 Module 10: PyTorch – The Ultimate Deep Dive</h1>
-    <h2>Linear Regression & Logistic Regression → Neural Networks (Tabbed Section)</h2>
-    <div class="badge"><i class="fab fa-pytorch"></i> Tensors • Autograd • Optimizers • Loss Functions • DataLoaders • GPU • Schedulers • Weight Init • Early Stopping • Neural Nets</div>
-    <p><strong>📌 Objective:</strong> Master PyTorch from the ground up. Understand <em>every</em> hyperparameter, internal mechanism, and best practice for building linear and logistic regression models — the foundation for all deep learning.</p>
-  </header>
+    <div class="theme-toggle" id="themeToggle" aria-label="Switch between dark and light mode">🌓 Dark/Light</div>
+    
+    <h1>🧠 Module 10: Simple Neural Network</h1>
+    <p><em>From Logistic Regression to Deep Learning – a complete interactive guide</em></p>
+    
+    <!-- Introduction section -->
+    <div class="card">
+        <h2>📖 Introduction: Neural Networks = Logistic Regression, but More Powerful</h2>
+        <p><strong>Logistic regression</strong> is one of the most fundamental classification algorithms. It takes a linear combination of inputs, passes it through a <strong>sigmoid function</strong>, and outputs a probability:</p>
+        <p class="inline-math" style="text-align:center; font-size:1.1rem;">
+            \[
+            \hat{y} = \sigma(w_1 x_1 + w_2 x_2 + \dots + w_n x_n + b) = \frac{1}{1 + e^{-(w_1 x_1 + \dots + b)}}
+            \]
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 1.5rem 0;">
+            <div style="flex: 1; min-width: 200px;">
+                <canvas id="sigmoidCanvasIntro" width="400" height="250" style="width:100%; height:auto; max-width:400px; background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border);"></canvas>
+                <p style="text-align:center; font-size:0.85rem; margin-top: 0.5rem;">Sigmoid function: maps any real number \(z\) to a probability between 0 and 1.</p>
+            </div>
+            <div style="flex: 1;">
+                <p><strong>A single neuron is exactly a logistic regression unit!</strong></p>
+                <ul>
+                    <li>Weights \(w_i\) → coefficients</li>
+                    <li>Bias \(b\) → intercept</li>
+                    <li>Sigmoid activation → probability output</li>
+                </ul>
+                <p>🧠 <strong>Key insight:</strong> If you understand logistic regression, you already understand a single neuron. A neural network simply <strong>stacks many such units</strong> (neurons) in layers, allowing it to learn much more complex, non‑linear patterns.</p>
+            </div>
+        </div>
+        <h3>📊 Logistic Regression vs. A Simple Neural Network</h3>
+        <table style="width:100%; margin: 1rem 0;">
+            <thead><tr><th>Aspect</th><th>Logistic Regression</th><th>Simple Neural Network (1 hidden layer)</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Structure</strong></td><td>Single neuron (input → sigmoid → output)</td><td>Input → Hidden layer (multiple neurons) → Output neuron</td></tr>
+                <tr><td><strong>Number of parameters</strong></td><td>\(n\) weights + 1 bias</td><td>\(n \times H\) (input→hidden) + \(H\) (hidden biases) + \(H\) (hidden→output) + 1 (output bias)</td></tr>
+                <tr><td><strong>Decision boundary</strong></td><td>Linear (straight line / hyperplane)</td><td>Non‑linear (can learn curves, circles, complex shapes)</td></tr>
+                <tr><td><strong>Activation in hidden layer</strong></td><td>— (no hidden layer)</td><td>Usually ReLU, Tanh, etc. → introduces non‑linearity</td></tr>
+                <tr><td><strong>When to use</strong></td><td>Small data, linearly separable problems, interpretability needed</td><td>Large data, complex patterns (images, text, audio), when linear models underperform</td></tr>
+            </tbody>
+        </table>
+        <h3>🏗️ From One Neuron to a Network</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center; margin: 1rem 0;">
+            <div style="text-align: center;">
+                <canvas id="singleNeuronDiagramIntro" width="250" height="150" style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border);"></canvas>
+                <p><strong>Logistic Regression</strong><br>(1 neuron, sigmoid output)</p>
+            </div>
+            <div style="text-align: center;">
+                <canvas id="simpleNetworkDiagramIntro" width="250" height="150" style="background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border);"></canvas>
+                <p><strong>Simple Neural Network</strong><br>(hidden layer + output)</p>
+            </div>
+        </div>
+        <p><strong>💡 Bottom line:</strong> A neural network is <em>not</em> magic – it is a natural extension of logistic regression. By adding hidden layers and non‑linear activations, we give the model the ability to learn features automatically and solve much harder problems. The core mathematics (weighted sum + activation + gradient descent) remains the same.</p>
+    </div>
 
-  <!-- ================= PART 1: INTRODUCTION TO PYTORCH (EXPANDED) ================= -->
-<div class="panel section">
-  <h3><i class="fab fa-pytorch"></i> 1. Introduction to PyTorch – Why It Dominates Deep Learning</h3>
-  <p><strong>PyTorch</strong> is an open‑source machine learning framework that accelerates the path from research prototyping to production deployment. Unlike static graph frameworks, PyTorch uses <strong>dynamic computation graphs</strong> (define‑by‑run), making it incredibly intuitive for Python developers. It is built around two core features: <strong>tensors</strong> (GPU‑accelerated arrays) and <strong>automatic differentiation</strong> (autograd).</p>
+    <div class="card">
+        <h2>🎯 Learning Objectives</h2>
+        <ul>
+            <li>Understand that neural networks generalize logistic regression</li>
+            <li>Identify full architecture: weights, biases, activation functions per layer</li>
+            <li>Perform forward pass computations manually</li>
+            <li>Know when to use (and not use) neural networks</li>
+            <li>Get an overview of deep learning models</li>
+        </ul>
+    </div>
 
-  <div class="info-box">
-    <strong>🎯 Why PyTorch?</strong><br>
-    • Dynamic graphs – ideal for variable‑length sequences (NLP, time series).<br>
-    • Pythonic & easy to debug – you can use `pdb` or `print` inside the forward pass.<br>
-    • Seamless GPU acceleration – move tensors to GPU with `.cuda()` or `.to(device)`.<br>
-    • Rich ecosystem – HuggingFace, PyTorch Lightning, TorchVision, TorchAudio.<br>
-    • Industry & research standard – used by OpenAI, Meta, Tesla, and thousands of startups.
-  </div>
+    <div class="card">
+        <h2>✅ When Should You Use Neural Networks?</h2>
+        <p>Neural networks are powerful but not always the right tool. This decision guide helps you choose.</p>
+        
+        <h3>📊 Neural Networks vs. Traditional Machine Learning</h3>
+        <table style="width:100%; margin:1rem 0;">
+            <thead><tr><th>Aspect</th><th>Neural Networks (Deep Learning)</th><th>Traditional ML (Linear/RF/XGBoost)</th></tr></thead>
+            <tbody>
+                <tr><td><strong>Data required</strong></td><td>Typically >10,000 samples, benefits from millions</td><td>Works with small to medium data (hundreds to thousands)</td></tr>
+                <tr><td><strong>Feature engineering</strong></td><td>Automatic feature learning from raw data</td><td>Manual feature engineering often required</td></tr>
+                <tr><td><strong>Interpretability</strong></td><td>Low (black box), harder to explain</td><td>High (feature importance, coefficients, trees)</td></tr>
+                <tr><td><strong>Training time</strong></td><td>Long (hours to weeks), requires GPU often</td><td>Fast (seconds to minutes) on CPU</td></tr>
+                <tr><td><strong>Inference speed</strong></td><td>Fast (milliseconds) but can be heavy for large models</td><td>Very fast, lightweight</td></tr>
+                <tr><td><strong>Performance on structured/tabular data</strong></td><td>Good but often not better than gradient boosting</td><td>Excellent (XGBoost, Random Forest dominate)</td></tr>
+                <tr><td><strong>Performance on unstructured data (images, audio, text)</strong></td><td>State‑of‑the‑art (CNNs, Transformers)</td><td>Poor (requires deep features)</td></tr>
+            </tbody>
+        </table>
+        <h3>🎯 Specific Scenarios: When to Reach for Neural Networks</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin: 1rem 0;">
+            <div style="flex: 1; min-width: 200px;">
+                <h4 style="color: #10b981;">✅ Good candidates</h4>
+                <ul>
+                    <li>Image classification / object detection</li><li>Speech recognition, audio processing</li><li>Natural language processing (translation, sentiment, chatbots)</li><li>Time series forecasting with long dependencies (LSTM, Transformers)</li><li>Recommender systems (collaborative filtering with embeddings)</li><li>Games and reinforcement learning</li><li>When you have >100k labeled examples</li>
+                </ul>
+            </div>
+            <div style="flex: 1; min-width: 200px;">
+                <h4 style="color: #ef4444;">❌ Avoid (or try simpler models first)</h4>
+                <ul>
+                    <li>Small datasets (< 1,000 samples) → overfitting risk</li><li>Tabular data with well‑engineered features → XGBoost often beats NNs</li><li>Need for high interpretability (medical, finance, legal)</li><li>Limited computational resources (no GPU, edge devices with low power)</li><li>Linear or nearly linear relationships → logistic/linear regression is enough</li><li>When you need a quick baseline or fast iteration</li>
+                </ul>
+            </div>
+        </div>
+        <h3>📈 Data Size & Problem Complexity Guide</h3>
+        <table style="width:100%; margin:1rem 0;">
+            <thead><tr><th>Data size</th><th>Problem complexity</th><th>Recommended model</th></tr></thead>
+            <tbody>
+                <tr><td>< 1,000 samples</td><td>Low to medium</td><td>Linear regression, k‑NN, decision tree, SVM (simple kernel)</td></tr>
+                <tr><td>1,000 – 10,000</td><td>Medium</td><td>Random Forest, XGBoost, regularized linear models</td></tr>
+                <tr><td>10,000 – 100,000</td><td>High</td><td>Neural network (shallow or small deep net), or ensemble</td></tr>
+                <tr><td>> 100,000</td><td>Very high / unstructured</td><td>Deep neural network (CNN, RNN, Transformer, ResNet)</td></tr>
+            </tbody>
+        </table>
+        <p><em>Tip: Always start simple (logistic regression / random forest) as a baseline. Add neural network complexity only if the baseline underperforms and you have enough data.</em></p>
+        <h3>📊 Typical Performance by Model Type (Illustrative)</h3>
+        <canvas id="performanceChartCanvas" width="600" height="250" style="width:100%; height:auto; max-width:600px; display:block; margin:0 auto; background: var(--bg-card); border-radius:12px; border:1px solid var(--border);"></canvas>
+        <p style="text-align:center; font-size:0.8rem;">Higher bars = better performance for that data type. Neural networks excel on unstructured data.</p>
+    </div>
 
-  <h4>🔹 Tensors – The Building Blocks</h4>
-  <p>Tensors are multi‑dimensional arrays that can run on CPU or GPU. They are similar to NumPy arrays but with additional capabilities: automatic differentiation and GPU support.</p>
+    <div class="card">
+        <h2>📐 Our Simple Network: 2‑3‑1 Architecture</h2>
+        <p>Below is the full specification – weights, biases, and activation functions for every layer.</p>
+        <div class="architecture-details">
+            <h3>🔹 Input Layer</h3><p>2 neurons: \(x_1, x_2\) — just passes data forward.</p>
+            <h3>🔹 Hidden Layer (3 neurons)</h3>
+            <p><strong>Activation function: ReLU</strong> \( \text{ReLU}(z) = \max(0, z) \)</p>
+            <table><thead><tr><th>Neuron</th><th>Weights (\(w_1, w_2\))</th><th>Bias</th></tr></thead><tbody><tr><td>\(h_1\)</td><td>[0.2, 0.8]</td><td>0.1</td></tr><tr><td>\(h_2\)</td><td>[0.6, 0.1]</td><td>0.2</td></tr><tr><td>\(h_3\)</td><td>[0.5, 0.3]</td><td>0.0</td></tr></tbody></table>
+            <p>\(z_{h_j} = w_{j1}x_1 + w_{j2}x_2 + b_j\), then \(h_j = \text{ReLU}(z_{h_j})\).</p>
+            <h3>🔹 Output Layer (1 neuron)</h3>
+            <p><strong>Activation function: Sigmoid</strong> \( \sigma(z) = \frac{1}{1+e^{-z}} \) (binary classification)</p>
+            <table><thead><tr><th>Weights from hidden (\(w_{out,1}, w_{out,2}, w_{out,3}\))</th><th>Bias</th></tr></thead><tbody><tr><td>[0.4, 0.9, 0.2]</td><td>0.3</td></tr></tbody></table>
+            <p>\(z_{out} = 0.4h_1 + 0.9h_2 + 0.2h_3 + 0.3\), then \(\hat{y} = \sigma(z_{out})\).</p>
+        </div>
+        <canvas id="networkCanvas" width="800" height="300" style="width:100%; height:auto; max-width:800px; display:block; margin:1rem auto 0;"></canvas>
+        <p class="inline-math" style="text-align:center;">\( \text{Input} \xrightarrow{\text{weights + bias}} \text{Hidden (ReLU)} \xrightarrow{\text{weights + bias}} \text{Output (Sigmoid)} \)</p>
+    </div>
 
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#tensorBasics">Copy</button>
-  <pre class="code-block" id="tensorBasics"><code class="language-python">import torch
-import numpy as np
+    <div class="card">
+        <h2>🧬 Inside a Neuron: Logistic Regression Unit</h2>
+        <div class="grid-2col">
+            <div><p>A single neuron computes: \( z = \sum w_i x_i + b \) then applies an activation \( f(z) \).</p><ul><li>Weights (\(w\)) = coefficients in logistic regression</li><li>Bias (\(b\)) = intercept term</li><li>If activation is sigmoid → exactly logistic regression!</li></ul></div>
+            <div><canvas id="neuronCanvas" width="400" height="220" style="width:100%; height:auto; max-width:400px; display:block; margin:0 auto;"></canvas></div>
+        </div>
+    </div>
 
-# Create tensors from lists or NumPy
-scalar = torch.tensor(3.14)                # scalar (0‑D)
-vector = torch.tensor([1, 2, 3])           # 1‑D
-matrix = torch.tensor([[1, 2], [3, 4]])    # 2‑D
-tensor_3d = torch.randn(2, 3, 4)           # random normal, shape (2,3,4)
+    <div class="card">
+        <h2>⚡ Activation Functions: From Logistic to Deep Learning</h2>
+        <p>Different activations serve different purposes. The table below shows the most important ones.</p>
+        <h3>🔹 Sigmoid (Logistic)</h3>
+        <div class="grid-2col"><div><p><strong>Formula:</strong> \( \sigma(z) = \frac{1}{1+e^{-z}} \)<br><strong>Range:</strong> (0,1)<br><strong>Use:</strong> Binary output layer.</p></div><div class="activation-example"><strong>Example:</strong> \( z=2.0 \) → \( \sigma \approx 0.8808 \)</div></div>
+        <h3>🔹 Tanh</h3>
+        <div class="grid-2col"><div><p><strong>Formula:</strong> \( \tanh(z) = \frac{e^{z}-e^{-z}}{e^{z}+e^{-z}} \)<br><strong>Range:</strong> (-1,1)<br><strong>Use:</strong> Hidden layers (zero-centered).</p></div><div class="activation-example"><strong>Example:</strong> \( z=1.0 \) → \( \tanh \approx 0.7616 \)</div></div>
+        <h3>🔹 ReLU</h3>
+        <div class="grid-2col"><div><p><strong>Formula:</strong> \( \max(0,z) \)<br><strong>Range:</strong> [0,∞)<br><strong>Use:</strong> Default for hidden layers.</p></div><div class="activation-example"><strong>Example:</strong> \( z=-0.5 \) → 0 ; \( z=3.2 \) → 3.2</div></div>
+        <h3>🔹 Softmax (Multi‑class)</h3>
+        <div class="grid-2col"><div><p><strong>Formula:</strong> \( \frac{e^{z_i}}{\sum_j e^{z_j}} \)<br><strong>Range:</strong> (0,1) sums to 1<br><strong>Use:</strong> Multi‑class output.</p></div><div class="activation-example"><strong>Example:</strong> \( z=[2.0,1.0,0.1] \) → probs ≈ [0.659, 0.242, 0.099]</div></div>
+    </div>
 
-# From NumPy
-np_arr = np.array([5, 6, 7])
-pt_from_np = torch.from_numpy(np_arr)      # shares memory (zero copy)
+    <div class="card">
+        <h2>⚡ Interactive Forward Pass</h2>
+        <p>Adjust inputs \(x_1, x_2\) to see how the network computes hidden activations (ReLU) and final output (sigmoid).</p>
+        <div class="grid-2col">
+            <div>
+                <div class="slider-group">
+                    <label>📥 Input \(x_1\): <span id="x1_val">1.5</span></label>
+                    <input type="range" id="x1_slider" min="-2" max="3" step="0.05" value="1.5" aria-label="Input x1">
+                </div>
+                <div class="slider-group">
+                    <label>📥 Input \(x_2\): <span id="x2_val">0.5</span></label>
+                    <input type="range" id="x2_slider" min="-2" max="3" step="0.05" value="0.5" aria-label="Input x2">
+                </div>
+                <div class="button-group">
+                    <button id="randomBtn">🎲 Random inputs</button>
+                    <button id="resetBtn">↺ Reset</button>
+                </div>
+            </div>
+            <div>
+                <div class="result-badge">
+                    <strong>Hidden layer (ReLU)</strong><br>
+                    \(h_1 =\) <span id="h1_out">0.80</span> &nbsp; | &nbsp;
+                    \(h_2 =\) <span id="h2_out">1.15</span> &nbsp; | &nbsp;
+                    \(h_3 =\) <span id="h3_out">0.90</span>
+                </div>
+                <div class="result-badge">
+                    <strong>Output layer (Sigmoid)</strong><br>
+                    \(z_{\text{out}} =\) <span id="z2_out">1.835</span> &nbsp; → &nbsp;
+                    \(\hat{y} = \sigma(z) =\) <span id="y_pred">0.862</span>
+                    <br><small>Probability for class 1: <span id="prob_pct">86.2</span>%</small>
+                </div>
+            </div>
+        </div>
+    </div>
 
-# Useful tensor creation functions
-zeros = torch.zeros(3, 4)                  # all zeros
-ones = torch.ones(2, 2)                    # all ones
-eye = torch.eye(3)                         # identity matrix
-arange = torch.arange(0, 10, step=2)       # [0,2,4,6,8]
-linspace = torch.linspace(0, 1, steps=5)   # [0, 0.25, 0.5, 0.75, 1]
+    <div class="card">
+        <h2>🔁 How It Learns (Backpropagation)</h2>
+        <ol>
+            <li><strong>Forward pass</strong> – compute prediction \(\hat{y}\).</li>
+            <li><strong>Loss calculation</strong> – binary cross‑entropy \( \mathcal{L} = -[y\log\hat{y} + (1-y)\log(1-\hat{y})] \).</li>
+            <li><strong>Backward pass</strong> – compute gradients of loss w.r.t every weight.</li>
+            <li><strong>Update</strong> – \( w \leftarrow w - \eta \frac{\partial \mathcal{L}}{\partial w} \) (gradient descent).</li>
+        </ol>
+    </div>
 
-print(f"Shape: {matrix.shape}, dtype: {matrix.dtype}, device: {matrix.device}")
-</code></pre></div>
+    <div class="card">
+        <h2>🚀 Deep Learning: Scaling Up</h2>
+        <p>A <strong>deep neural network</strong> is simply a neural network with <strong>many hidden layers</strong> (typically > 2). Deep learning has revolutionised AI by automatically learning hierarchical features.</p>
+        <h3>🏞️ For Images (Computer Vision)</h3>
+        <div class="model-list"><span class="model-tag">CNN (Convolutional Neural Network)</span><span class="model-tag">ResNet</span><span class="model-tag">VGG</span><span class="model-tag">Inception</span><span class="model-tag">EfficientNet</span><span class="model-tag">YOLO (object detection)</span></div>
+        <h3>📝 For Text & Sequences (NLP)</h3>
+        <div class="model-list"><span class="model-tag">RNN (Recurrent NN)</span><span class="model-tag">LSTM</span><span class="model-tag">GRU</span><span class="model-tag">Transformer</span><span class="model-tag">BERT</span><span class="model-tag">GPT</span><span class="model-tag">RoBERTa</span><span class="model-tag">T5</span></div>
+        <h3>🎨 Generative Models</h3>
+        <div class="model-list"><span class="model-tag">GAN (Generative Adversarial Network)</span><span class="model-tag">VAE (Variational Autoencoder)</span><span class="model-tag">Diffusion Models</span><span class="model-tag">NeRF (3D scenes)</span></div>
+        <h3>⚙️ Other Important Architectures</h3>
+        <div class="model-list"><span class="model-tag">MLP (Multilayer Perceptron)</span><span class="model-tag">Autoencoders</span><span class="model-tag">Siamese Networks</span><span class="model-tag">GNN (Graph Neural Networks)</span></div>
+        <p><em>All these models are built upon the same basic principles: neurons, weights, activations, and backpropagation – just arranged in clever ways.</em></p>
+    </div>
 
-  <h5>Tensor Operations – Broadcasting, Reshaping, and Indexing</h5>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#tensorOps">Copy</button>
-  <pre class="code-block" id="tensorOps"><code class="language-python">a = torch.tensor([1, 2, 3])
-b = torch.tensor([4, 5, 6])
+    <div class="card">
+        <h2>📋 Key Concepts Summary</h2>
+        <table>
+            <tr><th>Term</th><th>Description</th></tr>
+            <tr><td>Neuron</td><td>\( \sum w_i x_i + b \) + activation (like logistic regression unit)</td></tr>
+            <tr><td>Weight / Bias</td><td>Parameters learned during training</td></tr>
+            <tr><td>Activation function</td><td>Introduces non‑linearity (Sigmoid, ReLU, Tanh, Softmax)</td></tr>
+            <tr><td>Hidden layer</td><td>Intermediate layer that learns features</td></tr>
+            <tr><td>Deep Learning</td><td>Neural networks with many hidden layers</td></tr>
+        </table>
+    </div>
 
-# Element‑wise operations
-print(a + b)          # tensor([5,7,9])
-print(a * b)          # element‑wise multiplication
-print(a @ b)          # dot product (1*4 + 2*5 + 3*6 = 32)
-
-# Broadcasting
-c = torch.tensor([[1], [2], [3]])   # shape (3,1)
-d = torch.tensor([10, 20, 30])      # shape (3)
-result = c + d                      # broadcasts to (3,3)
-
-# Reshaping
-x = torch.arange(12)
-x_reshaped = x.view(3, 4)           # view – shared memory
-x_reshaped_2 = x.reshape(2, 6)      # reshape – safer, copies if needed
-x_flattened = x.flatten()
-
-# Indexing (same as NumPy)
-mat = torch.randn(4, 5)
-first_row = mat[0, :]
-last_col = mat[:, -1]
-condition = mat > 0
-positive_values = mat[condition]
-</code></pre></div>
-
-  <h4>🔹 Automatic Differentiation (Autograd) – The Heart of PyTorch</h4>
-  <p>Autograd automatically computes gradients of a scalar value (like loss) with respect to any tensor that has <code>requires_grad=True</code>. This eliminates manual derivation – you only define the forward pass.</p>
-
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#autogradBasics">Copy</button>
-  <pre class="code-block" id="autogradBasics"><code class="language-python"># Simple example: y = x^2, derivative dy/dx = 2x
-x = torch.tensor(3.0, requires_grad=True)
-y = x ** 2
-y.backward()          # computes gradient
-print(x.grad)         # tensor(6.0) -> 2*3 = 6
-
-# Vector example
-w = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
-x = torch.tensor([4.0, 5.0, 6.0])
-loss = (w * x).sum()   # loss = 1*4 + 2*5 + 3*6 = 32
-loss.backward()
-print(w.grad)          # tensor([4., 5., 6.]) → ∂loss/∂w_i = x_i
-
-# Gradient accumulation (important!)
-for _ in range(3):
-    loss = (w * x).sum()
-    loss.backward()    # gradients add to existing .grad
-print(w.grad)          # now [12, 15, 18] because backward called 3 times
-# Always zero gradients between steps: optimizer.zero_grad() or w.grad.zero_()
-</code></pre></div>
-
-  <div class="pro-tip">
-    <strong>⚡ Autograd Mechanics – Under the Hood</strong><br>
-    When you perform operations on tensors with <code>requires_grad=True</code>, PyTorch builds a <strong>directed acyclic graph (DAG)</strong> of operations. Calling <code>.backward()</code> on a scalar traverses this graph backwards, computing gradients using the chain rule. After each backward pass, the graph is freed (unless <code>retain_graph=True</code>). This dynamic graph construction is what makes PyTorch flexible for variable‑length inputs and complex control flows.
-  </div>
-
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#autogradAdvanced">Copy</button>
-  <pre class="code-block" id="autogradAdvanced"><code class="language-python"># Disable gradient tracking for inference or when you don't need gradients
-with torch.no_grad():
-    y = model(x)          # no gradients computed – saves memory and time
-
-# Detach a tensor from the computation graph
-z = y.detach()            # z has same data but requires_grad=False
-
-# Manual gradient modification (e.g., gradient clipping)
-w.grad.data.clamp_(-1, 1) # in‑place gradient clipping
-
-# Custom backward (rare but powerful)
-class MyReLU(torch.autograd.Function):
-    @staticmethod
-    def forward(ctx, x):
-        ctx.save_for_backward(x)
-        return x.clamp(min=0)
-    @staticmethod
-    def backward(ctx, grad_output):
-        x, = ctx.saved_tensors
-        grad_input = grad_output.clone()
-        grad_input[x < 0] = 0
-        return grad_input
-</code></pre></div>
-
-  <h4>🔹 Tensors vs NumPy – Side‑by‑Side Comparison</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#vsNumpy">Copy</button>
-  <pre class="code-block" id="vsNumpy"><code class="language-python">import numpy as np
-import torch
-
-# NumPy (CPU only, no gradients)
-np_arr = np.random.randn(3, 4)
-np_mean = np_arr.mean(axis=1)
-np_sin = np.sin(np_arr)
-
-# PyTorch (CPU/GPU, with gradients)
-pt_arr = torch.randn(3, 4, requires_grad=True)
-pt_mean = pt_arr.mean(dim=1)
-pt_sin = torch.sin(pt_arr)
-
-# Convert between them (zero copy if on CPU and contiguous)
-np_to_pt = torch.from_numpy(np_arr)
-pt_to_np = pt_arr.detach().numpy()   # .detach() to cut graph, then .numpy()
-
-# Performance: GPU tensors are 10‑50× faster for matrix operations
-if torch.cuda.is_available():
-    pt_gpu = pt_arr.cuda()
-    result_gpu = pt_gpu @ pt_gpu.T
-    result_cpu = result_gpu.cpu()
-    print("GPU acceleration works!")
-</code></pre></div>
-
-  <h4>🔹 GPU Acceleration – Device Management</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#gpuCode">Copy</button>
-  <pre class="code-block" id="gpuCode"><code class="language-python"># Best practice: device‑agnostic code
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-print(f"Using device: {device}")
-
-# Move tensors to device
-tensor_cpu = torch.randn(1000, 1000)
-tensor_gpu = tensor_cpu.to(device)       # or .cuda() if device is cuda
-
-# Model must also be moved
-model = MyModel().to(device)
-
-# In training loop:
-for batch_x, batch_y in dataloader:
-    batch_x, batch_y = batch_x.to(device), batch_y.to(device)
-    output = model(batch_x)
-    loss = criterion(output, batch_y)
-    loss.backward()
-    optimizer.step()
-
-# Memory management
-torch.cuda.empty_cache()                 # frees unused cached memory
-torch.cuda.reset_peak_memory_stats()     # reset peak memory stats
-</code></pre></div>
-
-  <div class="info-box">
-    <strong>💡 Common Pitfalls with GPU:</strong>
-    <ul>
-      <li>Moving data to GPU inside the innermost loop (expensive). Move once per batch.</li>
-      <li>Mixing CPU and GPU tensors – you'll get a runtime error. Always keep them on the same device.</li>
-      <li>Not using <code>pin_memory=True</code> in DataLoader – this speeds up CPU→GPU transfers.</li>
-    </ul>
-  </div>
-
-  <h4>🔹 PyTorch vs TensorFlow vs JAX vs scikit‑learn</h4>
-  <table class="detailed-table">
-    <thead><tr><th>Library</th><th>Strengths</th><th>Limitations vs PyTorch</th></tr></thead>
-    <tbody>
-      <tr><td><strong>PyTorch</strong></td><td>Dynamic graphs, Pythonic, great debugging, rich ecosystem (HuggingFace, Lightning).</td><td>—</td></tr>
-      <tr><td><strong>TensorFlow 2.x</strong></td><td>Production deployment (TF Serving), Keras simplicity, wider industry adoption.</td><td>Static graph legacy, less intuitive for custom layers, eager mode still slower for some ops.</td></tr>
-      <tr><td><strong>JAX</strong></td><td>Functional, XLA compilation, extremely fast for numerical computing.</td><td>Steep learning curve, less mature for deep learning, no built‑in modules like nn.Module.</td></tr>
-      <tr><td><strong>scikit‑learn</strong></td><td>Great for classical ML, clean API, extensive preprocessing.</td><td>No GPU, no autograd, cannot build deep neural networks.</td></tr>
-    </tbody>
-  </table>
-
-  <div class="pro-tip">
-    <strong>📌 Integration with scikit‑learn:</strong> You can freely use <code>sklearn.preprocessing</code> (StandardScaler, PCA) before feeding data into PyTorch. You can also use <code>sklearn.metrics</code> (accuracy, f1, roc_auc) on model predictions. For hyperparameter tuning, wrap your PyTorch model as a scikit‑learn estimator using <code>sklearn.base.BaseEstimator</code> and then use <code>GridSearchCV</code>.
-  </div>
-
-  <h4>🔹 Real‑World Examples: What Can You Build with PyTorch?</h4>
-  <div class="concept-grid">
-    <div class="concept-card"><i class="fas fa-image"></i> <strong>Computer Vision</strong><br>Image classification (ResNet, EfficientNet), object detection (YOLO, Faster R‑CNN), segmentation (UNet, Mask R‑CNN) using TorchVision.</div>
-    <div class="concept-card"><i class="fas fa-language"></i> <strong>Natural Language Processing</strong><br>Transformers (BERT, GPT), text classification, machine translation, sentiment analysis using HuggingFace Transformers.</div>
-    <div class="concept-card"><i class="fas fa-robot"></i> <strong>Reinforcement Learning</strong><br>Deep Q‑Networks (DQN), Proximal Policy Optimization (PPO) for game AI and robotics.</div>
-    <div class="concept-card"><i class="fas fa-chart-line"></i> <strong>Time Series & Forecasting</strong><br>LSTMs, GRUs, Temporal Convolutional Networks (TCNs) for stock prediction, weather forecasting.</div>
-  </div>
-
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#simpleLinear">Copy</button>
-  <pre class="code-block" id="simpleLinear"><code class="language-python"># Minimal complete example: linear regression with autograd (no nn.Module)
-# Generate synthetic data
-X = torch.randn(100, 1, requires_grad=False)
-true_w, true_b = 2.0, 1.0
-y = true_w * X + true_b + 0.1 * torch.randn(100, 1)
-
-# Initialize parameters
-w = torch.randn(1, 1, requires_grad=True)
-b = torch.zeros(1, requires_grad=True)
-
-# Training loop
-lr = 0.01
-epochs = 100
-for epoch in range(epochs):
-    y_pred = X @ w + b
-    loss = ((y_pred - y) ** 2).mean()
-    loss.backward()
-    with torch.no_grad():
-        w -= lr * w.grad
-        b -= lr * b.grad
-        w.grad.zero_()
-        b.grad.zero_()
-    if (epoch+1) % 20 == 0:
-        print(f"Epoch {epoch+1}: loss = {loss.item():.4f}, w = {w.item():.2f}, b = {b.item():.2f}")
-
-print(f"True w: {true_w}, learned w: {w.item():.2f}")
-print(f"True b: {true_b}, learned b: {b.item():.2f}")
-</code></pre></div>
-
-  <div class="common-pitfall">
-    <strong>⚠️ Critical Mistakes to Avoid</strong>
-    <ul>
-      <li><strong>Forgetting `.zero_grad()`</strong> – gradients accumulate, causing erratic updates.</li>
-      <li><strong>Not using `.detach()` when converting to NumPy</strong> – you cannot call `.numpy()` on a tensor that requires gradients.</li>
-      <li><strong>Mixing tensor operations with in‑place modifications</strong> – in‑place ops (e.g., `x.add_(5)`) can break the computation graph.</li>
-      <li><strong>Calling `.backward()` on non‑scalar tensors</strong> – you need to pass a gradient argument or reduce to scalar first.</li>
-    </ul>
-  </div>
-
-  <footer class="section-footer" style="margin-top: 20px; font-size: 0.85rem; color: var(--muted); text-align: center;">
-    <i class="fab fa-pytorch"></i> PyTorch Introduction – Complete with tensors, autograd, GPU, and comparisons.
-  </footer>
+    <footer>Module 10: Simple Neural Network – From Logistic Regression to Deep Learning | Interactive & Complete</footer>
 </div>
 
- <!-- ================= PART 2: LINEAR REGRESSION – FULL PARAMETER EXPLANATION (EXPANDED) ================= -->
-<div class="panel section">
-  <h3><i class="fas fa-chart-line"></i> 2. Linear Regression – Full Parameter Explanation</h3>
-  <p>We'll use the <strong>California Housing dataset</strong> (20,640 samples, 8 features) to predict house prices. Every component of the pipeline is dissected: data preparation, DataLoader parameters, model definition, loss functions, optimizers, learning rate schedulers, training loop hyperparameters, early stopping, and evaluation.</p>
-
-  <div class="info-box">
-    <strong>📐 Linear Regression Formula</strong><br>
-    \( \hat{y} = \mathbf{X}\mathbf{w} + b \) where \( \mathbf{w} \) are weights and \( b \) is bias. The goal is to minimize Mean Squared Error (MSE): 
-    \[ \text{MSE} = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{y}_i)^2 \]
-  </div>
-
-  <h4>📊 Data Preparation & DataLoader Parameters</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#lrPrepFull">Copy</button>
-  <pre class="code-block" id="lrPrepFull"><code class="language-python">from sklearn.datasets import fetch_california_housing
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-import torch
-from torch.utils.data import DataLoader, TensorDataset, random_split
-
-# Load data
-data = fetch_california_housing()
-X, y = data.data, data.target.reshape(-1, 1)  # shape (20640, 8) and (20640, 1)
-
-# Train/test split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-# Standardization – CRITICAL for convergence with gradient descent
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_test = scaler.transform(X_test)
-
-# Convert to PyTorch tensors
-X_train_t = torch.tensor(X_train, dtype=torch.float32)
-y_train_t = torch.tensor(y_train, dtype=torch.float32)
-X_test_t = torch.tensor(X_test, dtype=torch.float32)
-y_test_t = torch.tensor(y_test, dtype=torch.float32)
-
-# Create validation split from training set
-full_train = TensorDataset(X_train_t, y_train_t)
-train_size = int(0.8 * len(full_train))
-val_size = len(full_train) - train_size
-train_dataset, val_dataset = random_split(full_train, [train_size, val_size], 
-                                          generator=torch.Generator().manual_seed(42))
-
-# DataLoader – detailed parameters
-train_loader = DataLoader(
-    train_dataset,
-    batch_size=64,          # samples per batch: larger = smoother gradients, more memory
-    shuffle=True,           # essential to break order dependencies
-    num_workers=4,          # parallel loading (adjust to CPU cores)
-    pin_memory=True,        # speeds up CPU→GPU transfer (if using GPU)
-    drop_last=False,        # keep last incomplete batch (True for certain BatchNorm cases)
-    persistent_workers=True # keep workers alive between epochs (reduces overhead)
-)
-val_loader = DataLoader(val_dataset, batch_size=256, shuffle=False, num_workers=2)
-test_loader = DataLoader(TensorDataset(X_test_t, y_test_t), batch_size=256, shuffle=False)
-
-print(f"Train batches: {len(train_loader)}, Val batches: {len(val_loader)}")
-</code></pre></div>
-
-  <div class="pro-tip">
-    <strong>🔧 DataLoader Parameter Guide</strong><br>
-    • <code>batch_size</code>: 32–256 typical. Small batch → noisy gradients (better generalization), large batch → stable but memory heavy.<br>
-    • <code>num_workers</code>: number of CPU subprocesses. Increase if data loading is bottleneck (watch RAM).<br>
-    • <code>pin_memory</code>: set to True when using GPU – speeds up host-to-device transfer.<br>
-    • <code>drop_last</code>: set True if using BatchNorm and batch size must be constant.
-  </div>
-
-  <h4>📐 Model Definition – Understanding nn.Linear</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#lrModelDefFull">Copy</button>
-  <pre class="code-block" id="lrModelDefFull"><code class="language-python">import torch.nn as nn
-
-class LinearRegressionModel(nn.Module):
-    def __init__(self, input_dim):
-        super().__init__()
-        # nn.Linear applies y = x @ W.T + b
-        self.linear = nn.Linear(input_dim, 1, bias=True)
-        
-        # Optional: custom weight initialization
-        # Default is Kaiming Uniform (for ReLU). For linear regression, Xavier is also fine.
-        nn.init.xavier_uniform_(self.linear.weight)
-        nn.init.zeros_(self.linear.bias)   # bias initialized to zero
-        
-    def forward(self, x):
-        return self.linear(x)
-
-model = LinearRegressionModel(input_dim=X_train.shape[1])
-
-# Inspect parameters
-for name, param in model.named_parameters():
-    print(f"{name}: shape={param.shape}, requires_grad={param.requires_grad}")
-# Output: linear.weight: shape=(1, 8), linear.bias: shape=(1,)
-</code></pre></div>
-
-  <div class="math-note">
-    <strong>🧠 Inside nn.Linear:</strong> The weight matrix shape is <code>(out_features, in_features)</code>. The forward pass computes \( \hat{y} = X \cdot W^T + b \). Gradients for both weights and bias are automatically computed during backpropagation.
-  </div>
-
-  <h4>📉 Loss Functions for Regression – Which One to Choose?</h4>
-  <div class="concept-grid">
-    <div class="concept-card"><strong>MSELoss (L2)</strong><br>\( \frac{1}{n}\sum (y - \hat{y})^2 \)<br>Sensitive to outliers, but smooth gradients.</div>
-    <div class="concept-card"><strong>L1Loss (MAE)</strong><br>\( \frac{1}{n}\sum |y - \hat{y}| \)<br>Robust to outliers, but gradient constant (not zero at minimum).</div>
-    <div class="concept-card"><strong>SmoothL1Loss (Huber)</strong><br>Combines MSE and MAE – less sensitive to outliers than MSE, differentiable everywhere.</div>
-  </div>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#lossExamples">Copy</button>
-  <pre class="code-block" id="lossExamples"><code class="language-python">criterion_mse = nn.MSELoss()           # most common
-criterion_l1 = nn.L1Loss()
-criterion_huber = nn.SmoothL1Loss(beta=1.0)  # beta: threshold for L2→L1 transition
-
-# Example
-pred = torch.tensor([2.0, 3.0])
-target = torch.tensor([1.0, 5.0])
-print(f"MSE: {criterion_mse(pred, target):.2f}")   # (1+4)/2 = 2.5
-print(f"MAE: {criterion_l1(pred, target):.2f}")    # (1+2)/2 = 1.5
-</code></pre></div>
-
-  <h4>⚙️ Optimizers – Detailed Parameters and When to Use</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#optimizersFull">Copy</button>
-  <pre class="code-block" id="optimizersFull"><code class="language-python"># SGD with momentum (classic)
-optimizer_sgd = torch.optim.SGD(model.parameters(), 
-                                lr=0.01,          # learning rate
-                                momentum=0.9,     # accelerates convergence
-                                weight_decay=1e-5, # L2 regularization
-                                nesterov=False)   # use Nesterov accelerated gradient
-
-# Adam (most popular for deep learning)
-optimizer_adam = torch.optim.Adam(model.parameters(),
-                                  lr=0.001,
-                                  betas=(0.9, 0.999),  # decay rates for moment estimates
-                                  eps=1e-8,             # numerical stability
-                                  weight_decay=0)       # Adam's weight decay is different
-
-# AdamW (improved weight decay – recommended)
-optimizer_adamw = torch.optim.AdamW(model.parameters(),
-                                    lr=0.001,
-                                    weight_decay=0.01)   # decoupled weight decay
-
-# RMSprop (good for recurrent nets)
-optimizer_rms = torch.optim.RMSprop(model.parameters(),
-                                    lr=0.001,
-                                    alpha=0.99,          # smoothing constant
-                                    momentum=0.0)
-
-# Parameter explanations:
-# lr: step size – too high: loss diverges; too low: slow convergence.
-# momentum: fraction of previous update to add (0.9 typical).
-# weight_decay: L2 penalty coefficient – increase if overfitting.
-# betas: exponential decay rates for first/second moments (Adam).
-</code></pre></div>
-
-  <div class="pro-tip">
-    <strong>📌 Which Optimizer to Choose?</strong><br>
-    • <strong>Adam/AdamW</strong> – best default for most problems, adaptive learning rates.<br>
-    • <strong>SGD + momentum</strong> – often achieves better generalization, but requires careful LR tuning.<br>
-    • For linear regression, any optimizer works; Adam is safe and fast.
-  </div>
-
-  <h4>📈 Learning Rate Schedulers – Adjust LR During Training</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#schedulersFull">Copy</button>
-  <pre class="code-block" id="schedulersFull"><code class="language-python"># Reduce on plateau – reduces LR when metric stops improving
-scheduler_plateau = torch.optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer, mode='min', factor=0.5, patience=10, verbose=True, min_lr=1e-6
-)
-
-# Step decay – reduce LR by gamma every step_size epochs
-scheduler_step = torch.optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.1)
-
-# Exponential decay – LR = LR * gamma^epoch
-scheduler_exp = torch.optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.95)
-
-# Cosine annealing – cyclically decays LR
-scheduler_cos = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=50, eta_min=1e-6)
-
-# Usage example in training loop:
-# for epoch in range(epochs):
-#     train(...)
-#     val_loss = validate(...)
-#     scheduler_plateau.step(val_loss)   # for ReduceLROnPlateau
-#     # or scheduler_step.step()         # for StepLR
-</code></pre></div>
-
-  <h4>🔄 Complete Training Loop with Early Stopping and Checkpointing</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#trainLoopFull">Copy</button>
-  <pre class="code-block" id="trainLoopFull"><code class="language-python">import copy
-
-# Device configuration
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = LinearRegressionModel(X_train.shape[1]).to(device)
-criterion = nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=1e-5)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=8)
-
-# Early stopping parameters
-epochs = 200
-best_val_loss = float('inf')
-best_model_wts = None
-patience = 15
-patience_counter = 0
-
-for epoch in range(epochs):
-    # ---------- Training ----------
-    model.train()
-    train_loss = 0.0
-    for X_batch, y_batch in train_loader:
-        X_batch, y_batch = X_batch.to(device), y_batch.to(device)
-        
-        optimizer.zero_grad()          # clear previous gradients
-        y_pred = model(X_batch)
-        loss = criterion(y_pred, y_batch)
-        loss.backward()                # compute gradients
-        optimizer.step()               # update parameters
-        
-        train_loss += loss.item() * X_batch.size(0)
-    train_loss /= len(train_loader.dataset)
-    
-    # ---------- Validation ----------
-    model.eval()
-    val_loss = 0.0
-    with torch.no_grad():
-        for X_batch, y_batch in val_loader:
-            X_batch, y_batch = X_batch.to(device), y_batch.to(device)
-            y_pred = model(X_batch)
-            loss = criterion(y_pred, y_batch)
-            val_loss += loss.item() * X_batch.size(0)
-    val_loss /= len(val_loader.dataset)
-    
-    # Learning rate scheduling (based on validation loss)
-    scheduler.step(val_loss)
-    current_lr = optimizer.param_groups[0]['lr']
-    
-    # ---------- Early Stopping & Checkpoint ----------
-    if val_loss < best_val_loss:
-        best_val_loss = val_loss
-        best_model_wts = copy.deepcopy(model.state_dict())
-        patience_counter = 0
-        # Save best model
-        torch.save(best_model_wts, 'best_linear_model.pt')
-    else:
-        patience_counter += 1
-        if patience_counter >= patience:
-            print(f"Early stopping triggered at epoch {epoch+1}")
-            break
-    
-    # ---------- Logging ----------
-    if (epoch+1) % 20 == 0:
-        print(f"Epoch {epoch+1:3d} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | LR: {current_lr:.2e}")
-
-# Load best model
-model.load_state_dict(best_model_wts)
-print(f"Best validation loss: {best_val_loss:.4f}")
-</code></pre></div>
-
-  <h4>📊 Evaluation – Metrics Beyond MSE</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#evalFull">Copy</button>
-  <pre class="code-block" id="evalFull"><code class="language-python">from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
-import numpy as np
-
-model.eval()
-with torch.no_grad():
-    X_test_d = X_test_t.to(device)
-    y_test_d = y_test_t.to(device)
-    y_pred = model(X_test_d).cpu().numpy()
-    y_true = y_test_d.cpu().numpy()
-
-# Regression metrics
-mse = mean_squared_error(y_true, y_pred)
-rmse = np.sqrt(mse)
-mae = mean_absolute_error(y_true, y_pred)
-r2 = r2_score(y_true, y_pred)
-
-print(f"Test Results:")
-print(f"  MSE:  {mse:.4f}")
-print(f"  RMSE: {rmse:.4f}")
-print(f"  MAE:  {mae:.4f}")
-print(f"  R²:   {r2:.4f}")
-
-# Optional: plot residuals (requires matplotlib)
-# residuals = y_true - y_pred
-# import matplotlib.pyplot as plt
-# plt.scatter(y_pred, residuals)
-# plt.axhline(y=0, color='r', linestyle='--')
-# plt.xlabel('Predicted')
-# plt.ylabel('Residuals')
-# plt.title('Residual Plot')
-# plt.show()
-</code></pre></div>
-
-  <div class="info-box">
-    <strong>📈 Interpreting Metrics</strong><br>
-    • <strong>R²</strong> (coefficient of determination): proportion of variance explained. 1.0 is perfect, 0 means model predicts mean.<br>
-    • <strong>RMSE</strong> is in same units as target (house prices). MAE is less sensitive to outliers.<br>
-    • For California Housing, typical R² ~ 0.6–0.7 with linear regression.
-  </div>
-
-  <h4>🎯 Hyperparameter Tuning for Linear Regression</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#hyperTune">Copy</button>
-  <pre class="code-block" id="hyperTune"><code class="language-python"># Simple grid search for learning rate and weight decay
-param_grid = {
-    'lr': [0.1, 0.01, 0.001],
-    'weight_decay': [0, 1e-5, 1e-4],
-    'batch_size': [32, 64, 128]
-}
-
-best_val = float('inf')
-best_params = None
-
-for lr in param_grid['lr']:
-    for wd in param_grid['weight_decay']:
-        for bs in param_grid['batch_size']:
-            # Recreate loaders with new batch size
-            train_loader = DataLoader(train_dataset, batch_size=bs, shuffle=True)
-            val_loader = DataLoader(val_dataset, batch_size=bs*2, shuffle=False)
-            
-            model = LinearRegressionModel(X_train.shape[1]).to(device)
-            optimizer = torch.optim.Adam(model.parameters(), lr=lr, weight_decay=wd)
-            # Quick training for 30 epochs
-            val_loss = quick_train_eval(model, train_loader, val_loader, epochs=30, device=device)
-            if val_loss < best_val:
-                best_val = val_loss
-                best_params = {'lr': lr, 'weight_decay': wd, 'batch_size': bs}
-                print(f"New best: {best_params} -> val_loss={val_loss:.4f}")
-
-print(f"Best parameters: {best_params}")
-</code></pre></div>
-
-  <div class="common-pitfall">
-    <strong>⚠️ Common Mistakes in Linear Regression with PyTorch</strong>
-    <ul>
-      <li><strong>Forgetting to standardize features</strong> – gradient descent converges very slowly without scaling.</li>
-      <li><strong>Using a learning rate that is too high</strong> – loss diverges to NaN.</li>
-      <li><strong>Not shuffling the training data</strong> – the model may learn spurious order patterns.</li>
-      <li><strong>Evaluating on training data only</strong> – always use a separate validation/test set.</li>
-      <li><strong>Calling <code>.backward()</code> multiple times without zeroing gradients</strong> – causes gradient accumulation.</li>
-    </ul>
-  </div>
-
-  <div class="pro-tip">
-    <strong>🚀 Performance Tips</strong><br>
-    • Use <code>torch.set_num_threads(4)</code> to control CPU parallelism.<br>
-    • For large datasets, consider using <code>torch.utils.data.DataLoader</code> with <code>num_workers>0</code>.<br>
-    • Use <code>torch.cuda.amp</code> (automatic mixed precision) if using GPU – reduces memory and speeds up training.
-  </div>
-
-  <footer class="section-footer" style="margin-top: 20px; font-size: 0.85rem; color: var(--muted); text-align: center;">
-    <i class="fas fa-chart-line"></i> Linear Regression – Complete parameter guide with DataLoaders, optimizers, schedulers, early stopping, and evaluation.
-  </footer>
-</div>
-
- <!-- ================= PART 3: LOGISTIC REGRESSION – BINARY CLASSIFICATION DEEP DIVE (EXPANDED) ================= -->
-<div class="panel section">
-  <h3><i class="fas fa-chart-bar"></i> 3. Logistic Regression – Binary Classification Deep Dive</h3>
-  <p>We'll use the <strong>Breast Cancer Wisconsin dataset</strong> (569 samples, 30 features) to classify tumors as malignant (0) or benign (1). Every component of the classification pipeline is explained: data preparation, model with sigmoid, loss functions (BCEWithLogitsLoss), optimizers, handling class imbalance, evaluation metrics, early stopping, and hyperparameter tuning.</p>
-
-  <div class="info-box">
-    <strong>📐 Logistic Regression Formula</strong><br>
-    Logistic regression models the probability of the positive class:
-    \[ P(y=1|x) = \sigma(\mathbf{w}^T\mathbf{x} + b) = \frac{1}{1 + e^{-(\mathbf{w}^T\mathbf{x} + b)}} \]
-    The model outputs logits, which are transformed to probabilities via the sigmoid function. The decision boundary is linear in the feature space.
-  </div>
-
-  <h4>📊 Data Preparation & Train/Val/Test Split</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#logPrepFull">Copy</button>
-  <pre class="code-block" id="logPrepFull"><code class="language-python">from sklearn.datasets import load_breast_cancer
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-import torch
-from torch.utils.data import DataLoader, TensorDataset, random_split
-
-# Load dataset
-data = load_breast_cancer()
-X, y = data.data, data.target.reshape(-1, 1)   # shape (569, 30) and (569, 1)
-print(f"Classes: 0 (malignant) = {sum(y==0)[0]}, 1 (benign) = {sum(y==1)[0]}")
-
-# Train (60%), validation (20%), test (20%)
-X_temp, X_test, y_temp, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-X_train, X_val, y_train, y_val = train_test_split(X_temp, y_temp, test_size=0.25, random_state=42, stratify=y_temp)
-
-# Standardization – crucial for convergence
-scaler = StandardScaler()
-X_train = scaler.fit_transform(X_train)
-X_val = scaler.transform(X_val)
-X_test = scaler.transform(X_test)
-
-# Convert to tensors
-X_train_t = torch.tensor(X_train, dtype=torch.float32)
-y_train_t = torch.tensor(y_train, dtype=torch.float32)
-X_val_t = torch.tensor(X_val, dtype=torch.float32)
-y_val_t = torch.tensor(y_val, dtype=torch.float32)
-X_test_t = torch.tensor(X_test, dtype=torch.float32)
-y_test_t = torch.tensor(y_test, dtype=torch.float32)
-
-# Create DataLoaders
-train_dataset = TensorDataset(X_train_t, y_train_t)
-val_dataset = TensorDataset(X_val_t, y_val_t)
-test_dataset = TensorDataset(X_test_t, y_test_t)
-
-batch_size = 32
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, pin_memory=True)
-val_loader = DataLoader(val_dataset, batch_size=batch_size*2, shuffle=False)
-test_loader = DataLoader(test_dataset, batch_size=batch_size*2, shuffle=False)
-
-print(f"Train: {len(train_dataset)}, Val: {len(val_dataset)}, Test: {len(test_dataset)}")
-</code></pre></div>
-
-  <div class="pro-tip">
-    <strong>🔧 Handling Class Imbalance</strong><br>
-    The breast cancer dataset is fairly balanced, but in real-world scenarios you might have skewed classes. Options:<br>
-    • <code>pos_weight</code> in <code>BCEWithLogitsLoss</code> (give higher weight to minority class).<br>
-    • Weighted random sampler in DataLoader.<br>
-    • Oversampling/undersampling (e.g., SMOTE).<br>
-    • Use different metrics (precision, recall, F1, AUC) instead of accuracy.
-  </div>
-
-  <h4>🧠 Model Definition – Logits vs Sigmoid</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#logModelFull">Copy</button>
-  <pre class="code-block" id="logModelFull"><code class="language-python">import torch.nn as nn
-
-class LogisticRegressionModel(nn.Module):
-    def __init__(self, input_dim):
-        super().__init__()
-        self.linear = nn.Linear(input_dim, 1)   # outputs raw logits (no sigmoid here)
-        
-        # Optional: custom initialization
-        nn.init.xavier_uniform_(self.linear.weight)
-        nn.init.zeros_(self.linear.bias)
-        
-    def forward(self, x):
-        return self.linear(x)   # return logits, not probabilities
-
-model = LogisticRegressionModel(input_dim=X_train.shape[1])
-print(model)
-
-# Why logits? BCEWithLogitsLoss combines sigmoid + BCE for numerical stability.
-# It avoids log(0) issues and is more efficient.
-</code></pre></div>
-
-  <div class="math-note">
-    <strong>🔢 Understanding Logits and Probabilities</strong><br>
-    Logits are the raw outputs of the linear layer: \( z = \mathbf{w}^T\mathbf{x} + b \). The sigmoid function converts logits to probabilities: \( p = \frac{1}{1+e^{-z}} \). The loss function computes cross-entropy on the probabilities. Using <code>BCEWithLogitsLoss</code> directly on logits is numerically superior to applying sigmoid manually and then using <code>BCELoss</code>.
-  </div>
-
-  <h4>📉 Loss Function – BCEWithLogitsLoss Explained</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#lossLogFull">Copy</button>
-  <pre class="code-block" id="lossLogFull"><code class="language-python"># Binary Cross Entropy with Logits (recommended)
-criterion = nn.BCEWithLogitsLoss()
-
-# For imbalanced data, set pos_weight = (#negatives / #positives)
-neg_count = (y_train == 0).sum()
-pos_count = (y_train == 1).sum()
-pos_weight = torch.tensor([neg_count / pos_count])   # weight for positive class
-criterion_weighted = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-
-# Alternative (not recommended due to numerical issues):
-# criterion = nn.BCELoss()   # requires probabilities as input (apply sigmoid first)
-
-# Example
-logits = torch.tensor([2.0, -1.0, 0.5])
-targets = torch.tensor([1.0, 0.0, 1.0])
-loss = criterion(logits, targets)
-print(f"BCEWithLogitsLoss: {loss:.4f}")
-</code></pre></div>
-
-  <div class="info-box">
-    <strong>📐 Binary Cross-Entropy Formula</strong><br>
-    \[ \text{BCE} = -\frac{1}{n}\sum_{i=1}^{n} \left[ y_i \log(\sigma(z_i)) + (1-y_i) \log(1-\sigma(z_i)) \right] \]
-    where \( z_i \) are logits and \( \sigma \) is the sigmoid function. The loss penalizes confident wrong predictions heavily.
-  </div>
-
-  <h4>⚙️ Optimizer & Regularization for Classification</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#optLogFull">Copy</button>
-  <pre class="code-block" id="optLogFull"><code class="language-python"># AdamW is often best for classification
-optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
-
-# SGD with momentum can generalize better but needs careful tuning
-# optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9, weight_decay=1e-4)
-
-# Learning rate scheduler
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=10, verbose=True)
-
-# Gradient clipping (useful for deep networks, less critical for logistic regression)
-# torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-</code></pre></div>
-
-  <h4>🔄 Complete Training Loop with Metrics</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#trainLogFull">Copy</button>
-  <pre class="code-block" id="trainLogFull"><code class="language-python">from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
-import copy
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = LogisticRegressionModel(X_train.shape[1]).to(device)
-criterion = nn.BCEWithLogitsLoss()
-optimizer = torch.optim.AdamW(model.parameters(), lr=0.001, weight_decay=1e-4)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=8)
-
-epochs = 200
-best_val_auc = 0.0
-best_model_wts = None
-patience = 15
-patience_counter = 0
-
-for epoch in range(epochs):
-    # ---------- Training ----------
-    model.train()
-    train_loss = 0.0
-    for Xb, yb in train_loader:
-        Xb, yb = Xb.to(device), yb.to(device)
-        optimizer.zero_grad()
-        logits = model(Xb)
-        loss = criterion(logits, yb)
-        loss.backward()
-        optimizer.step()
-        train_loss += loss.item() * Xb.size(0)
-    train_loss /= len(train_loader.dataset)
-    
-    # ---------- Validation (with metrics) ----------
-    model.eval()
-    val_loss = 0.0
-    all_probs = []
-    all_labels = []
-    with torch.no_grad():
-        for Xb, yb in val_loader:
-            Xb, yb = Xb.to(device), yb.to(device)
-            logits = model(Xb)
-            loss = criterion(logits, yb)
-            val_loss += loss.item() * Xb.size(0)
-            probs = torch.sigmoid(logits).cpu().numpy().flatten()
-            all_probs.extend(probs)
-            all_labels.extend(yb.cpu().numpy().flatten())
-    val_loss /= len(val_loader.dataset)
-    
-    # Compute metrics
-    preds = (np.array(all_probs) >= 0.5).astype(int)
-    val_acc = accuracy_score(all_labels, preds)
-    val_auc = roc_auc_score(all_labels, all_probs)
-    val_f1 = f1_score(all_labels, preds)
-    
-    scheduler.step(val_loss)   # adjust LR based on val loss
-    
-    # ---------- Early Stopping & Checkpoint (based on AUC) ----------
-    if val_auc > best_val_auc:
-        best_val_auc = val_auc
-        best_model_wts = copy.deepcopy(model.state_dict())
-        patience_counter = 0
-        torch.save(best_model_wts, 'best_logreg.pt')
-    else:
-        patience_counter += 1
-        if patience_counter >= patience:
-            print(f"Early stopping at epoch {epoch+1}")
-            break
-    
-    # ---------- Logging ----------
-    if (epoch+1) % 20 == 0:
-        current_lr = optimizer.param_groups[0]['lr']
-        print(f"Epoch {epoch+1:3d} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | Acc: {val_acc:.3f} | AUC: {val_auc:.3f} | LR: {current_lr:.2e}")
-
-# Load best model
-model.load_state_dict(best_model_wts)
-print(f"\n✅ Best validation AUC: {best_val_auc:.4f}")
-</code></pre></div>
-
-  <h4>📊 Comprehensive Evaluation on Test Set</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#evalLogFull">Copy</button>
-  <pre class="code-block" id="evalLogFull"><code class="language-python">from sklearn.metrics import classification_report, roc_curve, auc
-import matplotlib.pyplot as plt
-
-model.eval()
-all_probs = []
-all_labels = []
-with torch.no_grad():
-    for Xb, yb in test_loader:
-        Xb = Xb.to(device)
-        logits = model(Xb)
-        probs = torch.sigmoid(logits).cpu().numpy().flatten()
-        all_probs.extend(probs)
-        all_labels.extend(yb.numpy().flatten())
-
-preds = (np.array(all_probs) >= 0.5).astype(int)
-
-# Print all metrics
-print("=== Test Set Evaluation ===")
-print(f"Accuracy:  {accuracy_score(all_labels, preds):.4f}")
-print(f"Precision: {precision_score(all_labels, preds):.4f}")
-print(f"Recall:    {recall_score(all_labels, preds):.4f}")
-print(f"F1 Score:  {f1_score(all_labels, preds):.4f}")
-print(f"AUC:       {roc_auc_score(all_labels, all_probs):.4f}")
-print("\nClassification Report:")
-print(classification_report(all_labels, preds, target_names=['Malignant', 'Benign']))
-
-# Confusion matrix
-cm = confusion_matrix(all_labels, preds)
-print(f"Confusion Matrix:\n{cm}")
-
-# Optional: ROC Curve
-# fpr, tpr, _ = roc_curve(all_labels, all_probs)
-# plt.plot(fpr, tpr, label=f'AUC = {roc_auc:.3f}')
-# plt.xlabel('False Positive Rate')
-# plt.ylabel('True Positive Rate')
-# plt.title('ROC Curve')
-# plt.legend()
-# plt.show()
-</code></pre></div>
-
-  <div class="pro-tip">
-    <strong>📈 Interpreting Classification Metrics</strong><br>
-    • <strong>Accuracy</strong>: overall correct predictions – but misleading for imbalanced data.<br>
-    • <strong>Precision</strong>: of predicted positives, how many are actually positive. High precision = low false positives.<br>
-    • <strong>Recall (Sensitivity)</strong>: of actual positives, how many were caught. High recall = low false negatives.<br>
-    • <strong>F1 Score</strong>: harmonic mean of precision and recall – good single metric for imbalanced problems.<br>
-    • <strong>AUC-ROC</strong>: probability that a random positive is ranked higher than a random negative. >0.8 is good, >0.9 excellent.
-  </div>
-
-  <h4>⚖️ Handling Class Imbalance – Detailed Example</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#imbalanceCode">Copy</button>
-  <pre class="code-block" id="imbalanceCode"><code class="language-python"># Simulate imbalanced dataset (90% negatives, 10% positives)
-from torch.utils.data import WeightedRandomSampler
-
-# Create weights: higher weight for minority class
-class_counts = [neg_count, pos_count]
-class_weights = [1.0 / class_counts[0], 1.0 / class_counts[1]]
-sample_weights = [class_weights[int(y)] for y in y_train]
-sampler = WeightedRandomSampler(sample_weights, num_samples=len(sample_weights), replacement=True)
-
-# Use sampler in DataLoader
-train_loader_balanced = DataLoader(train_dataset, batch_size=32, sampler=sampler)
-
-# Or use pos_weight in loss function
-pos_weight = torch.tensor([neg_count / pos_count])
-criterion_balanced = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-</code></pre></div>
-
-  <h4>🎯 Hyperparameter Tuning for Logistic Regression</h4>
-  <div class="code-container"><button class="copy-btn" data-clipboard-target="#hyperLogFull">Copy</button>
-  <pre class="code-block" id="hyperLogFull"><code class="language-python">from itertools import product
-
-param_grid = {
-    'lr': [0.01, 0.001, 0.0005],
-    'weight_decay': [0, 1e-5, 1e-4],
-    'batch_size': [16, 32, 64]
-}
-
-best_val_auc = 0.0
-best_params = None
-
-for lr, wd, bs in product(param_grid['lr'], param_grid['weight_decay'], param_grid['batch_size']):
-    # Recreate loaders with new batch size
-    train_loader = DataLoader(train_dataset, batch_size=bs, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=bs*2, shuffle=False)
-    
-    model = LogisticRegressionModel(X_train.shape[1]).to(device)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=wd)
-    criterion = nn.BCEWithLogitsLoss()
-    
-    # Quick training for 30 epochs
-    val_auc = quick_train_eval_classifier(model, train_loader, val_loader, epochs=30, device=device)
-    
-    if val_auc > best_val_auc:
-        best_val_auc = val_auc
-        best_params = {'lr': lr, 'weight_decay': wd, 'batch_size': bs}
-        print(f"New best: {best_params} -> AUC={val_auc:.4f}")
-
-print(f"\nOptimal parameters: {best_params}")
-print(f"Best validation AUC: {best_val_auc:.4f}")
-</code></pre></div>
-
-  <div class="common-pitfall">
-    <strong>⚠️ Common Mistakes in Logistic Regression with PyTorch</strong>
-    <ul>
-      <li><strong>Using <code>BCELoss</code> without sigmoid</strong> – this will give incorrect results. Use <code>BCEWithLogitsLoss</code> instead.</li>
-      <li><strong>Forgetting to apply sigmoid when interpreting probabilities</strong> – model outputs logits, not probabilities.</li>
-      <li><strong>Threshold at 0.5 without considering class imbalance</strong> – adjust threshold based on precision/recall trade-off.</li>
-      <li><strong>Not standardizing features</strong> – logistic regression is sensitive to feature scales, especially with regularization.</li>
-      <li><strong>Using accuracy alone for imbalanced data</strong> – always check precision, recall, F1, AUC.</li>
-    </ul>
-  </div>
-
-  <div class="info-box">
-    <strong>🔍 Decision Boundary Visualization (for 2D features)</strong><br>
-    If you reduce features to 2D (e.g., PCA), you can plot the decision boundary:
-    <code>plt.contourf(xx, yy, model(torch.tensor(np.c_[xx.ravel(), yy.ravel()])).detach().numpy().reshape(xx.shape), alpha=0.5)</code>
-    This shows the linear separation line in the original or transformed feature space.
-  </div>
-
-  <div class="pro-tip">
-    <strong>🚀 Performance & Production Tips</strong><br>
-    • Use <code>torch.jit.script</code> or <code>torch.jit.trace</code> to export the model for production.<br>
-    • For inference, always use <code>model.eval()</code> and <code>with torch.no_grad()</code>.<br>
-    • Calibrate probabilities using <code>sklearn.calibration.CalibratedClassifierCV</code> if needed.<br>
-    • Monitor calibration curve (reliability diagram) for probabilistic predictions.
-  </div>
-
-  <footer class="section-footer" style="margin-top: 20px; font-size: 0.85rem; color: var(--muted); text-align: center;">
-    <i class="fas fa-chart-bar"></i> Logistic Regression – Complete guide with loss functions, metrics, imbalance handling, early stopping, and hyperparameter tuning.
-  </footer>
-</div>
-
-  <!-- ================= NEW SECTION: NEURAL NETWORKS WITH TABS ================= -->
-  <div class="panel section">
-    <h3><i class="fas fa-brain"></i> 4. Neural Networks – From Shallow to Deep (Tabbed Deep Dive)</h3>
-    <p>Neural networks extend logistic regression by adding hidden layers and non-linear activations. Below, explore four key aspects: architecture design, training loop, regularization techniques, and hyperparameter tuning.</p>
-    
-    <div class="tabs-container">
-      <div class="tabs">
-        <button class="tab-button active" data-tab="tab1">🧠 Model Architecture</button>
-        <button class="tab-button" data-tab="tab2">⚙️ Training Loop & Callbacks</button>
-        <button class="tab-button" data-tab="tab3">🛡️ Regularization</button>
-        <button class="tab-button" data-tab="tab4">🎛️ Hyperparameter Tuning</button>
-      </div>
-    </div>
-
-    <!-- Tab 1: Model Architecture -->
-    <div id="tab1" class="tab-content active">
-      <h4>Designing a Flexible Multi-Layer Perceptron (MLP)</h4>
-      <p>A neural network consists of stacked linear layers with non-linear activation functions (ReLU, Tanh, LeakyReLU). PyTorch's <code>nn.Sequential</code> makes construction easy.</p>
-      <div class="code-container"><button class="copy-btn" data-clipboard-target="#nnArch">Copy</button>
-      <pre class="code-block" id="nnArch"><code class="language-python">import torch.nn as nn
-import torch.nn.functional as F
-
-class FlexibleMLP(nn.Module):
-    """Multi-layer perceptron with configurable hidden dimensions, activation, dropout, and batch norm."""
-    def __init__(self, input_dim, hidden_dims=[128, 64], output_dim=1, 
-                 activation='relu', dropout=0.0, use_batch_norm=False):
-        super().__init__()
-        layers = []
-        prev_dim = input_dim
-        for h_dim in hidden_dims:
-            layers.append(nn.Linear(prev_dim, h_dim))
-            if use_batch_norm:
-                layers.append(nn.BatchNorm1d(h_dim))
-            # Activation
-            if activation == 'relu':
-                layers.append(nn.ReLU(inplace=True))
-            elif activation == 'leaky_relu':
-                layers.append(nn.LeakyReLU(0.1, inplace=True))
-            elif activation == 'tanh':
-                layers.append(nn.Tanh())
-            if dropout > 0:
-                layers.append(nn.Dropout(dropout))
-            prev_dim = h_dim
-        layers.append(nn.Linear(prev_dim, output_dim))
-        self.net = nn.Sequential(*layers)
-    
-    def forward(self, x):
-        return self.net(x)
-
-# Example: Binary classifier with 2 hidden layers, ReLU, BatchNorm, Dropout
-model = FlexibleMLP(input_dim=30, hidden_dims=[128, 64], output_dim=1,
-                    activation='relu', dropout=0.2, use_batch_norm=True)
-print(model)
-
-# For multi-class classification: output_dim = num_classes, use CrossEntropyLoss
-# For regression: output_dim = 1, use MSELoss, no final activation.
-</code></pre></div>
-      <h5>Choosing Activation Functions</h5>
-      <ul>
-        <li><strong>ReLU</strong> – Most common, avoids vanishing gradient, but can cause dead neurons. Use <code>LeakyReLU</code> if many dead units.</li>
-        <li><strong>Tanh</strong> – Outputs between -1 and 1, zero-centered. Good for certain recurrent networks.</li>
-        <li><strong>Sigmoid</strong> – Only for output layer in binary classification.</li>
-        <li><strong>Softmax</strong> – For multi-class output (use with <code>CrossEntropyLoss</code> which includes log-softmax).</li>
-      </ul>
-      <div class="pro-tip"><strong>📌 Parameter count:</strong> Each linear layer has \( \text{in} \times \text{out} + \text{out} \) parameters. Too many parameters → overfitting; too few → underfitting.</div>
-    </div>
-
-    <!-- Tab 2: Training Loop & Callbacks -->
-    <div id="tab2" class="tab-content">
-      <h4>Advanced Training Loop with Callbacks, Checkpointing, and Early Stopping</h4>
-      <p>Beyond the basic loop, we add learning rate scheduling, model checkpointing, gradient clipping, and optional mixed precision (AMP).</p>
-      <div class="code-container"><button class="copy-btn" data-clipboard-target="#nnTrain">Copy</button>
-      <pre class="code-block" id="nnTrain"><code class="language-python">import torch.optim as optim
-from torch.cuda.amp import autocast, GradScaler
-
-def train_neural_network(model, train_loader, val_loader, epochs=100, lr=0.001,
-                         weight_decay=1e-4, patience=10, device='cuda'):
-    model.to(device)
-    criterion = nn.BCEWithLogitsLoss()  # for binary classification
-    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=5)
-    scaler = GradScaler() if device == 'cuda' else None
-    
-    best_val_loss = float('inf')
-    counter = 0
-    best_state = None
-    
-    for epoch in range(epochs):
-        # Training phase
-        model.train()
-        train_loss = 0.0
-        for Xb, yb in train_loader:
-            Xb, yb = Xb.to(device), yb.to(device)
-            optimizer.zero_grad()
-            
-            if scaler:
-                with autocast():
-                    logits = model(Xb)
-                    loss = criterion(logits, yb)
-                scaler.scale(loss).backward()
-                scaler.unscale_(optimizer)
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-                scaler.step(optimizer)
-                scaler.update()
-            else:
-                logits = model(Xb)
-                loss = criterion(logits, yb)
-                loss.backward()
-                torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-                optimizer.step()
-            train_loss += loss.item() * Xb.size(0)
-        train_loss /= len(train_loader.dataset)
-        
-        # Validation
-        model.eval()
-        val_loss = 0.0
-        with torch.no_grad():
-            for Xb, yb in val_loader:
-                Xb, yb = Xb.to(device), yb.to(device)
-                logits = model(Xb)
-                loss = criterion(logits, yb)
-                val_loss += loss.item() * Xb.size(0)
-        val_loss /= len(val_loader.dataset)
-        
-        scheduler.step(val_loss)
-        
-        # Early stopping & checkpoint
-        if val_loss < best_val_loss:
-            best_val_loss = val_loss
-            best_state = model.state_dict()
-            counter = 0
-        else:
-            counter += 1
-            if counter >= patience:
-                print(f"Early stopping at epoch {epoch+1}")
-                break
-        
-        if (epoch+1) % 10 == 0:
-            current_lr = optimizer.param_groups[0]['lr']
-            print(f"Epoch {epoch+1:3d} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | LR: {current_lr:.2e}")
-    
-    # Restore best model
-    if best_state:
-        model.load_state_dict(best_state)
-    return model
-</code></pre></div>
-      <div class="info-box"><strong>🔧 Gradient Clipping:</strong> Prevents exploding gradients, especially important for deep networks or RNNs. Typical max_norm: 0.5–2.0.</div>
-    </div>
-
-    <!-- Tab 3: Regularization Techniques -->
-    <div id="tab3" class="tab-content">
-      <h4>Preventing Overfitting in Neural Networks</h4>
-      <p>Deep networks have high capacity; regularization is crucial when data is limited.</p>
-      <div class="concept-grid">
-        <div class="concept-card"><strong>L2 Regularization (weight_decay)</strong><br>Adds penalty \( \lambda \sum w^2 \) to loss. Smoother weights. Use in optimizer: <code>weight_decay=1e-4</code>.</div>
-        <div class="concept-card"><strong>Dropout</strong><br>Randomly zeros a fraction of neurons during training. Typical rates: 0.2–0.5. Implement via <code>nn.Dropout(p)</code>.</div>
-        <div class="concept-card"><strong>Batch Normalization</strong><br>Normalizes layer inputs, stabilizes training, acts as regularizer. Use <code>nn.BatchNorm1d</code> for MLPs.</div>
-        <div class="concept-card"><strong>Early Stopping</strong><br>Stop training when validation loss stops improving. Already implemented in the training loop above.</div>
-        <div class="concept-card"><strong>Data Augmentation</strong><br>For images: random crops, flips, rotations. For tabular data: adding noise or mixup.</div>
-        <div class="concept-card"><strong>Weight Initialization</strong><br>Proper init (Xavier, Kaiming) prevents vanishing/exploding gradients. PyTorch defaults are good.</div>
-      </div>
-      <div class="code-container"><button class="copy-btn" data-clipboard-target="#regCode">Copy</button>
-      <pre class="code-block" id="regCode"><code class="language-python"># Example: Model with Dropout and BatchNorm
-class RegularizedMLP(nn.Module):
-    def __init__(self, input_dim, hidden_dims=[256, 128], dropout=0.3):
-        super().__init__()
-        self.fc1 = nn.Linear(input_dim, hidden_dims[0])
-        self.bn1 = nn.BatchNorm1d(hidden_dims[0])
-        self.drop1 = nn.Dropout(dropout)
-        self.fc2 = nn.Linear(hidden_dims[0], hidden_dims[1])
-        self.bn2 = nn.BatchNorm1d(hidden_dims[1])
-        self.drop2 = nn.Dropout(dropout)
-        self.out = nn.Linear(hidden_dims[1], 1)
-    
-    def forward(self, x):
-        x = torch.relu(self.bn1(self.fc1(x)))
-        x = self.drop1(x)
-        x = torch.relu(self.bn2(self.fc2(x)))
-        x = self.drop2(x)
-        return self.out(x)
-
-# Apply L2 via optimizer: weight_decay=1e-4
-# Apply custom initialization
-def init_weights(m):
-    if isinstance(m, nn.Linear):
-        nn.init.kaiming_normal_(m.weight, mode='fan_in', nonlinearity='relu')
-        if m.bias is not None:
-            nn.init.constant_(m.bias, 0)
-model.apply(init_weights)
-</code></pre></div>
-    </div>
-
-    <!-- Tab 4: Hyperparameter Tuning -->
-    <div id="tab4" class="tab-content">
-      <h4>Systematic Hyperparameter Optimization</h4>
-      <p>Finding the best combination of learning rate, batch size, hidden dimensions, dropout, etc. Use <strong>grid search, random search, or Bayesian optimization</strong> (e.g., Optuna). Below is a template using <code>sklearn.model_selection</code> with a PyTorch wrapper.</p>
-      <div class="code-container"><button class="copy-btn" data-clipboard-target="#tuningCode">Copy</button>
-      <pre class="code-block" id="tuningCode"><code class="language-python">from sklearn.model_selection import ParameterGrid
-import itertools
-
-# Hyperparameter grid
-param_grid = {
-    'lr': [1e-3, 1e-4],
-    'batch_size': [32, 64],
-    'hidden_layers': [[64], [128, 64]],
-    'dropout': [0.2, 0.4],
-    'weight_decay': [0, 1e-5]
-}
-
-best_val_loss = float('inf')
-best_params = None
-
-# Simple grid search (for demonstration; in practice use cross-validation)
-for params in ParameterGrid(param_grid):
-    print(f"Trying {params}")
-    # Recreate DataLoader with batch_size
-    train_loader = DataLoader(train_dataset, batch_size=params['batch_size'], shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=params['batch_size'])
-    # Build model
-    model = FlexibleMLP(input_dim=30, hidden_dims=params['hidden_layers'],
-                        dropout=params['dropout']).to(device)
-    optimizer = optim.Adam(model.parameters(), lr=params['lr'], weight_decay=params['weight_decay'])
-    # Quick training for 30 epochs (early stopping inside)
-    trained_model = train_neural_network(model, train_loader, val_loader, epochs=30,
-                                         lr=params['lr'], weight_decay=params['weight_decay'],
-                                         patience=5, device=device)
-    # Evaluate validation loss (use the trained model)
-    val_loss = evaluate(model, val_loader, device)  # assume evaluate function
-    if val_loss < best_val_loss:
-        best_val_loss = val_loss
-        best_params = params
-        print(f"New best! val_loss={val_loss:.4f}")
-
-print(f"Best params: {best_params}, val_loss={best_val_loss:.4f}")
-
-# Using Optuna (recommended for complex search)
-# pip install optuna
-import optuna
-def objective(trial):
-    lr = trial.suggest_float('lr', 1e-5, 1e-2, log=True)
-    dropout = trial.suggest_float('dropout', 0.1, 0.5)
-    hidden_size = trial.suggest_int('hidden_size', 32, 256)
-    # ... build and train model
-    return val_loss
-
-study = optuna.create_study(direction='minimize')
-study.optimize(objective, n_trials=50)
-</code></pre></div>
-      <div class="pro-tip"><strong>💡 Best Practices:</strong> Start with a small network and increase capacity if underfitting. Use learning rate finder (e.g., <code>torch_lr_finder</code>). Always track validation metrics, not train loss. Use <code>TensorBoard</code> for visualization.</div>
-    </div>
-  </div>
-
-  <!-- ================= PART 5: COMPLETE PARAMETER REFERENCE TABLE ================= -->
-  <div class="panel section">
-    <h3><i class="fas fa-table-list"></i> 5. Complete Parameter Reference – When & Why</h3>
-    <table class="detailed-table">
-      <thead><tr><th>Component</th><th>Parameter</th><th>Typical Range</th><th>Effect / When to Change</th></tr></thead>
-      <tbody>
-        <tr><td>DataLoader</td><td>batch_size</td><td>16–512</td><td>Smaller → noisy gradients (better generalization), larger → stable but memory heavy.</td></tr>
-        <tr><td>DataLoader</td><td>num_workers</td><td>0–8</td><td>Number of subprocesses for data loading. Increase if I/O bottleneck.</td></tr>
-        <tr><td>Optimizer (SGD)</td><td>momentum</td><td>0.9–0.99</td><td>Accelerates convergence. Higher values smooth gradients more.</td></tr>
-        <tr><td>Optimizer (Adam)</td><td>betas</td><td>(0.9, 0.999)</td><td>First and second moment decay rates. Rarely changed.</td></tr>
-        <tr><td>All optimizers</td><td>weight_decay</td><td>0, 1e-5, 1e-4</td><td>L2 regularization. Increase when overfitting.</td></tr>
-        <tr><td>Loss function</td><td>reduction</td><td>'mean', 'sum'</td><td>Usually 'mean' for stable gradients.</td></tr>
-        <tr><td>Scheduler</td><td>patience (ReduceLROnPlateau)</td><td>5–20</td><td>Epochs with no improvement before reducing LR.</td></tr>
-        <tr><td>Early stopping</td><td>patience</td><td>10–30</td><td>Stop training if val loss doesn't improve.</td></tr>
-        <tr><td>Neural net</td><td>hidden_dims</td><td>[64, 32] etc.</td><td>More layers/neurons increase capacity; risk overfitting.</td></tr>
-        <tr><td>Neural net</td><td>dropout rate</td><td>0.2–0.5</td><td>Higher = more regularization, but may underfit.</td></tr>
-        <tr><td>Neural net</td><td>activation</td><td>ReLU, LeakyReLU, Tanh</td><td>ReLU is default; LeakyReLU if dead neurons.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- ================= PART 6: ADVANCED TOPICS ================= -->
-  <div class="panel section">
-    <h3><i class="fas fa-graduation-cap"></i> 6. Advanced Topics – Beyond the Basics</h3>
-    <div class="concept-grid">
-      <div class="concept-card"><i class="fas fa-chart-line"></i> <strong>Learning Rate Finder</strong><br>Use <code>torch.optim.lr_scheduler</code> and iterate over increasing LR to find optimal starting LR.</div>
-      <div class="concept-card"><i class="fas fa-balance-scale"></i> <strong>Class Imbalance</strong><br>Set <code>pos_weight</code> in BCEWithLogitsLoss or use weighted random sampler in DataLoader.</div>
-      <div class="concept-card"><i class="fas fa-tachometer-alt"></i> <strong>Mixed Precision (AMP)</strong><br>Reduces memory and speeds up training by using float16 where possible. Use <code>torch.cuda.amp</code>.</div>
-      <div class="concept-card"><i class="fas fa-code-branch"></i> <strong>Gradient Clipping</strong><br><code>torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)</code> prevents exploding gradients.</div>
-    </div>
-  </div>
-
-  <footer>© Module 10: PyTorch – Ultimate Tutorial | Linear & Logistic Regression | Neural Networks with Tabbed Deep Dive | Production-Ready Code</footer>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script>
 <script>
-  const body = document.body;
-  const themeBtn = document.getElementById('themeToggle');
-  const hljsLight = document.getElementById('hljs-light');
-  const hljsDark = document.getElementById('hljs-dark');
+    (function(){
+        "use strict";
 
-  function setTheme(theme) {
-    body.setAttribute('data-theme', theme);
-    localStorage.setItem('pytorch-tutorial-theme', theme);
-    if (themeBtn) themeBtn.querySelector('.label').textContent = theme === 'day' ? 'Day Mode' : 'Night Mode';
-    if (theme === 'day') { hljsLight.disabled = false; hljsDark.disabled = true; }
-    else { hljsLight.disabled = true; hljsDark.disabled = false; }
-  }
-  themeBtn?.addEventListener('click', () => {
-    const current = body.getAttribute('data-theme');
-    setTheme(current === 'day' ? 'night' : 'day');
-  });
-  const savedTheme = localStorage.getItem('pytorch-tutorial-theme');
-  setTheme(savedTheme === 'day' ? 'day' : 'night');
-  
-  // Highlight all code blocks
-  document.querySelectorAll('pre code').forEach((block) => hljs.highlightElement(block));
-  new ClipboardJS('.copy-btn');
-  
-  // Tab switching logic
-  const tabButtons = document.querySelectorAll('.tab-button');
-  const tabContents = document.querySelectorAll('.tab-content');
-  
-  tabButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const tabId = button.getAttribute('data-tab');
-      // Deactivate all tabs
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      tabContents.forEach(content => content.classList.remove('active'));
-      // Activate current
-      button.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
-    });
-  });
+        // ---------- Theme ----------
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        if(localStorage.getItem('theme') === 'dark') body.classList.add('dark');
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            localStorage.setItem('theme', body.classList.contains('dark') ? 'dark' : 'light');
+            redrawAllCanvases();
+        });
+
+        // ---------- Canvas High-DPI Setup ----------
+        function setupCanvas(canvas, width, height) {
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+            return { ctx, w: width, h: height };
+        }
+
+        // ---------- Network Parameters ----------
+        const hiddenWeights = [[0.2, 0.8], [0.6, 0.1], [0.5, 0.3]];
+        const hiddenBiases = [0.1, 0.2, 0.0];
+        const outputWeights = [0.4, 0.9, 0.2];
+        const outputBias = 0.3;
+
+        function relu(z) { return Math.max(0, z); }
+        function sigmoid(z) { return 1 / (1 + Math.exp(-z)); }
+
+        function forwardPass(x1, x2) {
+            let z_hidden = hiddenWeights.map((w, i) => w[0]*x1 + w[1]*x2 + hiddenBiases[i]);
+            let h = z_hidden.map(relu);
+            let z_out = outputWeights[0]*h[0] + outputWeights[1]*h[1] + outputWeights[2]*h[2] + outputBias;
+            let y_hat = sigmoid(z_out);
+            return { h, z_out, y_hat };
+        }
+
+        // ---------- Interactive Sliders ----------
+        const x1Slider = document.getElementById('x1_slider');
+        const x2Slider = document.getElementById('x2_slider');
+        const x1Val = document.getElementById('x1_val');
+        const x2Val = document.getElementById('x2_val');
+        const h1Span = document.getElementById('h1_out');
+        const h2Span = document.getElementById('h2_out');
+        const h3Span = document.getElementById('h3_out');
+        const z2Span = document.getElementById('z2_out');
+        const yPredSpan = document.getElementById('y_pred');
+        const probPct = document.getElementById('prob_pct');
+
+        function updateFromInputs() {
+            let x1 = parseFloat(x1Slider.value);
+            let x2 = parseFloat(x2Slider.value);
+            x1Val.innerText = x1.toFixed(2);
+            x2Val.innerText = x2.toFixed(2);
+            const { h, z_out, y_hat } = forwardPass(x1, x2);
+            h1Span.innerText = h[0].toFixed(4);
+            h2Span.innerText = h[1].toFixed(4);
+            h3Span.innerText = h[2].toFixed(4);
+            z2Span.innerText = z_out.toFixed(4);
+            yPredSpan.innerText = y_hat.toFixed(4);
+            probPct.innerText = (y_hat*100).toFixed(1);
+        }
+
+        x1Slider.addEventListener('input', updateFromInputs);
+        x2Slider.addEventListener('input', updateFromInputs);
+        document.getElementById('randomBtn').addEventListener('click', () => {
+            x1Slider.value = (Math.random() * 5 - 2).toFixed(2);
+            x2Slider.value = (Math.random() * 5 - 2).toFixed(2);
+            updateFromInputs();
+        });
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            x1Slider.value = "1.5";
+            x2Slider.value = "0.5";
+            updateFromInputs();
+        });
+        updateFromInputs();
+
+        // ---------- Drawing Functions ----------
+
+        function redrawAllCanvases() {
+            drawNetworkDiagram();
+            drawNeuronDiagram();
+            drawSigmoidCurve();
+            drawSingleNeuronIntro();
+            drawSimpleNetworkIntro();
+            drawPerformanceChart();
+        }
+
+        function drawNetworkDiagram() {
+            const canvas = document.getElementById('networkCanvas');
+            if(!canvas) return;
+            const { ctx, w, h } = setupCanvas(canvas, 800, 300);
+            ctx.clearRect(0, 0, w, h);
+            
+            const isDark = body.classList.contains('dark');
+            const nodeColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-node').trim() || (isDark ? '#60a5fa' : '#3b82f6');
+            const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-line').trim() || '#94a3b8';
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-text').trim() || (isDark ? '#f1f5f9' : '#1e293b');
+            
+            ctx.strokeStyle = lineColor;
+            ctx.fillStyle = nodeColor;
+            ctx.font = "14px 'Inter'";
+            
+            const inputX = 120, hiddenX = 380, outputX = 640;
+            const inputYpos = [130, 200];
+            const hiddenYpos = [90, 150, 210];
+            const outputYpos = [150];
+            
+            // connections
+            for(let i=0; i<inputYpos.length; i++)
+                for(let j=0; j<hiddenYpos.length; j++) {
+                    ctx.beginPath();
+                    ctx.moveTo(inputX, inputYpos[i]);
+                    ctx.lineTo(hiddenX, hiddenYpos[j]);
+                    ctx.stroke();
+                }
+            for(let j=0; j<hiddenYpos.length; j++)
+                for(let k=0; k<outputYpos.length; k++) {
+                    ctx.beginPath();
+                    ctx.moveTo(hiddenX, hiddenYpos[j]);
+                    ctx.lineTo(outputX, outputYpos[k]);
+                    ctx.stroke();
+                }
+            
+            // nodes
+            for(let i=0; i<inputYpos.length; i++) {
+                ctx.beginPath();
+                ctx.arc(inputX, inputYpos[i], 20, 0, 2*Math.PI);
+                ctx.fill();
+                ctx.fillStyle = textColor;
+                ctx.fillText(`x_${i+1}`, inputX-8, inputYpos[i]+4);
+                ctx.fillStyle = nodeColor;
+            }
+            for(let j=0; j<hiddenYpos.length; j++) {
+                ctx.beginPath();
+                ctx.arc(hiddenX, hiddenYpos[j], 20, 0, 2*Math.PI);
+                ctx.fill();
+                ctx.fillStyle = textColor;
+                ctx.fillText(`h_${j+1}`, hiddenX-8, hiddenYpos[j]+4);
+                ctx.fillStyle = nodeColor;
+            }
+            ctx.beginPath();
+            ctx.arc(outputX, outputYpos[0], 20, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.fillStyle = textColor;
+            ctx.fillText(`ŷ`, outputX-8, outputYpos[0]+4);
+            
+            ctx.fillStyle = textColor;
+            ctx.font = "bold 14px 'Inter'";
+            ctx.fillText("Input", inputX-40, 70);
+            ctx.fillText("Hidden (ReLU)", hiddenX-60, 50);
+            ctx.fillText("Output (Sigmoid)", outputX-50, 270);
+        }
+
+        function drawNeuronDiagram() {
+            const canvas = document.getElementById('neuronCanvas');
+            if(!canvas) return;
+            const { ctx, w, h } = setupCanvas(canvas, 450, 240);
+            ctx.clearRect(0, 0, w, h);
+            
+            const isDark = body.classList.contains('dark');
+            const nodeColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-node').trim() || (isDark ? '#60a5fa' : '#3b82f6');
+            const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-line').trim() || '#94a3b8';
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-text').trim() || (isDark ? '#f1f5f9' : '#1e293b');
+            
+            ctx.strokeStyle = lineColor;
+            ctx.fillStyle = nodeColor;
+            ctx.font = "12px 'Inter'";
+            
+            const inputs = [{x:40, y:70, label:'x₁'}, {x:40, y:140, label:'x₂'}];
+            const neuronX = 220, neuronY = 105;
+            const outputX = 380, outputY = 105;
+            
+            inputs.forEach(inp => {
+                ctx.beginPath();
+                ctx.moveTo(inp.x+15, inp.y);
+                ctx.lineTo(neuronX-20, neuronY);
+                ctx.stroke();
+                ctx.fillStyle = textColor;
+                ctx.fillText(inp.label, inp.x, inp.y-5);
+                ctx.fillStyle = nodeColor;
+            });
+            
+            ctx.fillStyle = textColor;
+            ctx.fillText("w₁", 100, 50);
+            ctx.fillText("w₂", 100, 120);
+            ctx.fillText("bias", 140, 185);
+            
+            ctx.beginPath();
+            ctx.arc(neuronX, neuronY, 30, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.fillStyle = textColor;
+            ctx.fillText("Σ + f", neuronX-15, neuronY+4);
+            ctx.fillStyle = nodeColor;
+            
+            ctx.beginPath();
+            ctx.moveTo(neuronX+25, neuronY);
+            ctx.lineTo(outputX-15, outputY);
+            ctx.stroke();
+            ctx.fillStyle = textColor;
+            ctx.fillText("ŷ = f(z)", outputX-30, outputY-5);
+            
+            ctx.beginPath();
+            ctx.arc(outputX, outputY, 18, 0, 2*Math.PI);
+            ctx.fill();
+            ctx.fillStyle = textColor;
+            ctx.fillText("ŷ", outputX-6, outputY+4);
+            
+            ctx.fillStyle = textColor;
+            ctx.font = "italic 10px";
+            ctx.fillText("z = Σ wᵢxᵢ + b", neuronX-40, neuronY+45);
+        }
+
+        function drawSigmoidCurve() {
+            const canvas = document.getElementById('sigmoidCanvasIntro');
+            if (!canvas) return;
+            const { ctx, w, h } = setupCanvas(canvas, 400, 250);
+            ctx.clearRect(0, 0, w, h);
+            
+            const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--bg-card').trim() || '#ffffff';
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#1e2a3e';
+            const axisColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim() || '#e2e8f0';
+            const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#3b82f6';
+            
+            ctx.fillStyle = bgColor;
+            ctx.fillRect(0, 0, w, h);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = axisColor;
+            ctx.lineWidth = 1;
+            ctx.moveTo(40, h/2);
+            ctx.lineTo(w-20, h/2);
+            ctx.moveTo(40, 20);
+            ctx.lineTo(40, h-20);
+            ctx.stroke();
+            
+            const xMin = -6, xMax = 6;
+            const yMin = 0, yMax = 1;
+            const px = (z) => 40 + (z - xMin) / (xMax - xMin) * (w - 60);
+            const py = (y) => (h-20) - (y - yMin) / (yMax - yMin) * (h - 60);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = accent;
+            ctx.lineWidth = 2.5;
+            let first = true;
+            for (let z = xMin; z <= xMax; z += 0.05) {
+                const sig = 1 / (1 + Math.exp(-z));
+                const xc = px(z);
+                const yc = py(sig);
+                if (first) { ctx.moveTo(xc, yc); first = false; }
+                else { ctx.lineTo(xc, yc); }
+            }
+            ctx.stroke();
+            
+            ctx.fillStyle = textColor;
+            ctx.font = "10px 'Inter'";
+            ctx.fillText("z →", w-30, h/2-5);
+            ctx.fillText("σ(z)", 20, 40);
+            ctx.fillText("0", 30, h/2+4);
+            ctx.fillText("1", 30, py(1)-4);
+        }
+
+        function drawSingleNeuronIntro() {
+            const canvas = document.getElementById('singleNeuronDiagramIntro');
+            if (!canvas) return;
+            const { ctx, w, h } = setupCanvas(canvas, 250, 150);
+            ctx.clearRect(0, 0, w, h);
+            
+            const nodeColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-node').trim() || '#3b82f6';
+            const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-line').trim() || '#94a3b8';
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-text').trim() || '#1e293b';
+            
+            const x1 = {x: 40, y: 50}, x2 = {x: 40, y: 100}, neuron = {x: 120, y: 75}, out = {x: 200, y: 75};
+            
+            ctx.strokeStyle = lineColor;
+            ctx.beginPath(); ctx.moveTo(x1.x, x1.y); ctx.lineTo(neuron.x-10, neuron.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(x2.x, x2.y); ctx.lineTo(neuron.x-10, neuron.y); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(neuron.x+10, neuron.y); ctx.lineTo(out.x-10, out.y); ctx.stroke();
+            
+            ctx.fillStyle = nodeColor;
+            ctx.beginPath(); ctx.arc(x1.x, x1.y, 12, 0, 2*Math.PI); ctx.fill();
+            ctx.beginPath(); ctx.arc(x2.x, x2.y, 12, 0, 2*Math.PI); ctx.fill();
+            ctx.beginPath(); ctx.arc(neuron.x, neuron.y, 18, 0, 2*Math.PI); ctx.fill();
+            ctx.beginPath(); ctx.arc(out.x, out.y, 12, 0, 2*Math.PI); ctx.fill();
+            
+            ctx.fillStyle = textColor;
+            ctx.fillText("x₁", x1.x-5, x1.y+4);
+            ctx.fillText("x₂", x2.x-5, x2.y+4);
+            ctx.fillText("σ", neuron.x-5, neuron.y+4);
+            ctx.fillText("ŷ", out.x-5, out.y+4);
+        }
+
+        function drawSimpleNetworkIntro() {
+            const canvas = document.getElementById('simpleNetworkDiagramIntro');
+            if (!canvas) return;
+            const { ctx, w, h } = setupCanvas(canvas, 250, 150);
+            ctx.clearRect(0, 0, w, h);
+            
+            const nodeColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-node').trim() || '#3b82f6';
+            const lineColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-line').trim() || '#94a3b8';
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--diagram-text').trim() || '#1e293b';
+            
+            const inX = 30, hiddenX = 100, outX = 180;
+            const inY = [40, 80], hiddenY = [30, 65, 100], outY = [65];
+            
+            ctx.strokeStyle = lineColor;
+            for (let i of inY) for (let j of hiddenY) { ctx.beginPath(); ctx.moveTo(inX, i); ctx.lineTo(hiddenX, j); ctx.stroke(); }
+            for (let j of hiddenY) for (let k of outY) { ctx.beginPath(); ctx.moveTo(hiddenX, j); ctx.lineTo(outX, k); ctx.stroke(); }
+            
+            ctx.fillStyle = nodeColor;
+            for (let y of inY) { ctx.beginPath(); ctx.arc(inX, y, 8, 0, 2*Math.PI); ctx.fill(); }
+            for (let y of hiddenY) { ctx.beginPath(); ctx.arc(hiddenX, y, 8, 0, 2*Math.PI); ctx.fill(); }
+            for (let y of outY) { ctx.beginPath(); ctx.arc(outX, y, 8, 0, 2*Math.PI); ctx.fill(); }
+            
+            ctx.fillStyle = textColor;
+            ctx.fillText("x₁", inX-12, 43);
+            ctx.fillText("x₂", inX-12, 83);
+            ctx.fillText("h", hiddenX-5, 30);
+            ctx.fillText("ŷ", outX-5, 68);
+        }
+
+        function drawPerformanceChart() {
+            const canvas = document.getElementById('performanceChartCanvas');
+            if (!canvas) return;
+            const { ctx, w, h } = setupCanvas(canvas, 600, 250);
+            ctx.clearRect(0, 0, w, h);
+            
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#1e2a3e';
+            const barColorNN = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#3b82f6';
+            const barColorML = '#94a3b8';
+            
+            const categories = ["Images", "Text", "Audio", "Tabular (small)", "Tabular (large)"];
+            const nnScores = [0.95, 0.92, 0.90, 0.70, 0.82];
+            const mlScores = [0.60, 0.55, 0.58, 0.88, 0.85];
+            
+            const barWidth = (w - 100) / (categories.length * 2 + 1);
+            const startX = 60;
+            const maxHeight = h - 60;
+            
+            for (let i=0; i<categories.length; i++) {
+                const x1 = startX + i * (barWidth*2 + 10);
+                const x2 = x1 + barWidth;
+                const heightNN = nnScores[i] * maxHeight;
+                const heightML = mlScores[i] * maxHeight;
+                ctx.fillStyle = barColorNN;
+                ctx.fillRect(x1, maxHeight - heightNN + 20, barWidth-2, heightNN);
+                ctx.fillStyle = barColorML;
+                ctx.fillRect(x2, maxHeight - heightML + 20, barWidth-2, heightML);
+                ctx.fillStyle = textColor;
+                ctx.font = "8px 'Inter'";
+                ctx.fillText(categories[i], x1, maxHeight+15);
+            }
+            ctx.fillStyle = textColor;
+            ctx.font = "10px 'Inter'";
+            ctx.fillText("Neural Network", startX, 20);
+            ctx.fillStyle = barColorML;
+            ctx.fillRect(startX+70, 12, 15, 10);
+            ctx.fillStyle = textColor;
+            ctx.fillText("Traditional ML", startX+70, 22);
+        }
+
+        // Initial draw
+        redrawAllCanvases();
+
+        // Observers and resize
+        window.addEventListener('resize', redrawAllCanvases);
+        const observer = new MutationObserver(redrawAllCanvases);
+        observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    })();
 </script>
 </body>
 </html>
